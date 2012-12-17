@@ -97,7 +97,7 @@ var SampleApp = function() {
 
         // Routes for /health, /asciimo and /
         self.routes['/health'] = function(req, res) {
-            res.send('1');
+            res.send('2');
         };
 
         self.routes['/asciimo'] = function(req, res) {
