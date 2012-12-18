@@ -1,8 +1,8 @@
 #!/bin/env node
 //  OpenShift sample Node application
-var express = require('express');
-var fs      = require('fs');
-
+var express = require('express'),
+	mongoose = require('mongoose'),
+	fs = require('fs');
 
 /**
  *  Define the sample application.
@@ -22,8 +22,9 @@ var SampleApp = function() {
      */
     self.setupVariables = function() {
         //  Set the environment variables we need.
-        self.ipaddress = process.env.OPENSHIFT_INTERNAL_IP;
-        self.port      = process.env.OPENSHIFT_INTERNAL_PORT || 8080;
+        self.ipaddress = process.env.OPENSHIFT_INTERNAL_IP || "127.0.0.1";
+        self.port = process.env.OPENSHIFT_INTERNAL_PORT || 8080;
+		self.dburl = process.env.OPENSHIFT_MONGODB_DB_URL || "mongodb://localhost/test";
 
         if (typeof self.ipaddress === "undefined") {
             //  Log errors on OpenShift but continue w/ 127.0.0.1 - this
@@ -118,7 +119,8 @@ var SampleApp = function() {
      */
     self.initializeServer = function() {
         self.createRoutes();
-        self.app = express.createServer();
+        self.app = express();
+		mongoose.connect(self.dburl);
 
         //  Add handlers for the app (from the routes).
         for (var r in self.routes) {
