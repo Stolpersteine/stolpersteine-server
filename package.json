@@ -1,23 +1,14 @@
 {
-  "name": "OpenShift-Sample-App",
+  "name": "Stolpersteine",
   "version": "1.0.0",
-  "description": "OpenShift Sample Application",
-  "keywords": [
-    "OpenShift",
-    "Node.js",
-    "application",
-    "openshift"
-  ],
+  "description": "Stolpersteine",
   "author": {
-    "name": "OpenShift",
-    "email": "ramr@example.org",
-    "url":  "http://openshift.redhat.com/"
+    "name": "Option-U Software",
+    "email": "admin@option-u.com",
+    "url":  "http://www.option-u.com/"
   },
-  "homepage": "http://openshift.redhat.com/",
-  "repository": {
-    "type": "git",
-    "url": "https://gitub.com/openshift/origin-server"
-  },
+
+  "homepage": "http://www.option-u.com/",
 
   "engines": {
     "node": ">= 0.6.0",
@@ -25,8 +16,11 @@
   },
 
   "dependencies": {
-	  "express": "2.5.x"
+	"express": "2.5.x",
+	"mongoose": "3.5.x",
+	"jade": ">= 0.0.1"
   },
+
   "devDependencies": {},
   "bundleDependencies": [],
 
