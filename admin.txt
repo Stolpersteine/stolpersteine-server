@@ -1,0 +1,22 @@
+admin@option-u.com
+tnotb666
+
+GIT REPOSITORY
+ssh://59f8b31091f44750bd2784a350c294a7@stolpersteine-optionu.rhcloud.com/~/git/stolpersteine.git/
+
+
+
+MongoDB 2.2 database added.  Please make note of these credentials:
+
+       Root User: admin
+   Root Password: fKVrZ6isJ8XT
+   Database Name: stolpersteine
+
+Connection URL: mongodb://$OPENSHIFT_MONGODB_DB_HOST:$OPENSHIFT_MONGODB_DB_PORT/
+
+rockmongo-1.1 added.  Please make note of these MongoDB credentials again:
+
+   RockMongo User    : admin
+   RockMongo Password: fKVrZ6isJ8XT
+
+URL: https://stolpersteine-optionu.rhcloud.com/rockmongo/
