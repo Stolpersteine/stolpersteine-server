@@ -1,1 +1,1 @@
-module.exports = require('./stolperstein.js');
+module.exports = require('./stolpersteine.js');

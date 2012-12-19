@@ -28,7 +28,7 @@ app.configure('development', function(){
   app.use(express.errorHandler());
 });
 
-app.get('/api/stolperstein', controllers.getStolperstein);
+app.get('/api/stolpersteine/:id', controllers.getStolperstein);
 app.get('/api/stolpersteine', controllers.getStolpersteine);
 
 mongoose.connect(app.get('db url') + 'stolpersteine');
