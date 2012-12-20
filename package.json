@@ -16,9 +16,10 @@
   },
 
   "dependencies": {
-	"express": "3.x",
-	"mongoose": "3.5.x",
-	"jade": "*"
+		"express": "3.x",
+		"mongoose": "3.5.x",
+		"jade": "*",
+		"restify": "*"
   },
 
   "devDependencies": {},
