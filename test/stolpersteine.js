@@ -1,4 +1,5 @@
-var restify = require('restify');
+var restify = require('restify'),
+	should = require('should');
 
 // init the test client
 var client = restify.createJsonClient({
@@ -6,17 +7,22 @@ var client = restify.createJsonClient({
 	url: 'http://127.0.0.1:3000'
 });
 
-describe('200 response check', function() {
+describe('stolpersteine endpoint', function() {
 	it('should get a 200 response', function(done) {
 		client.get('/api/stolpersteine', function(err, req, res, data) { 
-			if (err) { 
-				throw new Error(err); 
-			} else { 
-				if (res.statusCode != 200) { 
-					throw new Error('invalid response');
-        } 
-				done();
-			} 
+			should.not.exist(err);
+			should.exist(res);
+			res.statusCode.should.equal(200);
+			done();
+		}); 
+	});
+	
+	it('should get a 400 response', function(done) {
+		client.get('/api/stolpersteine/123', function(err, req, res, data) { 
+			should.exist(err);
+			should.exist(res);
+			res.statusCode.should.equal(400);
+			done();
 		}); 
 	}); 
 });

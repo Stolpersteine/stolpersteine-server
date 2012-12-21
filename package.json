@@ -18,12 +18,19 @@
   "dependencies": {
 		"express": "3.0.x",
 		"mongoose": "3.5.x",
-		"jade": "0.27.x",
-		"restify": "1.4.x"
+		"jade": "0.27.x"
   },
 
-  "devDependencies": {},
+  "devDependencies": {
+		"restify": "1.4.x",
+		"should": "1.2.x"
+	},
+	
   "bundleDependencies": [],
+	
+	"scripts": {
+	    "test": "mocha -R spec"
+	},
 
   "private": true,
   "main": "server.js"
