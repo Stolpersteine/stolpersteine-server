@@ -10,7 +10,7 @@ var express = require('express')
 
 var app = express();
 
-app.configure(function(){
+app.configure(function() {
   app.set('port', process.env.OPENSHIFT_INTERNAL_PORT || 3000);
   app.set('host', process.env.OPENSHIFT_INTERNAL_IP || "localhost");
   app.set('db url', process.env.OPENSHIFT_MONGODB_DB_URL || "mongodb://localhost/");
@@ -20,11 +20,12 @@ app.configure(function(){
   app.use(express.logger('dev'));
   app.use(express.bodyParser());
   app.use(express.methodOverride());
+	app.use(express.compress());
   app.use(app.router);
   app.use(express.static(path.join(__dirname, 'public')));
 });
 
-app.configure('development', function(){
+app.configure('development', function() {
   app.use(express.errorHandler());
 });
 
