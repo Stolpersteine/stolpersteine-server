@@ -5,8 +5,17 @@ exports.createStolperstein = function(req, res) {
 }
 
 exports.retrieveStolpersteine = function(req, res) {
+//	var stein = new models.Stolperstein({
+//		title: "title"
+//	});
+//	stein.save();
+	
 	models.Stolperstein.find(null, { __v: 0 }, null, function(err, stolpersteine) {
-		res.send(stolpersteine);
+		if (!err) {
+			res.send(stolpersteine);
+		} else {
+			res.send(400, err);
+		}
 	});
 }
 
@@ -16,7 +25,11 @@ exports.updateStolpersteine = function(req, res) {
 
 exports.retrieveStolperstein = function(req, res) {
 	models.Stolperstein.findById(req.params.id, { __v: 0 }, null, function(err, stolpersteine) {
-		res.send(stolpersteine);
+		if (!err) {
+			res.send(stolpersteine);
+		} else {
+			res.send(400, err);
+		}
 	});
 }
 
