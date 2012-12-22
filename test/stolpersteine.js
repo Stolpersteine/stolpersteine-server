@@ -12,7 +12,9 @@ describe('stolpersteine endpoint', function() {
 		client.get('/api/stolpersteine', function(err, req, res, data) { 
 			should.not.exist(err);
 			should.exist(res);
+			should.exist(data);
 			res.statusCode.should.equal(200);
+			data.length.should.be.above(0);
 			done();
 		}); 
 	});
