@@ -23,7 +23,8 @@
 
   "devDependencies": {
 		"restify": "1.4.x",
-		"should": "1.2.x"
+		"should": "1.2.x",
+		"expect.js": "0.2.x"
 	},
 	
   "bundleDependencies": [],

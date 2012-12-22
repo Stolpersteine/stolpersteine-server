@@ -1,5 +1,15 @@
 var models = require('../models')
 
+function convertToGeoJSON(stolperstein) {
+	return { 
+		"type": "Feature", 
+		"geometry": {
+			"type": "Point", 
+			"coordinates": stolperstein.id
+		}
+	};
+}
+
 exports.createStolperstein = function(req, res) {
 	res.send();
 }
@@ -10,8 +20,12 @@ exports.retrieveStolpersteine = function(req, res) {
 //	});
 //	stein.save();
 	
-	models.Stolperstein.find(null, { __v: 0 }, null, function(err, stolpersteine) {
+	models.Stolperstein.find(function(err, stolpersteine) {
 		if (!err) {
+			// Convert to GeoJSON format
+			for (var i = 0; i < stolpersteine.length; i++) {
+				stolpersteine[i] = convertToGeoJSON(stolpersteine[i]);
+			};
 			res.send(stolpersteine);
 		} else {
 			res.send(400, err);

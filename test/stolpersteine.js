@@ -1,5 +1,5 @@
 var restify = require('restify'),
-	should = require('should');
+	expect = require('expect.js');
 
 // init the test client
 var client = restify.createJsonClient({
@@ -8,22 +8,20 @@ var client = restify.createJsonClient({
 });
 
 describe('stolpersteine endpoint', function() {
-	it('should get a 200 response', function(done) {
+	it('should get a 200 response expect', function(done) {
 		client.get('/api/stolpersteine', function(err, req, res, data) { 
-			should.not.exist(err);
-			should.exist(res);
-			should.exist(data);
-			res.statusCode.should.equal(200);
-			data.length.should.be.above(0);
+			expect(err).to.be(null);
+			expect(res.statusCode).to.be(200);
+			expect(data).to.be.an(Array);
+			expect(data.length).to.be.greaterThan(0);
 			done();
 		}); 
 	});
-	
+
 	it('should get a 400 response', function(done) {
 		client.get('/api/stolpersteine/123', function(err, req, res, data) { 
-			should.exist(err);
-			should.exist(res);
-			res.statusCode.should.equal(400);
+			expect(err).not.to.be(null);
+			expect(res.statusCode).to.be(400);
 			done();
 		}); 
 	}); 
