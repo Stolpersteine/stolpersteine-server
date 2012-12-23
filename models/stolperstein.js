@@ -2,27 +2,33 @@ var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 
 var schema = new Schema({
-	name: {
-		first: { type: String, required: true },
-		last: { type: String, required: true }
+	person: {
+		name: { type: String, required: true }
 	},
 	location: {
 		street: { type: String, required: true },
-		zipCode: { type: String },
-		city: { type: String },
+		zipCode: { type: String, required: true },
+		city: { type: String, required: true },
 		coordinates: {
-			longitude: { type: Number },
-			latitude: { type: Number }
+			longitude: { type: Number, required: true },
+			latitude: { type: Number, required: true }
 		},
+	},
+	laidAt : { 
+		year: { type: String, required: true },
+		month: { type: String },
+		date: { type: String }
 	},
 	description: { type: String },
 	image: { type: Buffer },
+	sources: [{
+		url: { type: String },
+		description: { type: String },
+		retrievedAt: { type: Date }
+	}],
 	createdAt: { type: Date },
 	updatedAt: { type: Date }
 });
-
-// Verlegedatum
-// Sources
 
 // Automatically maintain created and updated dates
 schema.pre('save', function (next) {
