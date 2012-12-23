@@ -30,6 +30,16 @@ var schema = new Schema({
 	updatedAt: { type: Date }
 });
 
+schema.methods.convertToGeoJSON = function() {
+	return { 
+		"type": "Feature", 
+		"geometry": {
+			"type": "Point", 
+			"coordinates": [this.location.longitude, this.location.latitude]
+		}
+	};
+}
+
 // Automatically maintain created and updated dates
 schema.pre('save', function (next) {
 	// This overwrites model data for createdAt and updatedAt
