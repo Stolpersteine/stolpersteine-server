@@ -3,27 +3,27 @@ var mongoose = require('mongoose'),
 
 var schema = new Schema({
 	person: {
-		name: { type: String, required: true }
+		name: { type: String, required: true, trim: true }
 	},
 	location: {
-		street: { type: String, required: true },
-		zipCode: { type: String, required: true },
-		city: { type: String, required: true },
+		street: { type: String, required: true, trim: true },
+		zipCode: { type: String, required: true, trim: true },
+		city: { type: String, required: true, trim: true },
 		coordinates: {
 			longitude: { type: Number, required: true },
 			latitude: { type: Number, required: true }
 		},
 	},
 	laidAt : { 
-		year: { type: String, required: true },
-		month: { type: String },
-		date: { type: String }
+		year: { type: String, required: true, trim: true },
+		month: { type: String, trim: true },
+		date: { type: String, trim: true }
 	},
-	description: { type: String },
+	description: { type: String, trim: true },
 	image: { type: Buffer },
 	sources: [{
-		url: { type: String },
-		description: { type: String },
+		url: { type: String, trim: true },
+		name: { type: String, trim: true },
 		retrievedAt: { type: Date }
 	}],
 	createdAt: { type: Date },
