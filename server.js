@@ -16,7 +16,6 @@ app.configure(function() {
   app.set('db url', process.env.OPENSHIFT_MONGODB_DB_URL || "mongodb://localhost/");
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
-  app.use(express.favicon());
   app.use(express.logger('dev'));
   app.use(express.bodyParser());
   app.use(express.methodOverride());
@@ -31,9 +30,9 @@ app.configure('development', function() {
 
 app.post('/api/stolpersteine', controllers.createStolperstein);
 app.get('/api/stolpersteine', controllers.retrieveStolpersteine);
-app.put('/api/stolpersteine', controllers.updateStolpersteine);
+//app.put('/api/stolpersteine', controllers.updateStolpersteine);
 app.get('/api/stolpersteine/:id', controllers.retrieveStolperstein);
-app.put('/api/stolpersteine/:id', controllers.updateStolperstein);
+//app.put('/api/stolpersteine/:id', controllers.updateStolperstein);
 app.delete('/api/stolpersteine/:id', controllers.deleteStolperstein);
 
 mongoose.connect(app.get('db url') + 'stolpersteine');

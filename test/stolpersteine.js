@@ -7,8 +7,58 @@ var client = restify.createJsonClient({
 	url: 'http://127.0.0.1:3000'
 });
 
-describe('stolpersteine endpoint', function() {
-	it('should get a 200 response expect', function(done) {
+var stolpersteinId = 0;
+var stolperstein = {
+	"person": {
+		"name": "Vorname Nachname"
+	},
+	"location": {
+		"street": "Straße 1",
+		"zipCode": "10000",
+		"city": "Stadt",
+		"coordinates": {
+			"longitude": "1.0",
+			"latitude": "1.0"
+		}
+	},
+	"laidAt" : { 
+		"year": "2012",
+		"month": "11",
+		"date": "12"
+	},
+	"description": "Beschreibung"
+}
+
+describe('Stolpersteine endpoint', function() {
+	it('POST /api/stolpersteine should get a 201 response', function(done) {
+		client.post('/api/stolpersteine', stolperstein, function(err, req, res, data) { 
+			expect(err).to.be(null);
+			expect(res.statusCode).to.be(201);
+			expect(data).to.be.an(Object);
+			stolpersteinId = data._id;
+			done();
+		}); 
+	});
+
+	it('GET /api/stolperstein/:id should get a 200 response', function(done) {
+		client.get('/api/stolpersteine/' + stolpersteinId, function(err, req, res, data) { 
+			expect(err).to.be(null);
+			expect(res.statusCode).to.be(200);
+			expect(data).to.be.an(Object);
+			expect(data._id).to.be(stolpersteinId);
+			done();
+		}); 
+	});
+
+	it('GET /api/stolperstein/:id with invalid id should get a 404 response', function(done) {
+		client.get('/api/stolpersteine/0', function(err, req, res, data) { 
+			expect(err).not.to.be(null);
+			expect(res.statusCode).to.be(404);
+			done();
+		}); 
+	}); 
+
+	it('GET /api/stolperstein should get a 200 response', function(done) {
 		client.get('/api/stolpersteine', function(err, req, res, data) { 
 			expect(err).to.be(null);
 			expect(res.statusCode).to.be(200);
@@ -18,10 +68,22 @@ describe('stolpersteine endpoint', function() {
 		}); 
 	});
 
-	it('should get a 400 response', function(done) {
-		client.get('/api/stolpersteine/123', function(err, req, res, data) { 
+	it('DELETE /api/stolperstein/:id should get a 204 response', function(done) {
+		client.del('/api/stolpersteine/' + stolpersteinId, function(err, req, res, data) { 
+			expect(err).to.be(null);
+			expect(res.statusCode).to.be(204);
+			client.get('/api/stolpersteine/' + stolpersteinId, function(err, req, res, data) { 
+				expect(err).not.to.be(null);
+				expect(res.statusCode).to.be(404);
+				done();
+			}); 
+		}); 
+	}); 
+
+	it('DELETE /api/stolperstein/:id with invalid id should get a 404 response', function(done) {
+		client.del('/api/stolpersteine/0', function(err, req, res, data) { 
 			expect(err).not.to.be(null);
-			expect(res.statusCode).to.be(400);
+			expect(res.statusCode).to.be(404);
 			done();
 		}); 
 	}); 

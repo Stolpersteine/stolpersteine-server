@@ -1,13 +1,17 @@
 var models = require('../models')
 
 exports.createStolperstein = function(req, res) {
-	res.send();
+	var stolperstein = new models.Stolperstein(req.body);
+	stolperstein.save(function(err, stolperstein) {
+		if (!err) {
+			res.send(201, stolperstein);
+		} else {
+			res.send(400, err);
+		}
+	});
 }
 
 exports.retrieveStolpersteine = function(req, res) {
-//	var stein = new models.Stolperstein({name: { first: "First", last: "Last" }, location: { street: "Street" } });
-//	stein.save();
- 	
 	models.Stolperstein.find(function(err, stolpersteine) {
 		if (!err) {
 			// Convert to GeoJSON format
@@ -26,11 +30,11 @@ exports.updateStolpersteine = function(req, res) {
 }
 
 exports.retrieveStolperstein = function(req, res) {
-	models.Stolperstein.findById(req.params.id, { __v: 0 }, null, function(err, stolpersteine) {
-		if (!err) {
-			res.send(stolpersteine);
+	models.Stolperstein.findById(req.params.id, { __v: 0 }, null, function(err, stolperstein) {
+		if (!err && stolperstein) {
+			res.send(stolperstein);
 		} else {
-			res.send(400, err);
+			res.send(404, err);
 		}
 	});
 }
@@ -40,5 +44,11 @@ exports.updateStolpersteine = function(req, res) {
 }
 
 exports.deleteStolperstein = function(req, res) {
-	res.send();
+	models.Stolperstein.findByIdAndRemove(req.params.id, { __v: 0 }, function(err, stolperstein) {
+		if (!err) {
+			res.send(204);
+		} else {
+			res.send(404, err);
+		}
+	});
 }
