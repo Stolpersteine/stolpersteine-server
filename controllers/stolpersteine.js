@@ -15,17 +15,15 @@ exports.createStolperstein = function(req, res) {
 }
 
 exports.retrieveStolpersteine = function(req, res) {
-//	var stein = new models.Stolperstein({
-//		title: "title"
-//	});
-//	stein.save();
-	
+	var stein = new models.Stolperstein({name: { first: "First", last: "Last" }, location: { street: "Street" } });
+	stein.save();
+ 	
 	models.Stolperstein.find(function(err, stolpersteine) {
 		if (!err) {
 			// Convert to GeoJSON format
-			for (var i = 0; i < stolpersteine.length; i++) {
-				stolpersteine[i] = convertToGeoJSON(stolpersteine[i]);
-			};
+//			for (var i = 0; i < stolpersteine.length; i++) {
+//				stolpersteine[i] = convertToGeoJSON(stolpersteine[i]);
+//			};
 			res.send(stolpersteine);
 		} else {
 			res.send(400, err);
