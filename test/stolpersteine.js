@@ -58,13 +58,34 @@ describe('Stolpersteine endpoint', function() {
 		}); 
 	}); 
 
-	it('GET /api/stolperstein should get a 200 response', function(done) {
+	it('GET /api/stolpersteine should get a 200 response', function(done) {
 		client.get('/api/stolpersteine', function(err, req, res, data) { 
 			expect(err).to.be(null);
 			expect(res.statusCode).to.be(200);
 			expect(data).to.be.an(Array);
 			expect(data.length).to.be.greaterThan(0);
 			done();
+		}); 
+	});
+	
+	it('GET /api/stolpersteine with etag should get a 304 response', function(done) {
+		client.get('/api/stolpersteine', function(err, req, res, data) { 
+			expect(err).to.be(null);
+			expect(res.statusCode).to.be(200);
+			
+			// As of version 3.0.x, Express only creates an etag when the content is larger than 1024 bytes
+			expect(res.headers['content-length']).to.be.greaterThan(1024);
+			expect(res.headers['etag']).not.to.be(null);
+			
+			var options = {
+			  path: '/api/stolpersteine',
+				headers: { 'If-None-Match': res.headers['etag'] }
+			};
+			client.get(options, function(err, req, res, data) { 
+				expect(err).to.be(null);
+				expect(res.statusCode).to.be(304);
+				done();
+			});
 		}); 
 	});
 
