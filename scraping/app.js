@@ -21,17 +21,18 @@ request({ uri:uri, headers: {'user-agent' : userAgent } }, function(error, respo
 		var stolpersteine = [];
 		async.series([
 			function(callback) { convertStolpersteine(window.jQuery, stolpersteine, callback) },
+			function(callback) { patchData(stolpersteine, callback) },
 			function(callback) { geocodeAddresses(stolpersteine, callback) },
 			function(callback) { logStolpersteine(stolpersteine); callback(); },
-			function(callback) { console.log('counter = ' + counter); callback(); }
+			function(callback) { console.log('counter = ' + counter + '/' + stolpersteine.length); callback(); }
 		]);
 	});
 });
 
 function convertStolpersteine($, stolpersteine, callback) {
 	var tableRows = $('table.wikitable.sortable tr');
-//	tableRows = tableRows.slice(1, tableRows.length); // first item is table header row
-	tableRows = tableRows.slice(1, 5); // first item is table header row
+	tableRows = tableRows.slice(1, tableRows.length); // first item is table header row
+//	tableRows = tableRows.slice(1, 5); // first item is table header row
 	async.forEachSeries(tableRows, function(stolperstein, callback) {
 		var stolperstein = convertStolperstein($, stolperstein);
 		stolpersteine.push(stolperstein);
@@ -89,9 +90,19 @@ function convertStolperstein($, item) {
 	return stolperstein;
 }
 
+function patchData(stolpersteine, callback) {
+	stolpersteine.forEach(function(stolperstein) {
+		stolperstein.location.street = stolperstein.location.street.replace("(heute Eingang U-Bahnhof Turmstraße)", "");
+		console.log(stolperstein.location.street);
+	});
+	callback();
+}
+
 function geocodeAddresses(stolpersteine, callback) {
+	var geocodeAddressMemoized = async.memoize(geocodeAddress);	// caches calls to Google API
+
 	async.forEachSeries(stolpersteine, function(stolperstein, callback) {
-		geocodeAddress(stolperstein, function(result) {
+		setTimeout(geocodeAddressMemoized, 500, stolperstein.location.street, stolperstein.location.city, function(result) {
 			if (result) {
 				stolperstein.location.zipCode = result.zipCode;
 				stolperstein.location.coordinates.longitude = result.longitude;
@@ -102,12 +113,11 @@ function geocodeAddresses(stolpersteine, callback) {
 	}, callback);
 }
 
-function geocodeAddress(stolperstein, callback) {
+function geocodeAddress(street, city, callback) {
 	counter++;
-	var street = encodeURIComponent(stolperstein.location.street);
-	var city = encodeURIComponent(stolperstein.location.city);
+	var street = encodeURIComponent(street);
+	var city = encodeURIComponent(city);
 	var uriGeocode = 'http://maps.googleapis.com/maps/api/geocode/json?sensor=false&components=country:de&address=' + street + ',' + city;
-	console.log(uriGeocode);
 	request({ uri:uriGeocode, headers: {'user-agent' : userAgent } }, function(error, response, body) {
 	  if (error && response.statusCode !== 200) {
 	    console.log('Error when contacting site');
@@ -115,7 +125,6 @@ function geocodeAddress(stolperstein, callback) {
 	  }
 			
 		body = JSON.parse(body);
-		console.log(body.results.length);
 		if (body.results.length === 0) {
 	    console.log('Error result');
 			return;
