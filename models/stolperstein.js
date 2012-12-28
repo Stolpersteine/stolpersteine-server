@@ -3,7 +3,8 @@ var mongoose = require('mongoose'),
 
 var schema = new Schema({
 	person: {
-		name: { type: String, required: true, trim: true }
+		firstName: { type: String, required: true, trim: true },
+		lastName: { type: String, required: true, trim: true }
 	},
 	location: {
 		street: { type: String, required: true, trim: true },
@@ -20,7 +21,7 @@ var schema = new Schema({
 		date: { type: Number, min: 0, max: 31 }
 	},
 	description: { type: String, trim: true },
-	image: { type: Buffer },
+	imageUrl: { type: String, trim: true },
 	sources: [{
 		url: { type: String, trim: true },
 		name: { type: String, trim: true },

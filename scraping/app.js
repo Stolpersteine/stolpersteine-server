@@ -1,6 +1,7 @@
 var request = require('request'),
-	jsdom = require('jsdom')
-	url = require('url');
+	jsdom = require('jsdom'),
+	url = require('url'),
+	models = require('../models');
 	
 var uri = url.parse( 'http://de.m.wikipedia.org/wiki/Liste_der_Stolpersteine_in_Berlin-Moabit');
 
@@ -14,18 +15,21 @@ request({ uri:uri, headers: {'user-agent' : 'Stolpersteine/1.0 (http://option-u.
     scripts: ['http://code.jquery.com/jquery-1.7.min.js']
   }, function (err, window) {
     var $ = window.jQuery;
+		var stolpersteine = [];
 		$('table.wikitable.sortable tr').each(function(i, item) {
 			// First item is table header row
 			if (i == 0) {
 				return true;
 			}
 			
+			var stolperstein = new models.Stolperstein();
+			stolpersteine.push(stolperstein);
 			var itemRows = $(item).find('td');
 			
 			// Image
 			var imageTag = $(itemRows[0]).find('img');
-			var imageUrl = uri.protocol + imageTag.attr('src');
-			imageUrl = imageUrl.replace('/100px-', '/1024px-'); // width
+			stolperstein.imageUrl = uri.protocol + imageTag.attr('src');
+			stolperstein.imageUrl = stolperstein.imageUrl.replace('/100px-', '/1024px-'); // width
 			
 			// Name
 			var nameSpan = $(itemRows[1]).find('span');
@@ -33,11 +37,11 @@ request({ uri:uri, headers: {'user-agent' : 'Stolpersteine/1.0 (http://option-u.
 				nameSpan = nameSpan.find('span');
 			}
 			var names = nameSpan.text().split(',');
-			var lastName = names[0].trim();
-			var firstName = names[1].trim();
+			stolperstein.person.lastName = names[0].trim();
+			stolperstein.person.firstName = names[1].trim();
 			
 			// Street
-			var street = $(itemRows[2]).text().trim();
+			stolperstein.location.street = $(itemRows[2]).text().trim();
 			
 			// Laid at date
 			var laidAtSpan = $(itemRows[3]).find('span');
@@ -45,30 +49,32 @@ request({ uri:uri, headers: {'user-agent' : 'Stolpersteine/1.0 (http://option-u.
 				laidAtSpan = laidAtSpan.find('span');
 			}
 			var laidAtDates = laidAtSpan.text().split('-');
-			var laidAtYear;
 			if (laidAtDates[0]) {
 				var number = new Number(laidAtDates[0]);
 				if (number != 0) {
-					laidAtYear = number;
+					stolperstein.laidAt.year = number;
 				}
 			}
-			var laidAtMonth;
 			if (laidAtDates[1]) {
 				var number = new Number(laidAtDates[1]);
 				if (number != 0) {
-					laidAtMonth = number;
+					stolperstein.laidAt.month = number;
 				}
 			}
-			var laidAtDate;
 			if (laidAtDates[2]) {
 				var number = new Number(laidAtDates[2]);
 				if (number != 0) {
-					laidAtDate = number;
+					stolperstein.laidAt.date = number;
 				}
 			}
-			
-			console.log('- ' + lastName + ', ' + firstName + ', ' + street + ', ' + laidAtYear + ', ' + laidAtMonth + ', ' + laidAtDate);
-			console.log(imageUrl);
+		});
+		
+		// Log stolpersteine
+		stolpersteine.forEach(function(stolperstein) {
+			console.log('- ' + stolperstein.person.lastName + ', ' + stolperstein.person.firstName);
+			console.log(stolperstein.location.street);
+			console.log(stolperstein.laidAt.year + ', ' + stolperstein.laidAt.month + ', ' + stolperstein.laidAt.date);
+			console.log(stolperstein.imageUrl);
 		});
   });
 });
