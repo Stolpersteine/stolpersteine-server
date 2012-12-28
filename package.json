@@ -20,7 +20,8 @@
 		"mongoose": "3.5.x",
 		"jade": "0.27.x",
 		"jsdom": "0.3.x",
-		"request": "2.12.x"
+		"request": "2.12.x",
+		"async": "0.1.x"
   },
 
   "devDependencies": {
