@@ -6,6 +6,7 @@ var request = require('request'),
 	
 var uri = url.parse( 'http://de.m.wikipedia.org/wiki/Liste_der_Stolpersteine_in_Berlin-Moabit');
 var userAgent = 'Stolpersteine/1.0 (http://option-u.com; admin@option-u.com)';
+var counter = 0;
 
 request({ uri:uri, headers: {'user-agent' : userAgent } }, function(error, response, body) {
   if (error && response.statusCode !== 200) {
@@ -17,31 +18,28 @@ request({ uri:uri, headers: {'user-agent' : userAgent } }, function(error, respo
     html: body,
     scripts: ['http://code.jquery.com/jquery-1.7.min.js']
   }, function (err, window) {
-    var $ = window.jQuery;
 		var stolpersteine = [];
-		$('table.wikitable.sortable tr').each(function(i, item) {
-			// First item is table header row
-			if (i == 0) {
-				return true;
-			}
-			
-			if (i > 3) {
-				return true;
-			}
-
-			// Convert data
-			var stolperstein = html2Stolperstein($, item);
-			stolpersteine.push(stolperstein);
-		
-			// Geo code addresses
-			geocodeAddresses(stolpersteine, function(err) {
-				logStolpersteine(stolpersteine);
-			});
-		});
+		async.series([
+			function(callback) { convertStolpersteine(window.jQuery, stolpersteine, callback) },
+			function(callback) { geocodeAddresses(stolpersteine, callback) },
+			function(callback) { logStolpersteine(stolpersteine); callback(); },
+			function(callback) { console.log('counter = ' + counter); callback(); }
+		]);
 	});
 });
 
-function html2Stolperstein($, item) {
+function convertStolpersteine($, stolpersteine, callback) {
+	var tableRows = $('table.wikitable.sortable tr');
+//	tableRows = tableRows.slice(1, tableRows.length); // first item is table header row
+	tableRows = tableRows.slice(1, 5); // first item is table header row
+	async.forEachSeries(tableRows, function(stolperstein, callback) {
+		var stolperstein = convertStolperstein($, stolperstein);
+		stolpersteine.push(stolperstein);
+		callback();
+	}, callback);
+}
+
+function convertStolperstein($, item) {
 	var stolperstein = new models.Stolperstein();
 	var itemRows = $(item).find('td');
 			
@@ -93,27 +91,58 @@ function html2Stolperstein($, item) {
 
 function geocodeAddresses(stolpersteine, callback) {
 	async.forEachSeries(stolpersteine, function(stolperstein, callback) {
-		var street = encodeURIComponent(stolperstein.location.street);
-		var city = encodeURIComponent(stolperstein.location.city);
-		var uriGeocode = 'http://maps.google.de/maps/geo?region=de&output=json&q=' + street + ',' + city + ',Deutschland';
-		request({ uri:uriGeocode, headers: {'user-agent' : userAgent } }, function(error, response, body) {
-		  if (error && response.statusCode !== 200) {
-		    console.log('Error when contacting site');
-				return;
-		  }
-			
-			body = JSON.parse(body);
-			if (body.Status.code != 200) {
-		    console.log('Error result ' + body.Status.code);
-				return;
+		geocodeAddress(stolperstein, function(result) {
+			if (result) {
+				stolperstein.location.zipCode = result.zipCode;
+				stolperstein.location.coordinates.longitude = result.longitude;
+				stolperstein.location.coordinates.latitude = result.latitude;
 			}
-			
-			stolperstein.location.zipCode = body.Placemark[0].AddressDetails.Country.AdministrativeArea.Locality.PostalCode.PostalCodeNumber;
-			stolperstein.location.coordinates.longitude = body.Placemark[0].Point.coordinates[0];
-			stolperstein.location.coordinates.latitude = body.Placemark[0].Point.coordinates[1];
 			callback();
 		});
 	}, callback);
+}
+
+function geocodeAddress(stolperstein, callback) {
+	counter++;
+	var street = encodeURIComponent(stolperstein.location.street);
+	var city = encodeURIComponent(stolperstein.location.city);
+	var uriGeocode = 'http://maps.googleapis.com/maps/api/geocode/json?sensor=false&components=country:de&address=' + street + ',' + city;
+	console.log(uriGeocode);
+	request({ uri:uriGeocode, headers: {'user-agent' : userAgent } }, function(error, response, body) {
+	  if (error && response.statusCode !== 200) {
+	    console.log('Error when contacting site');
+			return;
+	  }
+			
+		body = JSON.parse(body);
+		console.log(body.results.length);
+		if (body.results.length === 0) {
+	    console.log('Error result');
+			return;
+		}
+		
+		var zipCode;
+		var addressComponents = body.results[0].address_components;
+		for (var i = 0; i < addressComponents.length; i++) {
+			var types = addressComponents[i].types;
+			for (var j = 0; j < types.length; j++) {
+				if (types[j] === "postal_code") {
+					zipCode = addressComponents[i].long_name;
+					break;
+				}
+			}
+			
+			if (zipCode) {
+				break;
+			}
+		}
+		
+		callback({
+			zipCode: zipCode,
+			longitude: body.results[0].geometry.location.lng,
+			latitude: body.results[0].geometry.location.lat
+		});
+	})
 }
 
 function logStolpersteine(stolpersteine) {
