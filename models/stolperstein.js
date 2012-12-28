@@ -16,7 +16,7 @@ var schema = new Schema({
 		},
 	},
 	laidAt : { 
-		year: { type: Number, required: true, min: 1992 },
+		year: { type: Number, min: 1992 },
 		month: { type: Number, min: 0, max: 11 },
 		date: { type: Number, min: 0, max: 31 }
 	},

@@ -11,7 +11,8 @@ var client = restify.createJsonClient({
 var stolpersteinId = 0;
 var stolperstein = {
 	"person": {
-		"name": "Vorname Nachname"
+		"firstName": "Vorname",
+		"lastName": "Nachname"
 	},
 	"location": {
 		"street": "Straße 1",
@@ -97,7 +98,7 @@ describe('Stolpersteine endpoint', function() {
 		};
 		
 		client.get(options, function(err, req, res, data) { 
-			// As of Restify 1.4.x, the JsonClient doesn't support gzip
+			// As of Restify 1.4.x, the JsonClient doesn't automatically decompress gzip'ed data
 //			expect(err).to.be(null);
 			expect(res.statusCode).to.be(200);
 			expect(res.headers['content-encoding']).to.equal("gzip");
