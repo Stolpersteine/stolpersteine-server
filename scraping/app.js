@@ -19,15 +19,23 @@ request({ uri:uri, headers: {'user-agent' : userAgent } }, function(error, respo
     scripts: ['http://code.jquery.com/jquery-1.7.min.js']
   }, function (err, window) {
 		var stolpersteine = [];
+		
+		var source = { 
+			url: uri.href,
+			name: "Wikipedia",
+			retrievedAt: new Date(response.headers["date"])
+		}
+		
 		var $ = window.jQuery;
 		var tableRows = $('table.wikitable.sortable tr');
 		tableRows = tableRows.slice(1, tableRows.length); // first item is table header row
-//		tableRows = tableRows.slice(1, 5);
+		tableRows = tableRows.slice(0, 5);
 		async.forEachLimit(tableRows, 3, function(tableRow, callback) {
 			async.waterfall([
-				function(callback) { convertStolperstein($, tableRow, callback) },
+				function(callback) { convertStolperstein($, tableRow, callback); },
 				patchStolperstein,
-				geocodeStolperstein,
+				function(stolperstein, callback) { addSourceToStolperstein(stolperstein, source, callback); },
+				geocodeStolperstein
 			], function(err, stolperstein) {
 				if (!err) {
 					stolpersteine.push(stolperstein);
@@ -98,6 +106,11 @@ function patchStolperstein(stolperstein, callback) {
 	callback(null, stolperstein);
 }
 
+function addSourceToStolperstein(stolperstein, source, callback) {
+	stolperstein.sources.push(source);
+	callback(null, stolperstein);
+}
+
 function geocodeStolperstein(stolperstein, callback) {
 	geocodeAddressMemoized(stolperstein.location.street, stolperstein.location.city, function(result) {
 		if (result) {
@@ -157,9 +170,5 @@ function geocodeAddress(street, city, callback) {
 
 function logStolperstein(stolperstein) {
 	console.log('- ' + stolperstein.person.lastName + ', ' + stolperstein.person.firstName);
-	console.log(stolperstein.location.street);
-	console.log(stolperstein.location.zipCode + ' ' + stolperstein.location.city);
-	console.log(stolperstein.location.coordinates);
-	console.log(stolperstein.laidAt.year + ', ' + stolperstein.laidAt.month + ', ' + stolperstein.laidAt.date);
-	console.log(stolperstein.imageUrl);
+	console.log(stolperstein);
 }
