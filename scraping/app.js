@@ -107,7 +107,7 @@ function patchStolperstein(stolperstein, callback) {
 }
 
 function addSourceToStolperstein(stolperstein, source, callback) {
-	stolperstein.sources.push(source);
+	stolperstein.source = source;
 	callback(null, stolperstein);
 }
 

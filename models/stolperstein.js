@@ -22,11 +22,11 @@ var schema = new Schema({
 	},
 	description: { type: String, trim: true },
 	imageUrl: { type: String, trim: true },
-	sources: [{
+	source: {
 		url: { type: String, trim: true },
 		name: { type: String, trim: true },
 		retrievedAt: { type: Date }
-	}],
+	},
 	createdAt: { type: Date },
 	updatedAt: { type: Date }
 });
