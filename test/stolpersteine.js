@@ -76,18 +76,23 @@ describe('Stolpersteine endpoint', function() {
 			expect(res.statusCode).to.be(200);
 			
 			// As of version 3.0.x, Express only creates an etag when the content is larger than 1024 bytes
-			expect(res.headers['content-length']).to.be.greaterThan(1024);
-			expect(res.headers['etag']).not.to.be(null);
-			
-			var options = {
-			  path: '/api/stolpersteine',
-				headers: { 'If-None-Match': res.headers['etag'] }
-			};
-			client.get(options, function(err, req, res, data) { 
-				expect(err).to.be(null);
-				expect(res.statusCode).to.be(304);
+			var contentLength = new Number(res.headers['content-length']);
+			if (contentLength <= 1024) {
 				done();
-			});
+			} else {
+				expect(res.headers['content-length']).to.be.greaterThan(1024);
+				expect(res.headers['etag']).not.to.be(null);
+			
+				var options = {
+				  path: '/api/stolpersteine',
+					headers: { 'If-None-Match': res.headers['etag'] }
+				};
+				client.get(options, function(err, req, res, data) { 
+					expect(err).to.be(null);
+					expect(res.statusCode).to.be(304);
+					done();
+				});
+			}
 		}); 
 	});
 	
