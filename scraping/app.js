@@ -19,30 +19,33 @@ request({ uri:uri, headers: {'user-agent' : userAgent } }, function(error, respo
     scripts: ['http://code.jquery.com/jquery-1.7.min.js']
   }, function (err, window) {
 		var stolpersteine = [];
-		async.series([
-			function(callback) { convertStolpersteine(window.jQuery, stolpersteine, callback) },
-			function(callback) { patchData(stolpersteine, callback) },
-			function(callback) { geocodeAddresses(stolpersteine, callback) },
-			function(callback) { logStolpersteine(stolpersteine); callback(); },
-			function(callback) { console.log('counter = ' + counter + '/' + stolpersteine.length); callback(); }
-		]);
+		var $ = window.jQuery;
+		var tableRows = $('table.wikitable.sortable tr');
+		tableRows = tableRows.slice(1, tableRows.length); // first item is table header row
+//		tableRows = tableRows.slice(1, 5);
+		async.forEachLimit(tableRows, 3, function(tableRow, callback) {
+			async.waterfall([
+				function(callback) { convertStolperstein($, tableRow, callback) },
+				patchStolperstein,
+				geocodeStolperstein,
+			], function(err, stolperstein) {
+				if (!err) {
+					stolpersteine.push(stolperstein);
+					logStolperstein(stolperstein);
+				} else {
+					console.log('Error processing stolperstein');
+				}
+				callback();
+			});
+		}, function() {
+			console.log('counter = ' + counter + '/' + stolpersteine.length);
+		});
 	});
 });
 
-function convertStolpersteine($, stolpersteine, callback) {
-	var tableRows = $('table.wikitable.sortable tr');
-	tableRows = tableRows.slice(1, tableRows.length); // first item is table header row
-//	tableRows = tableRows.slice(1, 5); // first item is table header row
-	async.forEachSeries(tableRows, function(stolperstein, callback) {
-		var stolperstein = convertStolperstein($, stolperstein);
-		stolpersteine.push(stolperstein);
-		callback();
-	}, callback);
-}
-
-function convertStolperstein($, item) {
+function convertStolperstein($, tableRow, callback) {
 	var stolperstein = new models.Stolperstein();
-	var itemRows = $(item).find('td');
+	var itemRows = $(tableRow).find('td');
 			
 	// Image
 	var imageTag = $(itemRows[0]).find('img');
@@ -87,31 +90,29 @@ function convertStolperstein($, item) {
 		}
 	}
 	
-	return stolperstein;
+	callback(null, stolperstein);
 }
 
-function patchData(stolpersteine, callback) {
-	stolpersteine.forEach(function(stolperstein) {
-		stolperstein.location.street = stolperstein.location.street.replace("(heute Eingang U-Bahnhof Turmstraße)", "");
-		console.log(stolperstein.location.street);
+function patchStolperstein(stolperstein, callback) {
+	stolperstein.location.street = stolperstein.location.street.replace("(heute Eingang U-Bahnhof Turmstraße)", "");
+	callback(null, stolperstein);
+}
+
+function geocodeStolperstein(stolperstein, callback) {
+	geocodeAddressMemoized(stolperstein.location.street, stolperstein.location.city, function(result) {
+		if (result) {
+			stolperstein.location.zipCode = result.zipCode;
+			stolperstein.location.coordinates.longitude = result.longitude;
+			stolperstein.location.coordinates.latitude = result.latitude;
+		}
+		callback(null, stolperstein);
 	});
-	callback();
 }
 
-function geocodeAddresses(stolpersteine, callback) {
-	var geocodeAddressMemoized = async.memoize(geocodeAddress);	// caches calls to Google API
-
-	async.forEachSeries(stolpersteine, function(stolperstein, callback) {
-		setTimeout(geocodeAddressMemoized, 500, stolperstein.location.street, stolperstein.location.city, function(result) {
-			if (result) {
-				stolperstein.location.zipCode = result.zipCode;
-				stolperstein.location.coordinates.longitude = result.longitude;
-				stolperstein.location.coordinates.latitude = result.latitude;
-			}
-			callback();
-		});
-	}, callback);
-}
+var geocodeAddressMemoized = async.memoize(geocodeAddressRateLimited);
+function geocodeAddressRateLimited(street, city, callback)	{
+	setTimeout(geocodeAddress, 400, street, city, callback);
+};
 
 function geocodeAddress(street, city, callback) {
 	counter++;
@@ -154,13 +155,11 @@ function geocodeAddress(street, city, callback) {
 	})
 }
 
-function logStolpersteine(stolpersteine) {
-	stolpersteine.forEach(function(stolperstein) {
-		console.log('- ' + stolperstein.person.lastName + ', ' + stolperstein.person.firstName);
-		console.log(stolperstein.location.street);
-		console.log(stolperstein.location.zipCode + ' ' + stolperstein.location.city);
-		console.log(stolperstein.location.coordinates);
-		console.log(stolperstein.laidAt.year + ', ' + stolperstein.laidAt.month + ', ' + stolperstein.laidAt.date);
-		console.log(stolperstein.imageUrl);
-	});
+function logStolperstein(stolperstein) {
+	console.log('- ' + stolperstein.person.lastName + ', ' + stolperstein.person.firstName);
+	console.log(stolperstein.location.street);
+	console.log(stolperstein.location.zipCode + ' ' + stolperstein.location.city);
+	console.log(stolperstein.location.coordinates);
+	console.log(stolperstein.laidAt.year + ', ' + stolperstein.laidAt.month + ', ' + stolperstein.laidAt.date);
+	console.log(stolperstein.imageUrl);
 }
