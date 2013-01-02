@@ -25,10 +25,6 @@ exports.retrieveStolpersteine = function(req, res) {
 	});
 }
 
-exports.updateStolpersteine = function(req, res) {
-	res.send();
-}
-
 exports.retrieveStolperstein = function(req, res) {
 	models.Stolperstein.findById(req.params.id, { __v: 0 }, null, function(err, stolperstein) {
 		if (!err && stolperstein) {
@@ -37,10 +33,6 @@ exports.retrieveStolperstein = function(req, res) {
 			res.send(404, err);
 		}
 	});
-}
-
-exports.updateStolpersteine = function(req, res) {
-	res.send();
 }
 
 exports.deleteStolperstein = function(req, res) {
