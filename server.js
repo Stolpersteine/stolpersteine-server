@@ -30,9 +30,7 @@ app.configure('development', function() {
 
 app.post('/api/stolpersteine', controllers.createStolperstein);
 app.get('/api/stolpersteine', controllers.retrieveStolpersteine);
-//app.put('/api/stolpersteine', controllers.updateStolpersteine);
 app.get('/api/stolpersteine/:id', controllers.retrieveStolperstein);
-//app.put('/api/stolpersteine/:id', controllers.updateStolperstein);
 app.delete('/api/stolpersteine/:id', controllers.deleteStolperstein);
 
 mongoose.connect(app.get('db url') + 'stolpersteine');
