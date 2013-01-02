@@ -1,8 +1,7 @@
 var request = require('request'),
 	jsdom = require('jsdom'),
 	url = require('url'),
-	async = require('async'),
-	models = require('../models');
+	async = require('async');
 	
 var uri = url.parse( 'http://de.m.wikipedia.org/wiki/Liste_der_Stolpersteine_in_Berlin-Moabit');
 var userAgent = 'Stolpersteine/1.0 (http://option-u.com; admin@option-u.com)';
@@ -52,7 +51,7 @@ request({ uri:uri, headers: {'user-agent' : userAgent } }, function(error, respo
 });
 
 function convertStolperstein($, tableRow, callback) {
-	var stolperstein = new models.Stolperstein();
+	var stolperstein = {};
 	var itemRows = $(tableRow).find('td');
 			
 	// Image
@@ -60,20 +59,25 @@ function convertStolperstein($, tableRow, callback) {
 	stolperstein.imageUrl = uri.protocol + imageTag.attr('src');
 	stolperstein.imageUrl = stolperstein.imageUrl.replace('/100px-', '/1024px-'); // width
 			
-	// Name
+	// Person
 	var nameSpan = $(itemRows[1]).find('span');
 	if (nameSpan.find('span').length) {
 		nameSpan = nameSpan.find('span');
 	}
 	var names = nameSpan.text().split(',');
-	stolperstein.person.lastName = names[0].trim();
-	stolperstein.person.firstName = names[1].trim();
+	stolperstein.person = {
+		lastName: names[0].trim(),
+		firstName: names[1].trim()
+	};
 			
 	// Location
-	stolperstein.location.street = $(itemRows[2]).text().trim();
-	stolperstein.location.city = "Berlin";
+	stolperstein.location = {
+		street: $(itemRows[2]).text().trim(),
+		city: "Berlin"
+	};
 			
 	// Laid at date
+	stolperstein.laidAt = {};
 	var laidAtSpan = $(itemRows[3]).find('span');
 	if ($(laidAtSpan).find('span').length) {
 		laidAtSpan = laidAtSpan.find('span');
@@ -115,8 +119,10 @@ function geocodeStolperstein(stolperstein, callback) {
 	geocodeAddressMemoized(stolperstein.location.street, stolperstein.location.city, function(result) {
 		if (result) {
 			stolperstein.location.zipCode = result.zipCode;
-			stolperstein.location.coordinates.longitude = result.longitude;
-			stolperstein.location.coordinates.latitude = result.latitude;
+			stolperstein.location.coordinates = {
+				longitude: result.longitude,
+				latitude: result.latitude
+			}
 		}
 		callback(null, stolperstein);
 	});
