@@ -28,10 +28,11 @@ app.configure('development', function() {
   app.use(express.errorHandler());
 });
 
-app.post('/api/stolpersteine', controllers.createStolperstein);
-app.get('/api/stolpersteine', controllers.retrieveStolpersteine);
-app.get('/api/stolpersteine/:id', controllers.retrieveStolperstein);
-app.delete('/api/stolpersteine/:id', controllers.deleteStolperstein);
+app.post('/api/stolpersteine', controllers.stolpersteine.createStolperstein);
+app.get('/api/stolpersteine', controllers.stolpersteine.retrieveStolpersteine);
+app.get('/api/stolpersteine/:id', controllers.stolpersteine.retrieveStolperstein);
+app.delete('/api/stolpersteine/:id', controllers.stolpersteine.deleteStolperstein);
+app.post('/api/import', controllers.import.createImport);
 
 mongoose.connect(app.get('db url') + 'stolpersteine');
 app.listen(app.get('port'), app.get('host'), function() {

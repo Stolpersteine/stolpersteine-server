@@ -1,0 +1,7 @@
+- GET
+curl -v http://127.0.0.1:3000/api/stolpersteine
+
+- POST
+curl -v -d @stolperstein.json -H "Content-Type: application/json" http://127.0.0.1:3000/api/stolpersteine
+
+curl -v -d @stolperstein_import.json -H "Content-Type: application/json" http://127.0.0.1:3000/api/import

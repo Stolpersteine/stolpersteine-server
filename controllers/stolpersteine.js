@@ -16,7 +16,7 @@ exports.retrieveStolpersteine = function(req, res) {
 		if (!err) {
 			// Convert to GeoJSON format
 //			for (var i = 0; i < stolpersteine.length; i++) {
-//				stolpersteine[i] = stolpersteine[i].convertToGeoJSON();
+//				stolpersteine[i] = stolpersteine[i].toGeoJSON();
 //			};
 			res.send(stolpersteine);
 		} else {

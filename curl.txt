@@ -1,5 +1,0 @@
-- GET
-curl -v http://127.0.0.1:3000/api/stolpersteine
-
-- POST
-curl -v -d @sample_data.json -H "Content-Type: application/json" http://127.0.0.1:3000/api/stolpersteine

@@ -1,7 +1,7 @@
-var mongoose = require('mongoose'),
-    Schema = mongoose.Schema;
+var mongoose = require('mongoose');
 
-var schema = new Schema({
+var schema = new mongoose.Schema({
+	action: { type: String, enum: ["create", "update", "delete"] },
 	person: {
 		firstName: { type: String, required: true, trim: true },
 		lastName: { type: String, required: true, trim: true }
@@ -31,7 +31,7 @@ var schema = new Schema({
 	updatedAt: { type: Date }
 });
 
-schema.methods.convertToGeoJSON = function() {
+schema.methods.toGeoJSON = function() {
 	return { 
 		"type": "Feature", 
 		"geometry": {
@@ -53,3 +53,4 @@ schema.pre('save', function (next) {
 });
 
 exports.Stolperstein = mongoose.model('Stolperstein', schema, 'stolpersteine');
+exports.StolpersteinImport = mongoose.model('Stolperstein', schema, 'stolpersteine_import');

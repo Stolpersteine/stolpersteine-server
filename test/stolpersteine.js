@@ -9,31 +9,25 @@ var client = restify.createJsonClient({
 });
 
 var stolpersteinId = 0;
-var stolperstein = {
-	"person": {
-		"firstName": "Vorname",
-		"lastName": "Nachname"
+var stolpersteinData = {
+	person: {
+		firstName: "Vorname",
+		lastName: "Nachname"
 	},
-	"location": {
-		"street": "Straße 1",
-		"zipCode": "10000",
-		"city": "Stadt",
-		"coordinates": {
-			"longitude": "1.0",
-			"latitude": "1.0"
+	location: {
+		street: "Straße 1",
+		zipCode: "10000",
+		city: "Stadt",
+		coordinates: {
+			longitude: "1.0",
+			latitude: "1.0"
 		}
-	},
-	"laidAt" : { 
-		"year": "2012",
-		"month": "11",
-		"date": "12"
-	},
-	"description": "Beschreibung"
-}
+	}
+};
 
 describe('Stolpersteine endpoint', function() {
 	it('POST /api/stolpersteine should get a 201 response', function(done) {
-		client.post('/api/stolpersteine', stolperstein, function(err, req, res, data) { 
+		client.post('/api/stolpersteine', stolpersteinData, function(err, req, res, data) { 
 			expect(err).to.be(null);
 			expect(res.statusCode).to.be(201);
 			expect(data).to.be.an(Object);
