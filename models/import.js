@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+var models = require('../models');
 
 var schema = new mongoose.Schema({
 	source: {
@@ -8,8 +9,8 @@ var schema = new mongoose.Schema({
 	},
 	actions: [{
 		action: { type: String, enum: ["create", "update", "delete"] },
-		sourceId: { type: mongoose.Schema.Types.ObjectId, ref: 'Stolperstein' },
-		targetId: { type: mongoose.Schema.Types.ObjectId, ref: 'Stolperstein' }
+		targetId: { type: mongoose.Schema.Types.ObjectId, ref: 'Stolperstein' },
+		sourceData: [models.stolperstein.StolpersteinSchema]
 	}]
 });
 

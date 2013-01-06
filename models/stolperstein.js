@@ -52,3 +52,4 @@ schema.pre('save', function (next) {
 });
 
 exports.Stolperstein = mongoose.model('Stolperstein', schema, 'stolpersteine');
+exports.StolpersteinSchema = schema;

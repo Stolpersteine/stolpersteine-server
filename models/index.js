@@ -1,1 +1,2 @@
-module.exports = require('./stolperstein.js');
+exports.stolperstein = require('./stolperstein.js');
+exports.import = require('./import.js');
