@@ -48,7 +48,7 @@ var importData = {
 	]
 };
 
-describe.only('Import endpoint', function() {
+describe('Import endpoint', function() {
 	it('POST /api/import should get a 201 response', function(done) {
 		client.post('/api/import', importData, function(err, req, res, data) { 
 			expect(err).to.be(null);

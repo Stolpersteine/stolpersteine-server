@@ -1,7 +1,6 @@
 var mongoose = require('mongoose');
 
 var schema = new mongoose.Schema({
-	action: { type: String, enum: ["create", "update", "delete"] },
 	person: {
 		firstName: { type: String, required: true, trim: true },
 		lastName: { type: String, required: true, trim: true }
@@ -53,4 +52,3 @@ schema.pre('save', function (next) {
 });
 
 exports.Stolperstein = mongoose.model('Stolperstein', schema, 'stolpersteine');
-exports.StolpersteinImport = mongoose.model('Stolperstein', schema, 'stolpersteine_import');
