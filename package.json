@@ -33,7 +33,11 @@
   "bundleDependencies": [],
 	
 	"scripts": {
-	    "test": "mocha -R spec"
+	    "test": "mocha -R spec",
+			"start": "node server.js",
+			"db": "mongod --dbpath ~/tmp/",
+			"dbclient": "mongo",
+			"scrape": "node scraping/app"
 	},
 
   "private": true,
