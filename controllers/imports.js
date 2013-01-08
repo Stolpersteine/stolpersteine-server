@@ -46,6 +46,16 @@ exports.deleteImport = function(req, res) {
 }
 
 exports.executeImport = function(req, res) {
-	console.log("executeImport");
-	res.send(400);
+	models.import.Import.findById(req.params.id, { __v: 0 }, null, function(err, importData) {
+		if (!err && importData) {
+			importData.createActions.stolpersteine.forEach(function(stolpersteinData, index, array) {
+				var stolperstein = new models.stolperstein.Stolperstein(stolpersteinData);
+				stolperstein.save(function(err, stolperstein) {
+				});
+			})
+			res.send(201);
+		} else {
+			res.send(404, err);
+		}
+	});
 }
