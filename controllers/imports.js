@@ -50,7 +50,7 @@ exports.deleteImport = function(req, res) {
 	});
 }
 
-exports.exportImport = function(req, res) {
-	console.log("exportImport");
+exports.executeImport = function(req, res) {
+	console.log("executeImport");
 	res.send(400);
 }
