@@ -32,7 +32,10 @@ app.post('/api/stolpersteine', controllers.stolpersteine.createStolperstein);
 app.get('/api/stolpersteine', controllers.stolpersteine.retrieveStolpersteine);
 app.get('/api/stolpersteine/:id', controllers.stolpersteine.retrieveStolperstein);
 app.delete('/api/stolpersteine/:id', controllers.stolpersteine.deleteStolperstein);
-app.post('/api/import', controllers.import.createImport);
+app.post('/api/imports', controllers.imports.createImport);
+app.get('/api/imports', controllers.imports.retrieveImports);
+app.get('/api/imports/:id', controllers.imports.retrieveImport);
+app.delete('/api/imports/:id', controllers.imports.deleteImport);
 
 mongoose.connect(app.get('db url') + 'stolpersteine');
 app.listen(app.get('port'), app.get('host'), function() {

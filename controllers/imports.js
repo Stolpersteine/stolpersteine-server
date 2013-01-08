@@ -36,3 +36,34 @@ exports.createImport = function(req, res) {
 		}
 	});
 }
+
+exports.retrieveImports = function(req, res) {
+	console.log("retrieveImports");
+	models.import.Import.find(function(err, stolpersteine) {
+		if (!err) {
+			res.send(stolpersteine);
+		} else {
+			res.send(400, err);
+		}
+	});
+}
+
+exports.retrieveImport = function(req, res) {
+	models.import.Import.findById(req.params.id, { __v: 0 }, null, function(err, stolperstein) {
+		if (!err && stolperstein) {
+			res.send(stolperstein);
+		} else {
+			res.send(404, err);
+		}
+	});
+}
+
+exports.deleteImport = function(req, res) {
+	models.import.Import.findByIdAndRemove(req.params.id, { __v: 0 }, function(err, stolperstein) {
+		if (!err) {
+			res.send(204);
+		} else {
+			res.send(404, err);
+		}
+	});
+}
