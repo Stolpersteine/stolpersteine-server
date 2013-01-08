@@ -1,15 +1,11 @@
 var models = require('../models')
 
 exports.createImport = function(req, res) {
-//	console.log(req.body);
+	console.log(req.body.source);
 	
-	var importData = new models.import.Import({
-		source: { 
-			url: 'http://test.example.com',
-	    name: 'Integration Test 2',
-	    retrievedAt: '2013-01-06T18:12:17.603Z' 
-		}
-	});
+	var importData = new models.import.Import();
+	importData.source = req.body.source;
+	importData.createActions.stolpersteine = req.body.stolpersteine;
 	importData.save(function(err, importData) {
 		if (!err) {
 			res.send(201, importData);
@@ -20,7 +16,6 @@ exports.createImport = function(req, res) {
 }
 
 exports.retrieveImports = function(req, res) {
-	console.log("retrieveImports");
 	models.import.Import.find(function(err, stolpersteine) {
 		if (!err) {
 			res.send(stolpersteine);

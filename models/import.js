@@ -14,9 +14,9 @@ var schema = new mongoose.Schema({
 		targetIds: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Stolperstein' }],
 		stolpersteine: [models.stolperstein.StolpersteinSchema]
 	},
-	deleteActions: [{
+	deleteActions: {
 		targetIds: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Stolperstein' }],
-	}]
+	}
 });
 
 exports.Import = mongoose.model('Import', schema);
