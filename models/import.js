@@ -7,10 +7,15 @@ var schema = new mongoose.Schema({
 		name: { type: String, required: true, trim: true },
 		retrievedAt: { type: Date, required: true }
 	},
-	actions: [{
-		action: { type: String, enum: ["create", "update", "delete"] },
-		targetId: { type: mongoose.Schema.Types.ObjectId, ref: 'Stolperstein' },
-		sourceData: [models.stolperstein.StolpersteinSchema]
+	createActions: {
+		stolpersteine: [models.stolperstein.StolpersteinSchema]
+	},
+	updateActions: {
+		targetIds: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Stolperstein' }],
+		stolpersteine: [models.stolperstein.StolpersteinSchema]
+	},
+	deleteActions: [{
+		targetIds: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Stolperstein' }],
 	}]
 });
 

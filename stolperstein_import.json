@@ -3,9 +3,9 @@
 		"url": "http://curl.example.com",
 		"name": "Curl Test",
 		"retrievedAt": "2013-01-06T13:21:35.003Z"
-	}, 
-	"stolpertsteine": [
-		{
+	},
+	"createActions": {
+		"stolpersteine": [{
 			"person": {
 				"name": "Vorname Nachname"
 			},
@@ -43,6 +43,6 @@
 				"date": "12"
 			},
 			"description": "Beschreibung"
-		}
-	]
+		}]
+	}
 }

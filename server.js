@@ -36,6 +36,7 @@ app.post('/api/imports', controllers.imports.createImport);
 app.get('/api/imports', controllers.imports.retrieveImports);
 app.get('/api/imports/:id', controllers.imports.retrieveImport);
 app.delete('/api/imports/:id', controllers.imports.deleteImport);
+app.post('/api/imports/:id/execute', controllers.imports.executeImport);
 
 mongoose.connect(app.get('db url') + 'stolpersteine');
 app.listen(app.get('port'), app.get('host'), function() {

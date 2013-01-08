@@ -50,7 +50,7 @@ var importData = {
 
 describe('Import endpoint', function() {
 	it('POST /api/import should get a 201 response', function(done) {
-		client.post('/api/import', importData, function(err, req, res, data) { 
+		client.post('/api/imports', importData, function(err, req, res, data) { 
 			expect(err).to.be(null);
 			expect(res.statusCode).to.be(201);
 			expect(data).to.be.an(Object);
