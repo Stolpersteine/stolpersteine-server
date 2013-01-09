@@ -1,12 +1,51 @@
-var models = require('../models')
+var models = require('../models'),
+	async = require('async');
 
 exports.createImport = function(req, res) {
 	console.log(req.body.source);
 	
-	var importData = new models.import.Import();
-	importData.source = req.body.source;
-	importData.createActions.stolpersteine = req.body.stolpersteine;
-	importData.save(function(err, importData) {
+	var source = req.body.source;
+	var stolpersteine = req.body.stolpersteine;
+	
+	async.waterfall([
+		// Find old imports
+		function(callback) {
+			models.import.Import.find({"source.url": source.url}, function(err, oldImports) {
+				callback(err, oldImports);
+			});
+		},
+		// Delete those imports
+		function(oldImports, callback) {
+			async.forEach(oldImports, function(oldImport, callback) {
+				oldImport.remove(function(err) {
+					callback(err);
+				});
+			}, function(err) {
+			    callback(err);
+			});
+		},
+		// Figure out difference between existing stolpersteine and imported ones
+		function(callback) {
+			var importData = new models.import.Import();
+			importData.source = source;
+			
+			async.forEach(stolpersteine, function(stolperstein, callback) {
+				console.log(stolperstein.person.lastName);
+				
+				// Check if stolperstein exists
+				
+				callback(null);
+			}, function(err) {
+			    callback(err, importData);
+			});
+		},
+		// Store import data
+		function(importData, callback) {
+			importData.save(function(err, importData) {
+				callback(err, importData);
+			});
+		}
+	], function (err, importData) {
 		if (!err) {
 			res.send(201, importData);
 		} else {
@@ -48,12 +87,22 @@ exports.deleteImport = function(req, res) {
 exports.executeImport = function(req, res) {
 	models.import.Import.findById(req.params.id, { __v: 0 }, null, function(err, importData) {
 		if (!err && importData) {
-			importData.createActions.stolpersteine.forEach(function(stolpersteinData, index, array) {
-				var stolperstein = new models.stolperstein.Stolperstein(stolpersteinData);
-				stolperstein.save(function(err, stolperstein) {
-				});
-			})
-			res.send(201);
+			async.parallel([
+				function(callback) {
+					async.forEach(importData.createActions.stolpersteine, function(stolperstein, callback) {
+						var stolperstein = new models.stolperstein.Stolperstein(stolperstein);
+						stolperstein.source = importData.source;
+						stolperstein.save(function(err, stolperstein) {
+							callback(err);
+						});
+					}, function(err) {
+			    	callback(err);
+					});
+		    }
+			],
+			function(err, results) {
+				res.send(201);
+			});
 		} else {
 			res.send(404, err);
 		}
