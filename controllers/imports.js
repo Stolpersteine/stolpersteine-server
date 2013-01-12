@@ -30,11 +30,22 @@ exports.createImport = function(req, res) {
 					callback(err);
 				});
 			}, function(err) {
-			    callback(err, newImport);
+			    callback(err, newImport, existingStolpersteineIds);
 			});
 		},
-		// Delete removed stolpersteine
-		
+		// Stolpersteine that don't exist any more
+		function(newImport, existingStolpersteineIds, callback) {
+				models.stolperstein.Stolperstein.find({_id: {$nin: existingStolpersteineIds}}, function(err, stolpersteine) {
+					async.forEach(stolpersteine, function(stolperstein, callback) {
+						console.log('Remove stolperstein ' + stolperstein._id);
+						stolperstein.remove(function(err) {
+							callback(err, newImport);
+						});
+					}, function(err) {
+					    callback(err, newImport);
+					});
+				});
+		},
 		// Store import data
 		function(newImport, callback) {
 			newImport.save(function(err, newImport) {
