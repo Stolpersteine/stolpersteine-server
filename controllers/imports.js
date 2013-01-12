@@ -2,26 +2,14 @@ var models = require('../models'),
 	async = require('async');
 
 exports.createImport = function(req, res) {
-	console.log(req.body.source);
-	
 	var source = req.body.source;
 	var stolpersteineImport = req.body.stolpersteine;
 	
 	async.waterfall([
-		// Find old imports
+		// Find and delete old imports
 		function(callback) {
-			models.import.Import.find({"source.url": source.url}, function(err, oldImports) {
-				callback(err, oldImports);
-			});
-		},
-		// Delete those imports
-		function(oldImports, callback) {
-			async.forEach(oldImports, function(oldImport, callback) {
-				oldImport.remove(function(err) {
-					callback(err);
-				});
-			}, function(err) {
-			    callback(err);
+			models.import.Import.findAndDelete(source, function(err) {
+				callback(err);
 			});
 		},
 		// Figure out difference between existing stolpersteine and imported ones
@@ -30,14 +18,12 @@ exports.createImport = function(req, res) {
 			newImport.source = source;
 			
 			async.forEach(stolpersteineImport, function(stolpersteinImport, callback) {
-				console.log(stolpersteinImport);
-				
 				// Check if stolperstein exists
 				models.stolperstein.Stolperstein.findExactMatch(source, stolpersteinImport, function(err, stolperstein) {
 					if (stolperstein) {
-						console.log("found: " + stolperstein._id);
+						console.log("Found stolperstein " + stolperstein._id);
 					} else {
-						console.log("not found");
+						console.log("No stolperstein found");
 					}
 					callback(err);
 				});
@@ -48,6 +34,7 @@ exports.createImport = function(req, res) {
 		// Store import data
 		function(newImport, callback) {
 			newImport.save(function(err, newImport) {
+				console.log('Created import ' + newImport._id);
 				callback(err, newImport);
 			});
 		}
