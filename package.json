@@ -34,7 +34,7 @@
 	
 	"scripts": {
 	    "test": "mocha -R spec",
-			"start": "node server.js",
+			"start": "supervisor server.js",
 			"db": "mongod --dbpath ~/tmp/",
 			"dbclient": "mongo",
 			"scrape": "node scraping/app"

@@ -5,7 +5,7 @@ exports.createImport = function(req, res) {
 	console.log(req.body.source);
 	
 	var source = req.body.source;
-	var stolpersteine = req.body.stolpersteine;
+	var stolpersteineImport = req.body.stolpersteine;
 	
 	async.waterfall([
 		// Find old imports
@@ -26,28 +26,34 @@ exports.createImport = function(req, res) {
 		},
 		// Figure out difference between existing stolpersteine and imported ones
 		function(callback) {
-			var importData = new models.import.Import();
-			importData.source = source;
+			var newImport = new models.import.Import();
+			newImport.source = source;
 			
-			async.forEach(stolpersteine, function(stolperstein, callback) {
-				console.log(stolperstein.person.lastName);
+			async.forEach(stolpersteineImport, function(stolpersteinImport, callback) {
+				console.log(stolpersteinImport);
 				
 				// Check if stolperstein exists
-				
-				callback(null);
+				models.stolperstein.Stolperstein.findExactMatch(source, stolpersteinImport, function(err, stolperstein) {
+					if (stolperstein) {
+						console.log("found: " + stolperstein._id);
+					} else {
+						console.log("not found");
+					}
+					callback(err);
+				});
 			}, function(err) {
-			    callback(err, importData);
+			    callback(err, newImport);
 			});
 		},
 		// Store import data
-		function(importData, callback) {
-			importData.save(function(err, importData) {
-				callback(err, importData);
+		function(newImport, callback) {
+			newImport.save(function(err, newImport) {
+				callback(err, newImport);
 			});
 		}
-	], function (err, importData) {
+	], function (err, newImport) {
 		if (!err) {
-			res.send(201, importData);
+			res.send(201, newImport);
 		} else {
 			res.send(400, err);
 		}
@@ -55,7 +61,7 @@ exports.createImport = function(req, res) {
 }
 
 exports.retrieveImports = function(req, res) {
-	models.import.Import.find(function(err, stolpersteine) {
+	models.import.Import.find(null, null, {lean: true}, function(err, stolpersteine) {
 		if (!err) {
 			res.send(stolpersteine);
 		} else {
