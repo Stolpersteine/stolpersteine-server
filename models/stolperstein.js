@@ -22,9 +22,9 @@ var schema = new mongoose.Schema({
 	description: { type: String, trim: true },
 	imageUrl: { type: String, trim: true },
 	source: {
-		url: { type: String, trim: true },
-		name: { type: String, trim: true },
-		retrievedAt: { type: Date }
+		url: { type: String, trim: true, required: true },
+		name: { type: String, trim: true, required: true },
+		retrievedAt: { type: Date, required: true }
 	},
 	createdAt: { type: Date },
 	updatedAt: { type: Date }

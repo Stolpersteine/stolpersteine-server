@@ -24,12 +24,8 @@ schema.statics.findAndDelete = function(source, callback) {
 	models.import.Import.find({"source.url": source.url}, function(err, oldImports) {
 		async.forEach(oldImports, function(oldImport, callback) {
 			console.log('Remove import ' + oldImport._id);
-			oldImport.remove(function(err) {
-				callback(err);
-			});
-		}, function(err) {
-		    callback(err);
-		});
+			oldImport.remove(callback);
+		}, callback);
 	});
 }
 
