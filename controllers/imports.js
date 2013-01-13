@@ -63,7 +63,7 @@ exports.createImport = function(req, res) {
 }
 
 exports.retrieveImports = function(req, res) {
-	models.import.Import.find(null, null, {lean: true}, function(err, imports) {
+	models.import.Import.find(null, { __v: 0 }, { lean: true }, function(err, imports) {
 		if (!err) {
 			res.send(imports);
 		} else {

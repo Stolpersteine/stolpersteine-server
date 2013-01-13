@@ -40,6 +40,7 @@ describe('Stolpersteine endpoint', function() {
 				expect(err).to.be(null);
 				expect(res.statusCode).to.be(201);
 				expect(data).to.be.an(Object);
+//				expect(data.__v).to.be(undefined);
 				stolpersteinId = data._id;
 				done();
 			}); 
@@ -51,6 +52,7 @@ describe('Stolpersteine endpoint', function() {
 				expect(res.statusCode).to.be(200);
 				expect(data).to.be.an(Object);
 				expect(data._id).to.be(stolpersteinId);
+				expect(data.__v).to.be(undefined);
 				done();
 			}); 
 		});
@@ -61,6 +63,7 @@ describe('Stolpersteine endpoint', function() {
 				expect(res.statusCode).to.be(200);
 				expect(data).to.be.an(Array);
 				expect(data.length).to.be.greaterThan(0);
+				expect(data[0].__v).to.be(undefined);
 				done();
 			}); 
 		});

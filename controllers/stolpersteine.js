@@ -12,7 +12,7 @@ exports.createStolperstein = function(req, res) {
 }
 
 exports.retrieveStolpersteine = function(req, res) {
-	models.stolperstein.Stolperstein.find(function(err, stolpersteine) {
+	models.stolperstein.Stolperstein.find(null, { __v: 0 }, null, function(err, stolpersteine) {
 		if (!err) {
 			// Convert to GeoJSON format
 //			for (var i = 0; i < stolpersteine.length; i++) {
