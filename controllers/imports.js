@@ -19,8 +19,8 @@ exports.createImport = function(req, res) {
 				// Check if stolperstein exists
 				models.stolperstein.Stolperstein.findExactMatch(source, stolpersteinImport, function(err, stolperstein) {
 					if (stolperstein) {
-						existingStolpersteineIds.push(stolperstein._id);
-						console.log("Found stolperstein " + stolperstein._id);
+						existingStolpersteineIds.push(stolperstein.id);
+						console.log("Found stolperstein " + stolperstein.id);
 					} else {
 						var newStolperstein = new models.stolperstein.Stolperstein(stolpersteinImport);
 						newStolperstein.source = source;
@@ -37,7 +37,7 @@ exports.createImport = function(req, res) {
 		function(newImport, existingStolpersteineIds, callback) {
 				models.stolperstein.Stolperstein.find({"source.url": source.url, "_id": {$nin: existingStolpersteineIds}}, function(err, stolpersteine) {
 					async.forEach(stolpersteine, function(stolperstein, callback) {
-						console.log('Remove stolperstein ' + stolperstein._id);
+						console.log('Remove stolperstein ' + stolperstein.id);
 						stolperstein.remove(function(err) {
 							callback(err, newImport);
 						});
@@ -49,7 +49,7 @@ exports.createImport = function(req, res) {
 		// Store import data
 		function(newImport, callback) {
 			newImport.save(function(err, newImport) {
-				console.log('Created import ' + newImport._id);
+				console.log('Created import ' + newImport.id);
 				callback(err, newImport);
 			});
 		}

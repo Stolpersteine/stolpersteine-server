@@ -16,6 +16,10 @@ var schema = new mongoose.Schema({
 	}
 });
 
+schema.virtual('id').get(function(){
+    return this._id;
+});
+
 schema.set('toJSON', { transform: function (doc, ret, options) {
 	ret.id = doc._id;
   delete ret._id;
