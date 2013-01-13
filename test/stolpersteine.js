@@ -81,7 +81,7 @@ describe('Stolpersteine endpoint', function() {
 	// * Invalid IDs
 	describe('Invalid IDs', function() {
 		it('GET /api/stolpersteine/:id with invalid id should get a 404 response', function(done) {
-			client.get('/api/stolpersteine/0', function(err, req, res, data) { 
+			client.get('/api/stolpersteine/0', function(err, req, res, data) {
 				expect(err).not.to.be(null);
 				expect(res.statusCode).to.be(404);
 				done();

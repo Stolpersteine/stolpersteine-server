@@ -63,9 +63,9 @@ exports.createImport = function(req, res) {
 }
 
 exports.retrieveImports = function(req, res) {
-	models.import.Import.find(null, null, {lean: true}, function(err, stolpersteine) {
+	models.import.Import.find(null, null, {lean: true}, function(err, imports) {
 		if (!err) {
-			res.send(stolpersteine);
+			res.send(imports);
 		} else {
 			res.send(400, err);
 		}
@@ -73,9 +73,9 @@ exports.retrieveImports = function(req, res) {
 }
 
 exports.retrieveImport = function(req, res) {
-	models.import.Import.findById(req.params.id, { __v: 0 }, null, function(err, stolperstein) {
-		if (!err && stolperstein) {
-			res.send(stolperstein);
+	models.import.Import.findById(req.params.id, { __v: 0 }, null, function(err, importData) {
+		if (!err && importData) {
+			res.send(importData);
 		} else {
 			res.send(404, err);
 		}
@@ -83,7 +83,7 @@ exports.retrieveImport = function(req, res) {
 }
 
 exports.deleteImport = function(req, res) {
-	models.import.Import.findByIdAndRemove(req.params.id, { __v: 0 }, function(err, stolperstein) {
+	models.import.Import.findByIdAndRemove(req.params.id, { __v: 0 }, function(err) {
 		if (!err) {
 			res.send(204);
 		} else {
