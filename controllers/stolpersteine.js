@@ -30,15 +30,14 @@ exports.retrieveStolperstein = function(req, res) {
 		if (!err && stolperstein) {
 			res.send(stolperstein);
 		} else {
-//			console.log(err);
 			res.send(404, err);
 		}
 	});
 }
 
 exports.deleteStolperstein = function(req, res) {
-	models.stolperstein.Stolperstein.findByIdAndRemove(req.params.id, { __v: 0 }, function(err) {
-		if (!err) {
+	models.stolperstein.Stolperstein.findByIdAndRemove(req.params.id, { __v: 0 }, function(err, stolperstein) {
+		if (!err && stolperstein) {
 			res.send(204);
 		} else {
 			res.send(404, err);

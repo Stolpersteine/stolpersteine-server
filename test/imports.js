@@ -103,8 +103,24 @@ describe('Import endpoint', function() {
 			}); 
 		}); 
 		
+		it('GET /api/imports/:id with non-existent id should get a 404 response', function(done) {
+			client.get('/api/imports/000000000000000000000000', function(err, req, res, data) { 
+				expect(err).not.to.be(null);
+				expect(res.statusCode).to.be(404);
+				done();
+			}); 
+		}); 
+
 		it('DELETE /api/imports/:id with invalid id should get a 404 response', function(done) {
 			client.del('/api/imports/0', function(err, req, res, data) { 
+				expect(err).not.to.be(null);
+				expect(res.statusCode).to.be(404);
+				done();
+			}); 
+		});
+		
+		it('DELETE /api/imports/:id with non-existent id should get a 404 response', function(done) {
+			client.del('/api/imports/000000000000000000000000', function(err, req, res, data) { 
 				expect(err).not.to.be(null);
 				expect(res.statusCode).to.be(404);
 				done();

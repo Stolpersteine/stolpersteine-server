@@ -83,8 +83,8 @@ exports.retrieveImport = function(req, res) {
 }
 
 exports.deleteImport = function(req, res) {
-	models.import.Import.findByIdAndRemove(req.params.id, { __v: 0 }, function(err) {
-		if (!err) {
+	models.import.Import.findByIdAndRemove(req.params.id, { __v: 0 }, function(err, importData) {
+		if (!err && importData) {
 			res.send(204);
 		} else {
 			res.send(404, err);
