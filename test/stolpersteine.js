@@ -40,8 +40,8 @@ describe('Stolpersteine endpoint', function() {
 				expect(err).to.be(null);
 				expect(res.statusCode).to.be(201);
 				expect(data).to.be.an(Object);
-//				expect(data.__v).to.be(undefined);
-				stolpersteinId = data._id;
+				expect(data.__v).to.be(undefined);
+				stolpersteinId = data.id;
 				done();
 			}); 
 		});
@@ -51,7 +51,7 @@ describe('Stolpersteine endpoint', function() {
 				expect(err).to.be(null);
 				expect(res.statusCode).to.be(200);
 				expect(data).to.be.an(Object);
-				expect(data._id).to.be(stolpersteinId);
+				expect(data.id).to.be(stolpersteinId);
 				expect(data.__v).to.be(undefined);
 				done();
 			}); 
@@ -122,7 +122,7 @@ describe('Stolpersteine endpoint', function() {
 		
 		before(function(done) {
 			client.post('/api/stolpersteine', stolpersteinData, function(err, req, res, data) { 
-				stolpersteinId = data._id;
+				stolpersteinId = data.id;
 				done(err);
 			}); 
 		});
@@ -182,7 +182,7 @@ describe('Stolpersteine endpoint', function() {
 		
 		before(function(done) {
 			client.post('/api/stolpersteine', stolpersteinData, function(err, req, res, data) { 
-				stolpersteinId = data._id;
+				stolpersteinId = data.id;
 				done(err);
 			}); 
 		});

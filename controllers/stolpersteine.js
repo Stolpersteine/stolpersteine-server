@@ -12,7 +12,7 @@ exports.createStolperstein = function(req, res) {
 }
 
 exports.retrieveStolpersteine = function(req, res) {
-	models.stolperstein.Stolperstein.find(null, { __v: 0 }, null, function(err, stolpersteine) {
+	models.stolperstein.Stolperstein.find(function(err, stolpersteine) {
 		if (!err) {
 			// Convert to GeoJSON format
 //			for (var i = 0; i < stolpersteine.length; i++) {
@@ -26,7 +26,7 @@ exports.retrieveStolpersteine = function(req, res) {
 }
 
 exports.retrieveStolperstein = function(req, res) {
-	models.stolperstein.Stolperstein.findById(req.params.id, { __v: 0 }, null, function(err, stolperstein) {
+	models.stolperstein.Stolperstein.findById(req.params.id, function(err, stolperstein) {
 		if (!err && stolperstein) {
 			res.send(stolperstein);
 		} else {
@@ -36,7 +36,7 @@ exports.retrieveStolperstein = function(req, res) {
 }
 
 exports.deleteStolperstein = function(req, res) {
-	models.stolperstein.Stolperstein.findByIdAndRemove(req.params.id, { __v: 0 }, function(err, stolperstein) {
+	models.stolperstein.Stolperstein.findByIdAndRemove(req.params.id, function(err, stolperstein) {
 		if (!err && stolperstein) {
 			res.send(204);
 		} else {

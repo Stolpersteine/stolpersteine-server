@@ -55,8 +55,8 @@ describe('Import endpoint', function() {
 				expect(err).to.be(null);
 				expect(res.statusCode).to.be(201);
 				expect(data).to.be.an(Object);
-//				expect(data.__v).to.be(undefined);
-				importId = data._id;
+				expect(data.__v).to.be(undefined);
+				importId = data.id;
 				done();
 			}); 
 		});
@@ -66,7 +66,7 @@ describe('Import endpoint', function() {
 				expect(err).to.be(null);
 				expect(res.statusCode).to.be(200);
 				expect(data).to.be.an(Object);
-				expect(data._id).to.be(importId);
+				expect(data.id).to.be(importId);
 				expect(data.__v).to.be(undefined);
 				done();
 			}); 
@@ -137,7 +137,7 @@ describe('Import endpoint', function() {
 		
 		before(function(done) {
 			client.post('/api/imports', importData, function(err, req, res, data) { 
-				importId = data._id;
+				importId = data.id;
 				done(err);
 			}); 
 		});
@@ -197,7 +197,7 @@ describe('Import endpoint', function() {
 		
 		before(function(done) {
 			client.post('/api/imports', importData, function(err, req, res, data) { 
-				importId = data._id;
+				importId = data.id;
 				done(err);
 			}); 
 		});

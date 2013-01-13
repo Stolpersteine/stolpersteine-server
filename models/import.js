@@ -16,6 +16,12 @@ var schema = new mongoose.Schema({
 	}
 });
 
+schema.set('toJSON', { transform: function (doc, ret, options) {
+	ret.id = doc._id;
+  delete ret._id;
+	delete ret.__v;
+}});
+
 schema.statics.findAndDelete = function(source, callback) {
 	models.import.Import.find({"source.url": source.url}, function(err, oldImports) {
 		async.forEach(oldImports, function(oldImport, callback) {

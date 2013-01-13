@@ -30,6 +30,12 @@ var schema = new mongoose.Schema({
 	updatedAt: { type: Date }
 });
 
+schema.set('toJSON', { transform: function (doc, ret, options) {
+	ret.id = doc._id;
+  delete ret._id;
+	delete ret.__v;
+}});
+
 schema.methods.toGeoJSON = function() {
 	return { 
 		"type": "Feature", 
