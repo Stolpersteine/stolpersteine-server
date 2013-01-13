@@ -25,7 +25,7 @@ var importData = {
 			city: "Stadt",
 			coordinates: {
 				longitude: "0.0",
-				latitude: ".0"
+				latitude: "0.0"
 			}
 		}
 	}, {
@@ -46,7 +46,7 @@ var importData = {
 };
 
 describe('Import endpoint', function() {
-	// * Life cycle
+	//////////////////////////////////////////////////////////////////////////////
 	describe('Life cycle', function() {
 		var importId = 0;
 		
@@ -93,7 +93,7 @@ describe('Import endpoint', function() {
 		}); 
 	});
 	
-	// * Invalid IDs
+	//////////////////////////////////////////////////////////////////////////////
 	describe('Invalid IDs', function() {
 		it('GET /api/imports/:id with invalid id should get a 404 response', function(done) {
 			client.get('/api/imports/0', function(err, req, res, data) { 
@@ -128,7 +128,7 @@ describe('Import endpoint', function() {
 		});
 	});
 
-	// * Etag
+	//////////////////////////////////////////////////////////////////////////////
 	describe('ETag support', function() {
 		var importId;
 		
@@ -188,7 +188,7 @@ describe('Import endpoint', function() {
 		});
 	});
 
-	// * gzip
+	//////////////////////////////////////////////////////////////////////////////
 	describe('gzip support', function() {
 		var importId;
 		

@@ -31,7 +31,7 @@ var stolpersteinData = {
 };
 
 describe('Stolpersteine endpoint', function() {
-	// * Life cycle
+	//////////////////////////////////////////////////////////////////////////////
 	describe('Life cycle', function() {
 		var stolpersteinId = 0;
 		
@@ -78,7 +78,7 @@ describe('Stolpersteine endpoint', function() {
 		}); 
 	});
 	
-	// * Invalid IDs
+	//////////////////////////////////////////////////////////////////////////////
 	describe('Invalid IDs', function() {
 		it('GET /api/stolpersteine/:id with invalid id should get a 404 response', function(done) {
 			client.get('/api/stolpersteine/0', function(err, req, res, data) { 
@@ -113,7 +113,7 @@ describe('Stolpersteine endpoint', function() {
 		});
 	});
 
-	// * Etag
+	//////////////////////////////////////////////////////////////////////////////
 	describe('ETag support', function() {
 		var stolpersteinId;
 		
@@ -173,7 +173,7 @@ describe('Stolpersteine endpoint', function() {
 		});
 	});
 
-	// * gzip
+	//////////////////////////////////////////////////////////////////////////////
 	describe('gzip support', function() {
 		var stolpersteinId;
 		
