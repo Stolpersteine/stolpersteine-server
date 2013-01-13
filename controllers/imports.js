@@ -35,7 +35,7 @@ exports.createImport = function(req, res) {
 		},
 		// Stolpersteine that don't exist any more
 		function(newImport, existingStolpersteineIds, callback) {
-				models.stolperstein.Stolperstein.find({_id: {$nin: existingStolpersteineIds}}, function(err, stolpersteine) {
+				models.stolperstein.Stolperstein.find({"source.url": source.url, "_id": {$nin: existingStolpersteineIds}}, function(err, stolpersteine) {
 					async.forEach(stolpersteine, function(stolperstein, callback) {
 						console.log('Remove stolperstein ' + stolperstein._id);
 						stolperstein.remove(function(err) {
