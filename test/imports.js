@@ -242,6 +242,7 @@ describe('Import endpoint', function() {
 	//////////////////////////////////////////////////////////////////////////////
 	describe.only('Import execution', function() {
 		var stolpersteinToRetainId, stolpersteinToDeleteId, stolpersteinToCreateId;
+		var importId;
 		
 		before(function(done) {
 			var stolperstein = importData.stolpersteine[0];	// 'Nachname 0'
@@ -262,20 +263,39 @@ describe('Import endpoint', function() {
 			client.del('/api/stolpersteine/' + stolpersteinToRetainId, function(err, req, res, data) {
 				client.del('/api/stolpersteine/' + stolpersteinToDeleteId, function(err, req, res, data) {
 					client.del('/api/stolpersteine/' + stolpersteinToCreateId, function(err, req, res, data) {
-						done(null);	// ignore error
+						done();
 					});
 				});
 			});
 		});
 		
-		it('Import delta list works', function(done) {
+		it('Import creates delta list', function(done) {
 			client.post('/api/imports', importData, function(err, req, res, data) {
+				stolpersteinToCreateId = data.createActions.stolpersteine[0].id;
+				importId = data.id;
+				
 				expect(data.createActions.stolpersteine.length).to.be(1);
 				expect(data.createActions.stolpersteine[0].person.lastName).to.be(importData.stolpersteine[1].person.lastName);	// 'Nachname 1'
-				stolpersteinToCreateId = data.createActions.stolpersteine[0].id;
 				expect(data.deleteActions.targetIds.length).to.be(1);
 				expect(data.deleteActions.targetIds[0]).to.be(stolpersteinToDeleteId);
 				done(err);
+			});
+		});
+		
+		it('Import execution', function(done) {
+			client.post('/api/imports/' + importId + '/execute', importData, function(err, req, res, data) {
+				expect(err).to.be(null);
+				expect(res.statusCode).to.be(201);
+				client.get('/api/stolpersteine/' + stolpersteinToRetainId, function(err, req, res, data) {
+					expect(res.statusCode).to.be(200);
+					client.get('/api/stolpersteine/' + stolpersteinToCreateId, function(err, req, res, data) {
+						expect(res.statusCode).to.be(200);
+						client.get('/api/stolpersteine/' + stolpersteinToDeleteId, function(err, req, res, data) {
+							expect(res.statusCode).to.be(404);
+							done();
+						});
+					});
+				});
 			});
 		});
 	});

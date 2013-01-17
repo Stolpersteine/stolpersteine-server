@@ -62,7 +62,7 @@ exports.createImport = function(req, res) {
 }
 
 exports.retrieveImports = function(req, res) {
-	models.import.Import.find(null, { __v: 0 }, { lean: true }, function(err, imports) {
+	models.import.Import.find(function(err, imports) {
 		if (!err) {
 			res.send(imports);
 		} else {
@@ -72,7 +72,7 @@ exports.retrieveImports = function(req, res) {
 }
 
 exports.retrieveImport = function(req, res) {
-	models.import.Import.findById(req.params.id, { __v: 0 }, null, function(err, importData) {
+	models.import.Import.findById(req.params.id, function(err, importData) {
 		if (!err && importData) {
 			res.send(importData);
 		} else {
@@ -82,7 +82,7 @@ exports.retrieveImport = function(req, res) {
 }
 
 exports.deleteImport = function(req, res) {
-	models.import.Import.findByIdAndRemove(req.params.id, { __v: 0 }, function(err, importData) {
+	models.import.Import.findByIdAndRemove(req.params.id, function(err, importData) {
 		if (!err && importData) {
 			res.send(204);
 		} else {
@@ -92,23 +92,24 @@ exports.deleteImport = function(req, res) {
 }
 
 exports.executeImport = function(req, res) {
-	models.import.Import.findById(req.params.id, { __v: 0 }, null, function(err, importData) {
+	models.import.Import.findById(req.params.id, function(err, importData) {
 		if (!err && importData) {
 			async.parallel([
 				function(callback) {
 					async.forEach(importData.createActions.stolpersteine, function(stolperstein, callback) {
 						var stolperstein = new models.stolperstein.Stolperstein(stolperstein);
 						stolperstein.source = importData.source;
-						stolperstein.save(function(err, stolperstein) {
-							callback(err);
-						});
-					}, function(err) {
-			    	callback(err);
-					});
-		    }
+						stolperstein.save(callback);
+					}, callback);
+		    },
+				function(callback) {
+					async.forEach(importData.deleteActions.targetIds, function(targetId, callback) {
+						models.stolperstein.Stolperstein.findByIdAndRemove(targetId, callback);
+					}, callback);
+				}
 			],
 			function(err, results) {
-				res.send(201);
+				res.send(201, {});
 			});
 		} else {
 			res.send(404, err);
