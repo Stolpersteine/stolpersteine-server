@@ -3,7 +3,7 @@ var request = require('request'),
 	url = require('url'),
 	async = require('async');
 	
-var uri = url.parse( 'http://de.m.wikipedia.org/wiki/Liste_der_Stolpersteine_in_Berlin-Moabit');
+var uri = url.parse('http://de.m.wikipedia.org/wiki/Liste_der_Stolpersteine_in_Berlin-Moabit');
 var userAgent = 'Stolpersteine/1.0 (http://option-u.com; admin@option-u.com)';
 var counter = 0;
 
@@ -31,7 +31,7 @@ request({ uri:uri, headers: {'user-agent' : userAgent } }, function(error, respo
 		tableRows = tableRows.slice(0, 5);
 		async.forEachLimit(tableRows, 3, function(tableRow, callback) {
 			async.waterfall([
-				function(callback) { convertStolperstein($, tableRow, callback); },
+				convertStolperstein.bind(undefined, $, tableRow),
 				patchStolperstein,
 				function(stolperstein, callback) { addSourceToStolperstein(stolperstein, source, callback); },
 				geocodeStolperstein
@@ -46,6 +46,7 @@ request({ uri:uri, headers: {'user-agent' : userAgent } }, function(error, respo
 			});
 		}, function() {
 			console.log('counter = ' + counter + '/' + stolpersteine.length);
+			
 		});
 	});
 });
@@ -176,5 +177,5 @@ function geocodeAddress(street, city, callback) {
 
 function logStolperstein(stolperstein) {
 	console.log('- ' + stolperstein.person.lastName + ', ' + stolperstein.person.firstName);
-	console.log(stolperstein);
+//	console.log(stolperstein);
 }
