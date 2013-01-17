@@ -238,4 +238,45 @@ describe('Import endpoint', function() {
 			}); 
 		});
 	});
+	
+	//////////////////////////////////////////////////////////////////////////////
+	describe.only('Import execution', function() {
+		var stolpersteinToRetainId, stolpersteinToDeleteId, stolpersteinToCreateId;
+		
+		before(function(done) {
+			var stolperstein = importData.stolpersteine[0];	// 'Nachname 0'
+			stolperstein.source = importData.source;
+			client.post('/api/stolpersteine', stolperstein, function(err, req, res, data) { 
+				stolpersteinToRetainId = data.id;
+				
+				stolperstein.person.lastName = "Nachname 2";
+				client.post('/api/stolpersteine', stolperstein, function(err, req, res, data) { 
+					stolperstein.person.lastName = "Nachname 0";
+					stolpersteinToDeleteId = data.id;
+					done(err);
+				});
+			}); 
+		});
+
+		after(function(done) {
+			client.del('/api/stolpersteine/' + stolpersteinToRetainId, function(err, req, res, data) {
+				client.del('/api/stolpersteine/' + stolpersteinToDeleteId, function(err, req, res, data) {
+					client.del('/api/stolpersteine/' + stolpersteinToCreateId, function(err, req, res, data) {
+						done(null);	// ignore error
+					});
+				});
+			});
+		});
+		
+		it('Import delta list works', function(done) {
+			client.post('/api/imports', importData, function(err, req, res, data) {
+				expect(data.createActions.stolpersteine.length).to.be(1);
+				expect(data.createActions.stolpersteine[0].person.lastName).to.be(importData.stolpersteine[1].person.lastName);	// 'Nachname 1'
+				stolpersteinToCreateId = data.createActions.stolpersteine[0].id;
+				expect(data.deleteActions.targetIds.length).to.be(1);
+				expect(data.deleteActions.targetIds[0]).to.be(stolpersteinToDeleteId);
+				done(err);
+			});
+		});
+	});
 });

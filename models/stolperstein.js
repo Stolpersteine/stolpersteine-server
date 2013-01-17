@@ -54,7 +54,7 @@ schema.statics.findExactMatch = function(source, stolperstein, callback) {
 	this.findOne({
 		"source.url": source.url, 
 		"source.name": source.name, 
-		"source.retrievedAt": source.retrievedAt, 
+//		"source.retrievedAt": source.retrievedAt, 
 		"person.firstName": stolperstein.person.firstName,
 		"person.lastName": stolperstein.person.lastName,
 		"location.street": stolperstein.location.street,
