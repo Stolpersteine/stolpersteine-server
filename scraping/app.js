@@ -3,11 +3,12 @@ var request = require('request'),
 	url = require('url'),
 	async = require('async');
 	
-var uri = url.parse('http://de.m.wikipedia.org/wiki/Liste_der_Stolpersteine_in_Berlin-Moabit');
+var uriSource = url.parse('http://de.m.wikipedia.org/wiki/Liste_der_Stolpersteine_in_Berlin-Moabit');
+var urlApi = 'http://127.0.0.1:3000/api';
 var userAgent = 'Stolpersteine/1.0 (http://option-u.com; admin@option-u.com)';
 var counter = 0;
 
-request({ uri:uri, headers: {'user-agent' : userAgent } }, function(error, response, body) {
+request({ uri:uriSource, headers: {'user-agent' : userAgent } }, function(error, response, body) {
   if (error && response.statusCode !== 200) {
     console.log('Error when contacting site');
 		return;
@@ -20,7 +21,7 @@ request({ uri:uri, headers: {'user-agent' : userAgent } }, function(error, respo
 		var stolpersteine = [];
 		
 		var source = { 
-			url: uri.href,
+			url: uriSource.href,
 			name: "Wikipedia",
 			retrievedAt: new Date(response.headers["date"])
 		}
@@ -46,7 +47,18 @@ request({ uri:uri, headers: {'user-agent' : userAgent } }, function(error, respo
 			});
 		}, function() {
 			console.log('counter = ' + counter + '/' + stolpersteine.length);
-			
+			var importData = {
+				source: source,
+				stolpersteine: stolpersteine
+			};
+			request.post({url: urlApi + '/imports', json: importData}, function(err, res, data) {
+				console.log('Import (' + response.statusCode + ' ' + err + ')');
+				console.log(data);
+				request.post({url: urlApi + '/imports/' + data.id + '/execute'}, function(err, res, data) {
+					console.log('Execute (' + response.statusCode + ' ' + err + ')');
+					console.log(data);
+				});
+			});
 		});
 	});
 });
@@ -57,7 +69,7 @@ function convertStolperstein($, tableRow, callback) {
 			
 	// Image
 	var imageTag = $(itemRows[0]).find('img');
-	stolperstein.imageUrl = uri.protocol + imageTag.attr('src');
+	stolperstein.imageUrl = uriSource.protocol + imageTag.attr('src');
 	stolperstein.imageUrl = stolperstein.imageUrl.replace('/100px-', '/1024px-'); // width
 			
 	// Person
