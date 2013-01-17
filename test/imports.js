@@ -240,7 +240,7 @@ describe('Import endpoint', function() {
 	});
 	
 	//////////////////////////////////////////////////////////////////////////////
-	describe.only('Import execution', function() {
+	describe('Import execution', function() {
 		var stolpersteinToRetainId, stolpersteinToDeleteId, stolpersteinToCreateId;
 		var importId;
 		
