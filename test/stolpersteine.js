@@ -226,7 +226,7 @@ describe('Stolpersteine endpoint', function() {
 	});
 
 	//////////////////////////////////////////////////////////////////////////////
-	describe.only('Search', function() {
+	describe('Search', function() {
 		var stolpersteinId;
 		
 		before(function(done) {
