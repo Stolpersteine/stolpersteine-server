@@ -224,4 +224,45 @@ describe('Stolpersteine endpoint', function() {
 			}); 
 		});
 	});
+
+	//////////////////////////////////////////////////////////////////////////////
+	describe.only('Search', function() {
+		var stolpersteinId;
+		
+		before(function(done) {
+			client.post('/api/stolpersteine', stolpersteinData, function(err, req, res, data) { 
+				stolpersteinId = data.id;
+				done(err);
+			}); 
+		});
+
+		after(function(done) {
+			client.del('/api/stolpersteine/' + stolpersteinId, function(err, req, res, data) {
+				done(err);
+			});
+		});
+
+		it('GET /api/stolpersteine?q=<non-matching keyword> should get a 200 response', function(done) {
+			client.get('/api/stolpersteine?q=test', function(err, req, res, data) { 
+				expect(err).to.be(null);
+				expect(res.statusCode).to.be(200);
+				expect(data).to.be.an(Array);
+				expect(data.length).to.be(0);
+				
+				done();
+			}); 
+		});
+
+		it('GET /api/stolpersteine?q=<matching first name> should get a 200 response', function(done) {
+			client.get('/api/stolpersteine?q=vorname', function(err, req, res, data) { 
+				expect(err).to.be(null);
+				expect(res.statusCode).to.be(200);
+				expect(data).to.be.an(Array);
+				expect(data.length).to.be(1);
+				expect(data[0].id).to.be(stolpersteinId);
+				
+				done();
+			}); 
+		});
+	});
 });

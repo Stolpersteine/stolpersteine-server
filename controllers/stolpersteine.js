@@ -12,7 +12,14 @@ exports.createStolperstein = function(req, res) {
 }
 
 exports.retrieveStolpersteine = function(req, res) {
-	models.stolperstein.Stolperstein.find(function(err, stolpersteine) {
+	var query = {};
+	if (typeof req.query.q !== 'undefined') {
+		query = {
+			"person.firstName": new RegExp(req.query.q + '*', "i")
+		};
+	}
+	
+	models.stolperstein.Stolperstein.find(query, function(err, stolpersteine) {
 		if (!err) {
 			// Convert to GeoJSON format
 //			for (var i = 0; i < stolpersteine.length; i++) {

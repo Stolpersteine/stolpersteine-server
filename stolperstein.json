@@ -1,7 +1,7 @@
 {
 	"person": {
-		"first": "Vorname",
-		"last": "Nachname"
+		"firstName": "Vorname 0",
+		"lastName": "Nachname 0"
 	},
 	"location": {
 		"street": "Straße 1",
@@ -16,6 +16,11 @@
 		"year": "2012",
 		"month": "11",
 		"date": "12"
+	},
+	"source": {
+		"url": "http://curl.example.com",
+		"name": "Curl Test",
+		"retrievedAt": "2013-01-06T13:21:35.003Z"
 	},
 	"description": "Beschreibung"
 }
