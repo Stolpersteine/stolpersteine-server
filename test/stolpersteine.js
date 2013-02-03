@@ -254,7 +254,19 @@ describe('Stolpersteine endpoint', function() {
 		});
 
 		it('GET /api/stolpersteine?q=<matching first name> should get a 200 response', function(done) {
-			client.get('/api/stolpersteine?q=vorname', function(err, req, res, data) { 
+			client.get('/api/stolpersteine?q=vor', function(err, req, res, data) { 
+				expect(err).to.be(null);
+				expect(res.statusCode).to.be(200);
+				expect(data).to.be.an(Array);
+				expect(data.length).to.be(1);
+				expect(data[0].id).to.be(stolpersteinId);
+				
+				done();
+			}); 
+		});
+
+		it('GET /api/stolpersteine?q=<matching last name> should get a 200 response', function(done) {
+			client.get('/api/stolpersteine?q=nach', function(err, req, res, data) { 
 				expect(err).to.be(null);
 				expect(res.statusCode).to.be(200);
 				expect(data).to.be.an(Array);

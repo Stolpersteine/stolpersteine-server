@@ -14,8 +14,12 @@ exports.createStolperstein = function(req, res) {
 exports.retrieveStolpersteine = function(req, res) {
 	var query = {};
 	if (typeof req.query.q !== 'undefined') {
+		var regex = new RegExp('^' + req.query.q + '.*', "i");
 		query = {
-			"person.firstName": new RegExp('^' + req.query.q + '.*', "i")
+			$or: [
+				{"person.lastName": regex},
+				{"person.firstName": regex}
+			]
 		};
 	}
 	
