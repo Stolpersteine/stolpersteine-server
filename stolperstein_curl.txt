@@ -1,7 +1,20 @@
-- GET
+local: http://127.0.0.1:3000/api
+remote: https://stolpersteine-optionu.rhcloud.com/api
+
+- Start servers
+mongod --dbpath ~/tmp/
+supervisor server.js
+mongo -> db client
+
+- Search
 curl -v http://127.0.0.1:3000/api/stolpersteine
+curl -v https://stolpersteine-optionu.rhcloud.com/api/stolpersteine
 
-- POST
+- Debug curl local
 curl -v -d @stolperstein.json -H "Content-Type: application/json" http://127.0.0.1:3000/api/stolpersteine
-
 curl -v -d @stolperstein_import.json -H "Content-Type: application/json" http://127.0.0.1:3000/api/imports
+
+- Import stolpersteine
+node scraping/app
+curl -v -d "" http://127.0.0.1:3000/api/imports/<id>/execute
+curl -v -d "" https://stolpersteine-optionu.rhcloud.com/api/imports/<id>/execute

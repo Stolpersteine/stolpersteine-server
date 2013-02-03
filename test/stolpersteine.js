@@ -6,6 +6,7 @@ var client = restify.createJsonClient({
 	version: '*',
 	gzip: true,
 	url: 'http://127.0.0.1:3000'
+//	url: 'https://stolpersteine-optionu.rhcloud.com/api'
 });
 
 var stolpersteinData = {

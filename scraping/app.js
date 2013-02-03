@@ -1,15 +1,22 @@
+// Problems:
+// - Alexander Fromm, Kirchstr. 7 > wrong coords
+// - Wolff	Bundesratufer 1 (91, 92) -> not found
+// - Marianne Peukert, Spenerstraße Ecke Melanchtonstraße -> invalid zip
+
 var request = require('request'),
 	jsdom = require('jsdom'),
 	url = require('url'),
 	async = require('async');
 	
 var uriSource = url.parse('http://de.m.wikipedia.org/wiki/Liste_der_Stolpersteine_in_Berlin-Moabit');
-var urlApi = 'http://127.0.0.1:3000/api';
+//var urlApi = 'http://127.0.0.1:3000/api';
+var urlApi = 'https://stolpersteine-optionu.rhcloud.com/api';
 var userAgent = 'Stolpersteine/1.0 (http://option-u.com; admin@option-u.com)';
+var additionalGeoHint = ',Moabit'
 var counter = 0;
 
 request({ uri:uriSource, headers: {'user-agent' : userAgent } }, function(error, response, body) {
-  if (error && response.statusCode !== 200) {
+  if (error) {
     console.log('Error when contacting site');
 		return;
   }
@@ -29,35 +36,37 @@ request({ uri:uriSource, headers: {'user-agent' : userAgent } }, function(error,
 		var $ = window.jQuery;
 		var tableRows = $('table.wikitable.sortable tr');
 		tableRows = tableRows.slice(1, tableRows.length); // first item is table header row
-		tableRows = tableRows.slice(0, 5);
-		async.forEachLimit(tableRows, 3, function(tableRow, callback) {
+		console.log('num table rows: ' + tableRows.length);
+//		tableRows = tableRows.slice(91, 92);	// restrict test data
+		async.forEachLimit(tableRows, 1, function(tableRow, callback) {
 			async.waterfall([
 				convertStolperstein.bind(undefined, $, tableRow),
 				patchStolperstein,
-				function(stolperstein, callback) { addSourceToStolperstein(stolperstein, source, callback); },
+				addSourceToStolperstein.bind(undefined, source),
 				geocodeStolperstein
 			], function(err, stolperstein) {
 				if (!err) {
 					stolpersteine.push(stolperstein);
-					logStolperstein(stolperstein);
 				} else {
-					console.log('Error processing stolperstein');
+					console.log('Error processing stolperstein (' + err + ')');
 				}
-				callback();
+				callback(err);
 			});
 		}, function() {
+			console.log('Done processing stolpersteine');
 			console.log('counter = ' + counter + '/' + stolpersteine.length);
 			var importData = {
 				source: source,
 				stolpersteine: stolpersteine
 			};
+			console.log('importData = ' + importData)
 			request.post({url: urlApi + '/imports', json: importData}, function(err, res, data) {
 				console.log('Import (' + response.statusCode + ' ' + err + ')');
 				console.log(data);
-				request.post({url: urlApi + '/imports/' + data.id + '/execute'}, function(err, res, data) {
-					console.log('Execute (' + response.statusCode + ' ' + err + ')');
-					console.log(data);
-				});
+//				request.post({url: urlApi + '/imports/' + data.id + '/execute'}, function(err, res, data) {
+//					console.log('Execute (' + response.statusCode + ' ' + err + ')');
+//					console.log(data);
+//				});
 			});
 		});
 	});
@@ -66,11 +75,6 @@ request({ uri:uriSource, headers: {'user-agent' : userAgent } }, function(error,
 function convertStolperstein($, tableRow, callback) {
 	var stolperstein = {};
 	var itemRows = $(tableRow).find('td');
-			
-	// Image
-	var imageTag = $(itemRows[0]).find('img');
-	stolperstein.imageUrl = uriSource.protocol + imageTag.attr('src');
-	stolperstein.imageUrl = stolperstein.imageUrl.replace('/100px-', '/1024px-'); // width
 			
 	// Person
 	var nameSpan = $(itemRows[1]).find('span');
@@ -82,6 +86,12 @@ function convertStolperstein($, tableRow, callback) {
 		lastName: names[0].trim(),
 		firstName: names[1].trim()
 	};
+	console.log('- ' + stolperstein.person.lastName + ', ' + stolperstein.person.firstName + ' (converting...)');
+
+	// Image
+	var imageTag = $(itemRows[0]).find('img');
+	stolperstein.imageUrl = uriSource.protocol + imageTag.attr('src');
+	stolperstein.imageUrl = stolperstein.imageUrl.replace('/100px-', '/1024px-'); // width
 			
 	// Location
 	stolperstein.location = {
@@ -115,21 +125,34 @@ function convertStolperstein($, tableRow, callback) {
 		}
 	}
 	
+	console.log('- ' + stolperstein.person.lastName + ', ' + stolperstein.person.firstName + ' (converting done)');
 	callback(null, stolperstein);
 }
 
 function patchStolperstein(stolperstein, callback) {
+	console.log('- ' + stolperstein.person.lastName + ', ' + stolperstein.person.firstName + ' (patching...)');
+	
 	stolperstein.location.street = stolperstein.location.street.replace("(heute Eingang U-Bahnhof Turmstraße)", "");
+	stolperstein.location.street = stolperstein.location.street.replace("Spenerstraße Ecke Melanchtonstraße", "Spenerstr. 14");
+	stolperstein.location.street = stolperstein.location.street.replace("Bundesratufer 1", "Bundesratufer 2");
+
+	console.log('- ' + stolperstein.person.lastName + ', ' + stolperstein.person.firstName + ' (patching done)');
 	callback(null, stolperstein);
 }
 
-function addSourceToStolperstein(stolperstein, source, callback) {
+function addSourceToStolperstein(source, stolperstein, callback) {
+	console.log('- ' + stolperstein.person.lastName + ', ' + stolperstein.person.firstName + ' (adding source...)');
+	
 	stolperstein.source = source;
+
+	console.log('- ' + stolperstein.person.lastName + ', ' + stolperstein.person.firstName + ' (adding source done)');
 	callback(null, stolperstein);
 }
 
 function geocodeStolperstein(stolperstein, callback) {
-	geocodeAddressMemoized(stolperstein.location.street, stolperstein.location.city, function(result) {
+	console.log('- ' + stolperstein.person.lastName + ', ' + stolperstein.person.firstName + ' (geocoding...)');
+	
+	geocodeAddressMemoized(stolperstein.location.street, stolperstein.location.city, function(err, result) {
 		if (result) {
 			stolperstein.location.zipCode = result.zipCode;
 			stolperstein.location.coordinates = {
@@ -137,7 +160,8 @@ function geocodeStolperstein(stolperstein, callback) {
 				latitude: result.latitude
 			}
 		}
-		callback(null, stolperstein);
+		console.log('- ' + stolperstein.person.lastName + ', ' + stolperstein.person.firstName + ' (geocoding done, err: ' + err + ')');
+		callback(err, stolperstein);
 	});
 }
 
@@ -148,19 +172,19 @@ function geocodeAddressRateLimited(street, city, callback)	{
 
 function geocodeAddress(street, city, callback) {
 	counter++;
-	var street = encodeURIComponent(street);
-	var city = encodeURIComponent(city);
-	var uriGeocode = 'http://maps.googleapis.com/maps/api/geocode/json?sensor=false&components=country:de&address=' + street + ',' + city;
+	var encodedStreet = encodeURIComponent(street);
+	var encodedCity = encodeURIComponent(city);
+	var uriGeocode = 'http://maps.googleapis.com/maps/api/geocode/json?sensor=false&components=country:de&address=' + encodedStreet + ',' + encodedCity + additionalGeoHint;
 	request({ uri:uriGeocode, headers: {'user-agent' : userAgent } }, function(error, response, body) {
-	  if (error && response.statusCode !== 200) {
-	    console.log('Error when contacting site');
-			return;
+	  if (error) {
+	    console.log('Error when contacting maps.googleapis.com site');
+			callback(new Error('Error result geocoding'));
 	  }
 			
 		body = JSON.parse(body);
 		if (body.results.length === 0) {
-	    console.log('Error result');
-			return;
+	    console.log('Error result geocoding ' + body + '(' + uriGeocode + ')' );
+			callback(new Error('Error result geocoding'));
 		}
 		
 		var zipCode;
@@ -179,10 +203,18 @@ function geocodeAddress(street, city, callback) {
 			}
 		}
 		
-		callback({
+		var longitude = body.results[0].geometry.location.lng;
+		var latitude = body.results[0].geometry.location.lat;
+		
+		if (zipCode === undefined || !longitude || !latitude) {
+			console.log('Missing valid geocode data ' + street + ', ' + city);
+			callback(new Error('Error result geocoding'));
+		}
+		
+		callback(null, {
 			zipCode: zipCode,
-			longitude: body.results[0].geometry.location.lng,
-			latitude: body.results[0].geometry.location.lat
+			longitude: longitude,
+			latitude: latitude
 		});
 	})
 }
