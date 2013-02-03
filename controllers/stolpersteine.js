@@ -15,7 +15,7 @@ exports.retrieveStolpersteine = function(req, res) {
 	var query = {};
 	if (typeof req.query.q !== 'undefined') {
 		query = {
-			"person.firstName": new RegExp('^' + req.query.q + '*', "i")
+			"person.firstName": new RegExp('^' + req.query.q + '.*', "i")
 		};
 	}
 	
