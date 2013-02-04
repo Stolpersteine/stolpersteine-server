@@ -18,7 +18,9 @@ exports.retrieveStolpersteine = function(req, res) {
 		query = {
 			$or: [
 				{"person.lastName": regex},
-				{"person.firstName": regex}
+				{"person.firstName": regex},
+				{"location.street": regex},
+				{"location.zipCode": regex}
 			]
 		};
 	}
