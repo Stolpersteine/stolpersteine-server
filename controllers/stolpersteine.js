@@ -14,7 +14,7 @@ exports.createStolperstein = function(req, res) {
 exports.retrieveStolpersteine = function(req, res) {
 	var query = {};
 	if (typeof req.query.q !== 'undefined') {
-		var regex = new RegExp('^' + req.query.q + '.*', "i");
+		var regex = new RegExp('^' + req.query.q, "i");
 		query = {
 			$or: [
 				{"person.lastName": regex},
@@ -24,13 +24,16 @@ exports.retrieveStolpersteine = function(req, res) {
 			]
 		};
 	}
+
+	if (typeof req.query.street !== 'undefined') {
+		var regex = new RegExp('^' + req.query.street, "i");
+		query = {
+			"location.street": regex
+		};
+	}
 	
 	models.stolperstein.Stolperstein.find(query, function(err, stolpersteine) {
 		if (!err) {
-			// Convert to GeoJSON format
-//			for (var i = 0; i < stolpersteine.length; i++) {
-//				stolpersteine[i] = stolpersteine[i].toGeoJSON();
-//			};
 			res.send(stolpersteine);
 		} else {
 			res.send(400, err);
