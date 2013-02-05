@@ -242,8 +242,8 @@ describe('Stolpersteine endpoint', function() {
 			});
 		});
 
-		it('GET /api/stolpersteine?q=<non-matching keyword> should get a 200 response', function(done) {
-			client.get('/api/stolpersteine?q=test', function(err, req, res, data) { 
+		it('GET /api/stolpersteine?q=<non-matching keyword> should not find any data', function(done) {
+			client.get('/api/stolpersteine?q=xyz', function(err, req, res, data) { 
 				expect(err).to.be(null);
 				expect(res.statusCode).to.be(200);
 				expect(data).to.be.an(Array);
@@ -253,49 +253,81 @@ describe('Stolpersteine endpoint', function() {
 			}); 
 		});
 
-		it('GET /api/stolpersteine?q=<matching first name> should get a 200 response', function(done) {
+		it('GET /api/stolpersteine?q=<matching first name> should find data', function(done) {
 			client.get('/api/stolpersteine?q=vor', function(err, req, res, data) { 
 				expect(err).to.be(null);
 				expect(res.statusCode).to.be(200);
 				expect(data).to.be.an(Array);
-				expect(data.length).to.be(1);
-				expect(data[0].id).to.be(stolpersteinId);
+				expect(data.length).to.be.greaterThan(0);
+				
+				var containsId = false;
+				for(var i = 0, len = data.length; i < len; i++) {
+					if (data[i].id === stolpersteinId) {
+						containsId = true;
+				  	break;
+					}
+				}
+				expect(containsId).to.be(true);
 				
 				done();
 			}); 
 		});
 
-		it('GET /api/stolpersteine?q=<matching last name> should get a 200 response', function(done) {
+		it('GET /api/stolpersteine?q=<matching last name> should find data', function(done) {
 			client.get('/api/stolpersteine?q=nach', function(err, req, res, data) { 
 				expect(err).to.be(null);
 				expect(res.statusCode).to.be(200);
 				expect(data).to.be.an(Array);
-				expect(data.length).to.be(1);
-				expect(data[0].id).to.be(stolpersteinId);
+				expect(data.length).to.be.greaterThan(0);
+				
+				var containsId = false;
+				for(var i = 0, len = data.length; i < len; i++) {
+					if (data[i].id === stolpersteinId) {
+						containsId = true;
+				  	break;
+					}
+				}
+				expect(containsId).to.be(true);
 				
 				done();
 			}); 
 		});
 
-		it('GET /api/stolpersteine?q=<matching street> should get a 200 response', function(done) {
+		it('GET /api/stolpersteine?q=<matching street> should find data', function(done) {
 			client.get('/api/stolpersteine?q=stra', function(err, req, res, data) { 
 				expect(err).to.be(null);
 				expect(res.statusCode).to.be(200);
 				expect(data).to.be.an(Array);
-				expect(data.length).to.be(1);
-				expect(data[0].id).to.be(stolpersteinId);
+				expect(data.length).to.be.greaterThan(0);
+				
+				var containsId = false;
+				for(var i = 0, len = data.length; i < len; i++) {
+					if (data[i].id === stolpersteinId) {
+						containsId = true;
+				  	break;
+					}
+				}
+				expect(containsId).to.be(true);
 				
 				done();
 			}); 
 		});
 
-		it('GET /api/stolpersteine?q=<matching zip code> should get a 200 response', function(done) {
+		it('GET /api/stolpersteine?q=<matching zip code> should find data', function(done) {
 			client.get('/api/stolpersteine?q=10000', function(err, req, res, data) { 
 				expect(err).to.be(null);
 				expect(res.statusCode).to.be(200);
 				expect(data).to.be.an(Array);
-				expect(data.length).to.be(1);
-				expect(data[0].id).to.be(stolpersteinId);
+				expect(data.length).to.be.greaterThan(0);
+				
+				var containsId = false;
+				for(var i = 0, len = data.length; i < len; i++) {
+					if (data[i].id === stolpersteinId) {
+						containsId = true;
+				  	break;
+					}
+				}
+				expect(containsId).to.be(true);
 				
 				done();
 			}); 
