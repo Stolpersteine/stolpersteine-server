@@ -276,5 +276,29 @@ describe('Stolpersteine endpoint', function() {
 				done();
 			}); 
 		});
+
+		it('GET /api/stolpersteine?q=<matching street> should get a 200 response', function(done) {
+			client.get('/api/stolpersteine?q=stra', function(err, req, res, data) { 
+				expect(err).to.be(null);
+				expect(res.statusCode).to.be(200);
+				expect(data).to.be.an(Array);
+				expect(data.length).to.be(1);
+				expect(data[0].id).to.be(stolpersteinId);
+				
+				done();
+			}); 
+		});
+
+		it('GET /api/stolpersteine?q=<matching zip code> should get a 200 response', function(done) {
+			client.get('/api/stolpersteine?q=10000', function(err, req, res, data) { 
+				expect(err).to.be(null);
+				expect(res.statusCode).to.be(200);
+				expect(data).to.be.an(Array);
+				expect(data.length).to.be(1);
+				expect(data[0].id).to.be(stolpersteinId);
+				
+				done();
+			}); 
+		});
 	});
 });
