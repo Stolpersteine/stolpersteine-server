@@ -6,7 +6,8 @@ var express = require('express')
   , http = require('http')
   , path = require('path')
   , mongoose = require('mongoose')
-	, controllers = require('./controllers');
+	, controllers = require('./controllers')
+	, middleware = require('./middleware');
 
 var app = express();
 
@@ -17,9 +18,10 @@ app.configure(function() {
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
   app.use(express.logger('dev'));
-  app.use(express.bodyParser());
-  app.use(express.methodOverride());
-	app.use(express.compress());
+  app.use('/api', express.bodyParser());
+  app.use('/api', express.methodOverride());
+	app.use('/api', express.compress());
+	app.use('/api', middleware.filter());
   app.use(app.router);
   app.use(express.static(path.join(__dirname, 'public')));
 });
