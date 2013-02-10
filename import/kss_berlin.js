@@ -27,7 +27,7 @@ request({ uri:uriSource, headers: {'user-agent' : userAgent } }, function(error,
 		console.log('Found ' + result.markers.$.cnt + ' stolpersteine in ' + result.markers.marker.length + ' markers');
 		var markers = result.markers.marker;
 		markers = markers.slice(0, 10);	// restrict test data
-		async.forEachLimit(result.markers.marker, 1, function(marker, callback) {
+		async.forEachLimit(markers, 1, function(marker, callback) {
 			console.log(marker.$);
 			callback();
 		});
