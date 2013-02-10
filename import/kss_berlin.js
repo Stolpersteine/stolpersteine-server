@@ -8,6 +8,11 @@ var uriSource = url.parse('http://www.stolpersteine-berlin.de/st_interface/xml/g
 var urlApi = 'https://stolpersteine-optionu.rhcloud.com/api';
 var userAgent = 'Stolpersteine/1.0 (http://option-u.com; admin@option-u.com)';
 
+var source = { 
+	url: uriSource.href,
+	name: "Koordinierungsstelle Stolpersteine Berlin"
+}
+
 console.log('Loading source data...');
 request({ uri:uriSource, headers: {'user-agent' : userAgent } }, function(error, response, body) {
 	console.log('Loading source data done');
@@ -25,10 +30,24 @@ request({ uri:uriSource, headers: {'user-agent' : userAgent } }, function(error,
 	  }
 
 		console.log('Found ' + result.markers.$.cnt + ' stolpersteine in ' + result.markers.marker.length + ' markers');
+		var stolpersteine = [];
+		source.retrievedAt = 	new Date(response.headers["date"]);
 		var markers = result.markers.marker;
 		markers = markers.slice(0, 10);	// restrict test data
 		async.forEachLimit(markers, 1, function(marker, callback) {
-			console.log(marker.$);
+			var location = {
+				street : marker.$.adresse,
+				city : "Berlin",
+				coordinates : {
+					longitude: marker.$.lng,
+					latitude: marker.$.lat
+				}
+			};
+			
+			var stolperstein = {};
+			stolperstein.location = location;
+			stolperstein.source = source;
+			console.log(stolperstein);
 			callback();
 		});
 	});
