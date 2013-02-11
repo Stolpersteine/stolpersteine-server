@@ -38,6 +38,8 @@ request({ uri:uriSource, headers: {'user-agent' : userAgent } }, function(error,
 			var location = {
 				street : marker.$.adresse,
 				city : "Berlin",
+				sublocality1 : marker.$.bezirk,
+				sublocality2 : marker.$.ortsteil,
 				coordinates : {
 					longitude: marker.$.lng,
 					latitude: marker.$.lat
