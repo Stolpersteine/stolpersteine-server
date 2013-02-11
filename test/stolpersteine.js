@@ -18,9 +18,11 @@ var stolpersteinData = {
 		street: "Straße 1",
 		zipCode: "10000",
 		city: "Stadt",
+		sublocalityLevel1: "Bezirk",
+		sublocalityLevel2: "Ortsteil",
 		coordinates: {
-			longitude: "1.0",
-			latitude: "1.0"
+			longitude: 1.0,
+			latitude: 1.0
 		}
 	},
 	source: {
@@ -53,6 +55,19 @@ describe('Stolpersteine endpoint', function() {
 				expect(res.statusCode).to.be(200);
 				expect(data).to.be.an(Object);
 				expect(data.id).to.be(stolpersteinId);
+				expect(data.person.firstName).to.be(stolpersteinData.person.firstName);
+				expect(data.person.lastName).to.be(stolpersteinData.person.lastName);
+				expect(data.location.street).to.be(stolpersteinData.location.street);
+				expect(data.location.zipCode).to.be(stolpersteinData.location.zipCode);
+				expect(data.location.city).to.be(stolpersteinData.location.city);
+				expect(data.location.sublocalityLevel1).to.be(stolpersteinData.location.sublocalityLevel1);
+				expect(data.location.sublocalityLevel2).to.be(stolpersteinData.location.sublocalityLevel2);
+				expect(data.location.coordinates.longitude).to.be(stolpersteinData.location.coordinates.longitude);
+				expect(data.location.coordinates.latitude).to.be(stolpersteinData.location.coordinates.latitude);
+				expect(data.source.url).to.be(stolpersteinData.source.url);
+				expect(data.source.name).to.be(stolpersteinData.source.name);
+				expect(data.source.retrievedAt).not.to.be(null);
+				expect(data.description).to.be(stolpersteinData.description);
 				expect(data.__v).to.be(undefined);
 				done();
 			}); 
