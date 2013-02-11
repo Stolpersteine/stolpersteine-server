@@ -9,8 +9,8 @@ var schema = new mongoose.Schema({
 		street: { type: String, required: true, trim: true },
 		zipCode: { type: String, required: true, trim: true },
 		city: { type: String, required: true, trim: true },
-		sublocalityLevel1: { type: String, trim: true },
-		sublocalityLevel2: { type: String, trim: true },
+		sublocality1: { type: String, trim: true },
+		sublocality2: { type: String, trim: true },
 		coordinates: {
 			longitude: { type: Number, required: true },
 			latitude: { type: Number, required: true }
