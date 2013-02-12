@@ -3,11 +3,11 @@ var mongoose = require('mongoose');
 var schema = new mongoose.Schema({
 	person: {
 		firstName: { type: String, required: true, trim: true },
-		lastName: { type: String, required: true, trim: true }
+		lastName: { type: String/*, required: true*/, trim: true }
 	},
 	location: {
 		street: { type: String, required: true, trim: true },
-		zipCode: { type: String, required: true, trim: true },
+		zipCode: { type: String/*, required: true*/, trim: true },
 		city: { type: String, required: true, trim: true },
 		sublocality1: { type: String, trim: true },
 		sublocality2: { type: String, trim: true },
