@@ -36,13 +36,14 @@ request({ uri:uriSource, headers: {'user-agent' : userAgent } }, function(error,
 		var stolpersteine = [];
 		source.retrievedAt = 	new Date(response.headers["date"]);
 		var markers = result.markers.marker;
-//		markers = markers.slice(250, 260); // restrict test data
+//		markers = markers.slice(0, 1); // restrict test data
 		for (var j = 0; j < markers.length; j++) {
 			var marker = markers[j];
 			
 			var location = {
 				street : marker.$.adresse,
 				city : "Berlin",
+				zipCode : '',
 				sublocality1 : marker.$.bezirk,
 				sublocality2 : marker.$.ortsteil,
 				coordinates : {
@@ -77,18 +78,29 @@ request({ uri:uriSource, headers: {'user-agent' : userAgent } }, function(error,
 			}
 		};
 		console.log('Converted ' + stolpersteine.length + ' stolperstein(e)');
+		var importData = {
+			source: source,
+			stolpersteine: stolpersteine
+		};
+		console.log('importData = ' + importData)
+		request.post({url: urlApi + '/imports', json: importData}, function(err, res, data) {
+			console.log('Import (' + response.statusCode + ' ' + err + ')');
+			console.log(data);
+		});
 	});
 });
 
 function convertStolperstein(person, location, source) {
-	return stolperstein = {
+	var stolperstein = {
 		person : {
-			firstName : person.name,
+			firstName : person.$.name,
 			lastName : ''
 		},
 		location : location,
 		source : source
 	};
+//	console.log(stolperstein.person.firstName);
+	return stolperstein;
 }
 
 function patchStolperstein(stolperstein, callback) {

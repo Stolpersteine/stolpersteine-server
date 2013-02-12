@@ -63,10 +63,6 @@ request({ uri:uriSource, headers: {'user-agent' : userAgent } }, function(error,
 			request.post({url: urlApi + '/imports', json: importData}, function(err, res, data) {
 				console.log('Import (' + response.statusCode + ' ' + err + ')');
 				console.log(data);
-//				request.post({url: urlApi + '/imports/' + data.id + '/execute'}, function(err, res, data) {
-//					console.log('Execute (' + response.statusCode + ' ' + err + ')');
-//					console.log(data);
-//				});
 			});
 		});
 	});
