@@ -27,9 +27,7 @@ var schema = new mongoose.Schema({
 		url: { type: String, trim: true, required: true },
 		name: { type: String, trim: true, required: true },
 		retrievedAt: { type: Date, required: true }
-	},
-	createdAt: { type: Date },
-	updatedAt: { type: Date }
+	}
 });
 
 schema.virtual('id').get(function(){
@@ -67,17 +65,6 @@ schema.statics.findExactMatch = function(source, stolperstein, callback) {
 		"description": stolperstein.description
 	}, callback);
 }
-
-// Automatically maintain created and updated dates
-schema.pre('save', function (next) {
-	// This overwrites model data for createdAt and updatedAt
-	if (this.isNew) {
-		this.createdAt = this.updatedAt = new Date;
-	} else {
-		this.updatedAt = new Date;
-	}
-	next();
-});
 
 exports.Stolperstein = mongoose.model('Stolperstein', schema, 'stolpersteine');
 exports.StolpersteinSchema = schema;
