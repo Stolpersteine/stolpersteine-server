@@ -32,11 +32,17 @@ exports.retrieveStolpersteine = function(req, res) {
 		};
 	}
 
-	console.time('t1');	
-	models.stolperstein.Stolperstein.find(query).lean().exec(function(err, stolpersteine) {
+	// Use lean option to improve speed
+	console.time('t1');
+	models.stolperstein.Stolperstein.find(query).select('-__v').lean().exec(function(err, stolpersteine) {
 		console.timeEnd('t1');
 		console.time('t2');	
 		if (!err) {
+			for (var i = 0; i < stolpersteine.length; i++) {
+				var stolperstein = stolpersteine[i];
+				stolperstein.id = stolperstein._id;
+				delete stolperstein._id;
+			}
 			res.send(stolpersteine);
 		} else {
 			res.send(400, err);
