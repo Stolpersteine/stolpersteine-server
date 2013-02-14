@@ -31,13 +31,17 @@ exports.retrieveStolpersteine = function(req, res) {
 			"location.street": regex
 		};
 	}
-	
+
+	console.time('t1');	
 	models.stolperstein.Stolperstein.find(query, function(err, stolpersteine) {
+		console.timeEnd('t1');
+		console.time('t2');	
 		if (!err) {
 			res.send(stolpersteine);
 		} else {
 			res.send(400, err);
 		}
+		console.timeEnd('t2');
 	});
 }
 
