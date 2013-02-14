@@ -2,8 +2,6 @@
  * Stolpersteine
  */
  
-require('nodetime').profile();
-
 var express = require('express')
   , http = require('http')
   , path = require('path')

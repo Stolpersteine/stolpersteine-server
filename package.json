@@ -22,8 +22,7 @@
 		"jsdom": "0.3.x",
 		"xml2js": "0.2.x",
 		"request": "2.12.x",
-		"async": "0.1.x",
-		"nodetime": "0.8.x"
+		"async": "0.1.x"
   },
 
   "devDependencies": {
