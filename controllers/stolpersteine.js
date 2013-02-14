@@ -33,7 +33,7 @@ exports.retrieveStolpersteine = function(req, res) {
 	}
 
 	console.time('t1');	
-	models.stolperstein.Stolperstein.find(query, function(err, stolpersteine) {
+	models.stolperstein.Stolperstein.find(query).lean().exec(function(err, stolpersteine) {
 		console.timeEnd('t1');
 		console.time('t2');	
 		if (!err) {
