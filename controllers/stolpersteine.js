@@ -36,7 +36,8 @@ exports.retrieveStolpersteine = function(req, res) {
 	console.time('t1');
 	models.stolperstein.Stolperstein.find(query).select('-__v').lean().batchSize(100).exec(function(err, stolpersteine) {
 		console.timeEnd('t1');
-		console.time('t2');	
+		console.time('t2');
+		console.log(stolpersteine.length);
 		if (!err) {
 			for (var i = 0; i < stolpersteine.length; i++) {
 				var stolperstein = stolpersteine[i];
