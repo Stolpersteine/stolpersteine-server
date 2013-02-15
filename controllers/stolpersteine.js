@@ -34,7 +34,7 @@ exports.retrieveStolpersteine = function(req, res) {
 
 	// Use lean option to improve speed
 	console.time('t1');
-	models.stolperstein.Stolperstein.find(query).select('-__v').lean().exec(function(err, stolpersteine) {
+	models.stolperstein.Stolperstein.find(query).select('-__v').lean().batchSize(100).exec(function(err, stolpersteine) {
 		console.timeEnd('t1');
 		console.time('t2');	
 		if (!err) {
