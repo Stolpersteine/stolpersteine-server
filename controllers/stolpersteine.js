@@ -37,7 +37,7 @@ exports.retrieveStolpersteine = function(req, res) {
 	var stream = models.stolperstein.Stolperstein.find(query).select('-__v').lean().batchSize(100).stream();
 	stream.on('data', function(doc) {
 		console.log('data');
-		res.write(JSON.stringify(stolpersteine));
+		res.write(JSON.stringify(doc));
 	}).on('err', function(err) {
 		console.log('err');
 	}).on('close', function() {
