@@ -33,23 +33,16 @@ exports.retrieveStolpersteine = function(req, res) {
 	}
 
 	// Use lean option to improve speed
-	console.time('t1');
 	res.type('application/json');
-	models.stolperstein.Stolperstein.find(query).select('-__v').lean().exec(function(err, stolpersteine) {
-		console.timeEnd('t1');
-		console.time('t2');	
-		if (!err) {
-			for (var i = 0; i < stolpersteine.length; i++) {
-				var stolperstein = stolpersteine[i];
-				stolperstein.id = stolperstein._id;
-				delete stolperstein._id;
-			}
-			res.write(JSON.stringify(stolpersteine));
-			res.end();
-		} else {
-			res.send(400, err);
-		}
-		console.timeEnd('t2');
+	var stream = models.stolperstein.Stolperstein.find(query).select('-__v').lean().batchSize(100).stream();
+	stream.on('data', function(doc) {
+		console.log('data');
+		res.write(JSON.stringify(doc));
+	}).on('err', function(err) {
+		console.log('err');
+	}).on('close', function() {
+		console.log('close');
+		res.end();
 	});
 }
 
