@@ -36,12 +36,10 @@ exports.retrieveStolpersteine = function(req, res) {
 	console.time('t1');
 	var stream = models.stolperstein.Stolperstein.find(query).select('-__v').lean().batchSize(100).stream();
 	stream.on('data', function(doc) {
-		console.log('data');
 		res.write(JSON.stringify(doc));
-	}).on('err', function(err) {
-		console.log('err');
 	}).on('close', function() {
-		console.log('close');
+		res.end();
+	}).on('err', function(err) {
 		res.end();
 	});
 }
