@@ -11,6 +11,8 @@ var express = require('express')
 
 var app = express();
 
+console.log('env = ' + app.get('env'));
+
 app.configure(function() {
   app.set('port', process.env.OPENSHIFT_INTERNAL_PORT || 3000);
   app.set('host', process.env.OPENSHIFT_INTERNAL_IP || "localhost");
