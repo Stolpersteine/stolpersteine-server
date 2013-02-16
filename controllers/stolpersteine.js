@@ -37,9 +37,6 @@ exports.retrieveStolpersteine = function(req, res) {
 	var stream = models.stolperstein.Stolperstein.find(query).select('-__v').lean().stream();
 	var hasWritten = false;
 	stream.on('data', function(stolperstein) {
-		stolperstein.id = stolperstein._id;
-		delete stolperstein._id;
-		
 		var replacer = res.app.get('json replacer') || null;
 		var spaces = res.app.get('json spaces') || null;
 		res.write(JSON.stringify(stolperstein, replacer, spaces));
