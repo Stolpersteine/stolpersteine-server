@@ -32,14 +32,35 @@ exports.retrieveStolpersteine = function(req, res) {
 		};
 	}
 
-	// Use lean option and streaming to improve speed
+	// Manual streaming to improve speed
 	res.type('application/json');
 	var stream = models.stolperstein.Stolperstein.find(query).select('-__v').lean().stream();
-	stream.on('data', function(doc) {
-		res.write(JSON.stringify(doc));
+	var hasWritten = false;
+	stream.on('data', function(stolperstein) {
+	  if (!hasWritten) {
+	    hasWritten = true;
+			res.write('[');
+		} else {
+			res.write(',');
+		}
+		
+		stolperstein.id = stolperstein._id;
+		delete stolperstein._id;
+		
+		var replacer = res.app.get('json replacer') || null;
+		var spaces = res.app.get('json spaces') || null;
+		res.write(JSON.stringify(stolperstein, replacer, spaces));
 	}).on('err', function(err) {
+	  if (!hasWritten) {
+			res.write('[');
+		}
+		res.write(']');
 		res.end();
 	}).on('close', function() {
+	  if (!hasWritten) {
+			res.write('[');
+		}
+		res.write(']');
 		res.end();
 	});
 }
