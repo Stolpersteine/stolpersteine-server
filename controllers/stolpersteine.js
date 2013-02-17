@@ -45,18 +45,30 @@ exports.retrieveStolpersteine = function(req, res) {
 		stringify = JSON.stringify;
 	}
 	
-	res.write('[');
 	var stream = models.stolperstein.Stolperstein.find(query).select('-__v').lean().stream();
+	var hasWritten = false;
 	stream.on('data', function(stolperstein) {
 		stolperstein.id = stolperstein._id;
 		delete stolperstein._id;
 		
+	  if (!hasWritten) {
+	    hasWritten = true;
+			res.write('[');
+		} else {
+			res.write(',');
+		}		
+		
 		res.write(stringify(stolperstein));
-		res.write(',');
 	}).on('err', function(err) {
+	  if (!hasWritten) {
+			res.write('[');
+		}
 		res.write(']');
 		res.end();
 	}).on('close', function() {
+	  if (!hasWritten) {
+			res.write('[');
+		}
 		res.write(']');
 		res.end();
 	});
