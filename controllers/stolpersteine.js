@@ -36,13 +36,21 @@ exports.retrieveStolpersteine = function(req, res) {
 	res.type('application/json');
 	var stream = models.stolperstein.Stolperstein.find(query).select('-__v').lean().stream();
 	var hasWritten = false;
-	var replacer = res.app.get('json replacer') || null;
-	var spaces = res.app.get('json spaces') || null;
+	var stringify;
+	if (res.app.get('env') === 'development') {
+		var replacer = res.app.get('json replacer') || null;
+		var spaces = res.app.get('json spaces') || null;
+		stringify = function(stolperstein) {
+			return JSON.stringify(stolperstein, replacer, spaces)
+		};
+	} else {
+		stringify = JSON.stringify;
+	}
 	stream.on('data', function(stolperstein) {
 		stolperstein.id = stolperstein._id;
 		delete stolperstein._id;
 		
-		res.write(JSON.stringify(stolperstein, replacer, spaces));
+		res.write(stringify(stolperstein));
 	}).on('err', function(err) {
 		res.end();
 	}).on('close', function() {
