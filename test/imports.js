@@ -66,6 +66,7 @@ describe('Import endpoint', function() {
 			client.get('/api/imports/' + importId, function(err, req, res, data) { 
 				expect(err).to.be(null);
 				expect(res.statusCode).to.be(200);
+				expect(res.headers['content-type']).to.be('application/json; charset=utf-8');
 				expect(data).to.be.an(Object);
 				expect(data.id).to.be(importId);
 				expect(data.__v).to.be(undefined);

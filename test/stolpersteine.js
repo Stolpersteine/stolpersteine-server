@@ -53,6 +53,7 @@ describe('Stolpersteine endpoint', function() {
 			client.get('/api/stolpersteine/' + stolpersteinId, function(err, req, res, data) { 
 				expect(err).to.be(null);
 				expect(res.statusCode).to.be(200);
+				expect(res.headers['content-type']).to.be('application/json; charset=utf-8');
 				expect(data).to.be.an(Object);
 				expect(data.id).to.be(stolpersteinId);
 				expect(data.person.firstName).to.be(stolpersteinData.person.firstName);
