@@ -33,6 +33,18 @@ var stolpersteinData = {
 	description: "aaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 };
 
+function containsId(stolpersteine, id) {
+	var containsId = false;
+	for (var i = 0, len = stolpersteine.length; i < len; i++) {
+		if (stolpersteine[i].id === id) {
+			containsId = true;
+	  	break;
+		}
+	}
+	
+	return containsId;
+}
+
 describe('Stolpersteine endpoint', function() {
 	//////////////////////////////////////////////////////////////////////////////
 	describe('Life cycle', function() {
@@ -275,15 +287,7 @@ describe('Stolpersteine endpoint', function() {
 				expect(res.statusCode).to.be(200);
 				expect(data).to.be.an(Array);
 				expect(data.length).to.be.greaterThan(0);
-				
-				var containsId = false;
-				for(var i = 0, len = data.length; i < len; i++) {
-					if (data[i].id === stolpersteinId) {
-						containsId = true;
-				  	break;
-					}
-				}
-				expect(containsId).to.be(true);
+				expect(containsId(data, stolpersteinId)).to.be(true);
 				
 				done();
 			}); 
@@ -295,15 +299,7 @@ describe('Stolpersteine endpoint', function() {
 				expect(res.statusCode).to.be(200);
 				expect(data).to.be.an(Array);
 				expect(data.length).to.be.greaterThan(0);
-				
-				var containsId = false;
-				for(var i = 0, len = data.length; i < len; i++) {
-					if (data[i].id === stolpersteinId) {
-						containsId = true;
-				  	break;
-					}
-				}
-				expect(containsId).to.be(true);
+				expect(containsId(data, stolpersteinId)).to.be(true);
 				
 				done();
 			}); 
@@ -315,15 +311,7 @@ describe('Stolpersteine endpoint', function() {
 				expect(res.statusCode).to.be(200);
 				expect(data).to.be.an(Array);
 				expect(data.length).to.be.greaterThan(0);
-				
-				var containsId = false;
-				for(var i = 0, len = data.length; i < len; i++) {
-					if (data[i].id === stolpersteinId) {
-						containsId = true;
-				  	break;
-					}
-				}
-				expect(containsId).to.be(true);
+				expect(containsId(data, stolpersteinId)).to.be(true);
 				
 				done();
 			}); 
@@ -335,15 +323,7 @@ describe('Stolpersteine endpoint', function() {
 				expect(res.statusCode).to.be(200);
 				expect(data).to.be.an(Array);
 				expect(data.length).to.be.greaterThan(0);
-				
-				var containsId = false;
-				for(var i = 0, len = data.length; i < len; i++) {
-					if (data[i].id === stolpersteinId) {
-						containsId = true;
-				  	break;
-					}
-				}
-				expect(containsId).to.be(true);
+				expect(containsId(data, stolpersteinId)).to.be(true);
 				
 				done();
 			}); 
@@ -384,15 +364,104 @@ describe('Stolpersteine endpoint', function() {
 				expect(res.statusCode).to.be(200);
 				expect(data).to.be.an(Array);
 				expect(data.length).to.be.greaterThan(0);
+				expect(containsId(data, stolpersteinId)).to.be(true);
 				
-				var containsId = false;
-				for(var i = 0, len = data.length; i < len; i++) {
-					if (data[i].id === stolpersteinId) {
-						containsId = true;
-				  	break;
-					}
-				}
-				expect(containsId).to.be(true);
+				done();
+			}); 
+		});
+	});
+	
+	//////////////////////////////////////////////////////////////////////////////
+	describe.only('Pagination', function() {
+		var stolpersteinId0, stolpersteinId1, stolpersteinId2;
+		
+		before(function(done) {
+			client.post('/api/stolpersteine', stolpersteinData, function(err, req, res, data) { 
+				stolpersteinId0 = data.id;
+				client.post('/api/stolpersteine', stolpersteinData, function(err, req, res, data) { 
+					stolpersteinId1 = data.id;
+					client.post('/api/stolpersteine', stolpersteinData, function(err, req, res, data) { 
+						stolpersteinId2 = data.id;
+						done(err);
+					});
+				});
+			}); 
+		});
+
+		after(function(done) {
+			client.del('/api/stolpersteine/' + stolpersteinId0, function(err, req, res, data) {
+				client.del('/api/stolpersteine/' + stolpersteinId1, function(err, req, res, data) {
+					client.del('/api/stolpersteine/' + stolpersteinId2, function(err, req, res, data) {
+						done(err);
+					});
+				});
+			});
+		});
+
+		it('GET /api/stolpersteine?limit=1&offset=0 should have 1 result', function(done) {
+			client.get('/api/stolpersteine?limit=1&offset=0', function(err, req, res, data) { 
+				expect(err).to.be(null);
+				expect(res.statusCode).to.be(200);
+				expect(data).to.be.an(Array);
+				expect(data.length).to.be(1);
+				
+				done();
+			}); 
+		});
+
+		it('GET /api/stolpersteine?limit=1 should have 1 result', function(done) {
+			client.get('/api/stolpersteine?limit=1', function(err, req, res, data) { 
+				expect(err).to.be(null);
+				expect(res.statusCode).to.be(200);
+				expect(data).to.be.an(Array);
+				expect(data.length).to.be(1);
+				
+				done();
+			}); 
+		});
+
+		it('GET /api/stolpersteine?limit=3&offset=0 should have 3 results', function(done) {
+			client.get('/api/stolpersteine?limit=3&offset=0', function(err, req, res, data) { 
+				expect(err).to.be(null);
+				expect(res.statusCode).to.be(200);
+				expect(data).to.be.an(Array);
+				expect(data.length).to.be(3);
+				expect(containsId(data, stolpersteinId0)).to.be(true);
+				expect(containsId(data, stolpersteinId1)).to.be(true);
+				expect(containsId(data, stolpersteinId2)).to.be(true);
+				
+				done();
+			}); 
+		});
+		
+		it('GET /api/stolpersteine?limit=1&offset=1 should have 1 result', function(done) {
+			client.get('/api/stolpersteine?limit=1&offset=2', function(err, req, res, data) { 
+				expect(err).to.be(null);
+				expect(res.statusCode).to.be(200);
+				expect(data).to.be.an(Array);
+				expect(data.length).to.be(1);
+				
+				done();
+			}); 
+		});
+
+		it('GET /api/stolpersteine?limit=1&offset=2 should have 0 results', function(done) {
+			client.get('/api/stolpersteine?limit=1&offset=3', function(err, req, res, data) { 
+				expect(err).to.be(null);
+				expect(res.statusCode).to.be(200);
+				expect(data).to.be.an(Array);
+				expect(data.length).to.be(0);
+				
+				done();
+			}); 
+		});
+
+		it('GET /api/stolpersteine should have 3 results', function(done) {
+			client.get('/api/stolpersteine', function(err, req, res, data) { 
+				expect(err).to.be(null);
+				expect(res.statusCode).to.be(200);
+				expect(data).to.be.an(Array);
+				expect(data.length).to.be(3);
 				
 				done();
 			}); 

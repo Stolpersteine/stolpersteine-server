@@ -12,6 +12,7 @@ exports.createStolperstein = function(req, res) {
 }
 
 exports.retrieveStolpersteine = function(req, res) {
+	// Query
 	var query = {};
 	if (typeof req.query.q !== 'undefined') {
 		var regex = new RegExp('^' + req.query.q, "i");
@@ -31,6 +32,10 @@ exports.retrieveStolpersteine = function(req, res) {
 			"location.street": regex
 		};
 	}
+	
+	// Pagination
+	var limit = req.query.limit || 10;
+	var skip = req.query.offset || 0;
 
 	// Stringify shortcut
 	var stringify;
@@ -47,7 +52,12 @@ exports.retrieveStolpersteine = function(req, res) {
 	// Manual streaming to improve speed
 	res.charset = 'utf-8';
 	res.type('application/json');
-	var stream = models.stolperstein.Stolperstein.find(query).select('-__v').lean().stream();
+	var stream = models.stolperstein.Stolperstein.find(query)
+																							 .select('-__v')
+																							 .limit(limit)
+																							 .skip(skip)
+																							 .lean()
+																							 .stream();
 	var hasWritten = false;
 	stream.on('data', function(stolperstein) {
 		stolperstein.id = stolperstein._id;
