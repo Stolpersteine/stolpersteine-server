@@ -45,6 +45,7 @@ exports.retrieveStolpersteine = function(req, res) {
 	}
 	
 	// Manual streaming to improve speed
+	res.charset = 'utf-8';
 	res.type('application/json');
 	var stream = models.stolperstein.Stolperstein.find(query).select('-__v').lean().stream();
 	var hasWritten = false;
