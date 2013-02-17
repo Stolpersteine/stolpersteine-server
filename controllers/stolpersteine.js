@@ -32,8 +32,7 @@ exports.retrieveStolpersteine = function(req, res) {
 		};
 	}
 
-	// Manual streaming to improve speed
-	res.type('application/json');
+	// Stringify shortcut
 	var stringify;
 	if (res.app.get('env') === 'development') {
 		var replacer = res.app.get('json replacer') || null;
@@ -45,6 +44,8 @@ exports.retrieveStolpersteine = function(req, res) {
 		stringify = JSON.stringify;
 	}
 	
+	// Manual streaming to improve speed
+	res.type('application/json');
 	var stream = models.stolperstein.Stolperstein.find(query).select('-__v').lean().stream();
 	var hasWritten = false;
 	stream.on('data', function(stolperstein) {
