@@ -11,8 +11,7 @@ var client = restify.createJsonClient({
 
 var stolpersteinData = {
 	person: {
-		firstName: "Vorname",
-		lastName: "Nachname"
+		name: "Vorname Nachname"
 	},
 	location: {
 		street: "Straße 1",
@@ -68,8 +67,7 @@ describe('Stolpersteine endpoint', function() {
 				expect(res.headers['content-type']).to.be('application/json; charset=utf-8');
 				expect(data).to.be.an(Object);
 				expect(data.id).to.be(stolpersteinId);
-				expect(data.person.firstName).to.be(stolpersteinData.person.firstName);
-				expect(data.person.lastName).to.be(stolpersteinData.person.lastName);
+				expect(data.person.name).to.be(stolpersteinData.person.name);
 				expect(data.location.street).to.be(stolpersteinData.location.street);
 				expect(data.location.zipCode).to.be(stolpersteinData.location.zipCode);
 				expect(data.location.city).to.be(stolpersteinData.location.city);
@@ -318,7 +316,19 @@ describe('Stolpersteine endpoint', function() {
 		});
 
 		it('GET /api/stolpersteine?q=<matching zip code> should have results', function(done) {
-			client.get('/api/stolpersteine?q=10000', function(err, req, res, data) { 
+			client.get('/api/stolpersteine?q=1000', function(err, req, res, data) { 
+				expect(err).to.be(null);
+				expect(res.statusCode).to.be(200);
+				expect(data).to.be.an(Array);
+				expect(data.length).to.be.greaterThan(0);
+				expect(containsId(data, stolpersteinId)).to.be(true);
+				
+				done();
+			}); 
+		});
+
+		it('GET /api/stolpersteine?q=<matching sublocality> should have results', function(done) {
+			client.get('/api/stolpersteine?q=Bez', function(err, req, res, data) { 
 				expect(err).to.be(null);
 				expect(res.statusCode).to.be(200);
 				expect(data).to.be.an(Array);
@@ -372,7 +382,7 @@ describe('Stolpersteine endpoint', function() {
 	});
 	
 	//////////////////////////////////////////////////////////////////////////////
-	describe.only('Pagination', function() {
+	describe('Pagination', function() {
 		var stolpersteinId0, stolpersteinId1, stolpersteinId2;
 		
 		before(function(done) {

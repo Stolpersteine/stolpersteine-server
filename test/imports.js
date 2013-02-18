@@ -17,8 +17,7 @@ var importData = {
 	}, 
 	stolpersteine: [{
 		person: {
-			firstName: "Vorname",
-			lastName: "Nachname 0"
+			name: "Vorname Nachname"
 		},
 		location: {
 			street: "Straße 1",
@@ -31,8 +30,7 @@ var importData = {
 		}
 	}, {
 		person: {
-			firstName: "Vorname",
-			lastName: "Nachname 1"
+			name: "Vorname Nachname"
 		},
 		location: {
 			street: "Straße 1",

@@ -2,12 +2,11 @@ var mongoose = require('mongoose');
 
 var schema = new mongoose.Schema({
 	person: {
-		firstName: { type: String, required: true, trim: true },
-		lastName: { type: String/*, required: true*/, trim: true }
+		name: { type: String, required: true, trim: true },
 	},
 	location: {
 		street: { type: String, required: true, trim: true },
-		zipCode: { type: String/*, required: true*/, trim: true },
+		zipCode: { type: String, trim: true },
 		city: { type: String, required: true, trim: true },
 		sublocality1: { type: String, trim: true },
 		sublocality2: { type: String, trim: true },
@@ -23,6 +22,7 @@ var schema = new mongoose.Schema({
 	},
 	description: { type: String, trim: true },
 	imageUrl: { type: String, trim: true },
+	biographyUrl: { type: String, trim: true },
 	source: {
 		url: { type: String, trim: true, required: true },
 		name: { type: String, trim: true, required: true },
