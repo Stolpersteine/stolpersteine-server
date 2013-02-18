@@ -15,11 +15,6 @@ var schema = new mongoose.Schema({
 			latitude: { type: Number, required: true }
 		},
 	},
-	laidAt : { 
-		year: { type: Number, min: 1992 },
-		month: { type: Number, min: 0, max: 11 },
-		date: { type: Number, min: 0, max: 31 }
-	},
 	description: { type: String, trim: true },
 	imageUrl: { type: String, trim: true },
 	biographyUrl: { type: String, trim: true },
