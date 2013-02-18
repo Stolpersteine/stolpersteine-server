@@ -6,8 +6,7 @@
 	},
 	"stolpersteine": [{
 		"person": {
-			"firstName": "Vorname 0",
-			"lastName": "Nachname 0"
+			"name": "Vorname Nachname"
 		},
 		"location": {
 			"street": "Straße 1",
@@ -17,16 +16,10 @@
 				"longitude": "1.0",
 				"latitude": "1.0"
 			}
-		},
-		"laidAt" : { 
-			"year": "2012",
-			"month": "11",
-			"date": "12"
 		}
 	}, {
 		"person": {
-			"firstName": "Vorname 1",
-			"lastName": "Nachname 1"
+			"name": "Vorname Nachname"
 		},
 		"location": {
 			"street": "Straße 1",
@@ -36,11 +29,6 @@
 				"longitude": "1.0",
 				"latitude": "1.0"
 			}
-		},
-		"laidAt" : { 
-			"year": "2012",
-			"month": "11",
-			"date": "12"
 		},
 		"description": "Beschreibung"
 	}]
