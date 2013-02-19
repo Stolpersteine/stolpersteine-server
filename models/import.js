@@ -38,7 +38,7 @@ schema.statics.findAndDelete = function(source, callback) {
 
 schema.statics.findMostRecentExecutedDate = function(callback) {
 	models.import.Import.findOne().select('executedAt -_id').sort({executedAt : -1}).exec(function(err, mostRecentImport) {
-		callback(mostRecentImport.executedAt);
+		callback(mostRecentImport === null ? undefined : mostRecentImport.executedAt);
 	});
 }
 
