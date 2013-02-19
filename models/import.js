@@ -3,6 +3,7 @@ var mongoose = require('mongoose'),
 	models = require('../models');
 
 var schema = new mongoose.Schema({
+	executedAt: { type: Date },
 	source: {
 		url: { type: String, unique: true, required: true, trim: true },
 		name: { type: String, required: true, trim: true },
@@ -32,6 +33,12 @@ schema.statics.findAndDelete = function(source, callback) {
 			console.log('Remove import ' + oldImport._id);
 			oldImport.remove(callback);
 		}, callback);
+	});
+}
+
+schema.statics.findMostRecentExecutedDate = function(callback) {
+	models.import.Import.findOne().select('executedAt -_id').sort({executedAt : -1}).exec(function(err, mostRecentImport) {
+		callback(mostRecentImport.executedAt);
 	});
 }
 

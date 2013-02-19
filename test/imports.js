@@ -278,6 +278,7 @@ describe('Import endpoint', function() {
 				expect(data.createActions.stolpersteine[0].person.lastName).to.be(importData.stolpersteine[1].person.lastName);	// 'Nachname 1'
 				expect(data.deleteActions.targetIds.length).to.be(1);
 				expect(data.deleteActions.targetIds[0]).to.be(stolpersteinToDeleteId);
+				expect(data.executedAt).to.be(undefined);
 				done(err);
 			});
 		});
@@ -286,6 +287,7 @@ describe('Import endpoint', function() {
 			client.post('/api/imports/' + importId + '/execute', importData, function(err, req, res, data) {
 				expect(err).to.be(null);
 				expect(res.statusCode).to.be(201);
+				expect(data.executedAt).not.to.be(undefined);
 				client.get('/api/stolpersteine/' + stolpersteinToRetainId, function(err, req, res, data) {
 					expect(res.statusCode).to.be(200);
 					client.get('/api/stolpersteine/' + stolpersteinToCreateId, function(err, req, res, data) {

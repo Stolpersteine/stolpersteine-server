@@ -144,7 +144,7 @@ describe('Stolpersteine endpoint', function() {
 	});
 
 	//////////////////////////////////////////////////////////////////////////////
-	describe('ETag support', function() {
+	describe('Validation support', function() {
 		var stolpersteinId;
 		
 		before(function(done) {
@@ -165,8 +165,7 @@ describe('Stolpersteine endpoint', function() {
 				expect(err).to.be(null);
 				expect(res.statusCode).to.be(200);
 			
-				// As of version 3.0.x, Express only creates an etag when the content is larger than 1024 bytes
-				expect(res.headers['content-length']).to.be.greaterThan(1024);
+				// Manual ETag implementation without content-length
 				expect(res.headers['etag']).not.to.be(null);
 			
 				var options = {

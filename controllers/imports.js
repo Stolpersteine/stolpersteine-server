@@ -111,7 +111,9 @@ exports.executeImport = function(req, res) {
 				}
 			],
 			function(err, results) {
-				res.send(201, {});
+				importData.executedAt = new Date();
+				importData.save();
+				res.send(201, importData);
 			});
 		} else {
 			res.send(404, err);
