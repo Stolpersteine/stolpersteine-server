@@ -4,8 +4,8 @@ var request = require('request'),
 	async = require('async');
 	
 var uriSource = url.parse('http://www.stolpersteine-berlin.de/st_interface/xml/geo/linked');
-//var urlApi = 'http://127.0.0.1:3000/api';
-var urlApi = 'https://stolpersteine-optionu.rhcloud.com/api';
+var urlApi = 'http://127.0.0.1:3000/api';
+//var urlApi = 'https://stolpersteine-optionu.rhcloud.com/api';
 var userAgent = 'Stolpersteine/1.0 (http://option-u.com; admin@option-u.com)';
 
 var source = { 
@@ -41,14 +41,13 @@ request({ uri:uriSource, headers: {'user-agent' : userAgent } }, function(error,
 			var marker = markers[j];
 			
 			var location = {
-				street : marker.$.adresse,
+				street : marker.$.adresse.trim(),
 				city : "Berlin",
-				zipCode : '',
-				sublocality1 : marker.$.bezirk,
-				sublocality2 : marker.$.ortsteil,
+				sublocality1 : marker.$.bezirk.trim(),
+				sublocality2 : marker.$.ortsteil == null ? undefined : marker.$.ortsteil.trim(),
 				coordinates : {
-					longitude: marker.$.lng,
-					latitude: marker.$.lat
+					longitude: marker.$.lng.trim(),
+					latitude: marker.$.lat.trim()
 				}
 			};
 
@@ -65,7 +64,7 @@ request({ uri:uriSource, headers: {'user-agent' : userAgent } }, function(error,
 			if (marker.weitere) {
 				console.log('Processing "weitere"');
 				for (var i = 0; i < marker.weitere.length; i++) {
-					location.street = marker.weitere[i].$.adresse;
+					location.street = marker.weitere[i].$.adresse.trim();
 				
 					for (var k = 0; k < marker.weitere[i].person.length; k++) {
 						var person = marker.weitere[i].person[k];
@@ -93,23 +92,10 @@ request({ uri:uriSource, headers: {'user-agent' : userAgent } }, function(error,
 function convertStolperstein(person, location, source) {
 	var stolperstein = {
 		person : {
-			firstName : person.$.name,
-			lastName : ''
+			name : person.$.name.trim()
 		},
 		location : location,
 		source : source
 	};
-//	console.log(stolperstein.person.firstName);
 	return stolperstein;
-}
-
-function patchStolperstein(stolperstein, callback) {
-	console.log('- ' + stolperstein.person.lastName + ', ' + stolperstein.person.firstName + ' (patching...)');
-	
-	stolperstein.location.street = stolperstein.location.street.replace("(heute Eingang U-Bahnhof Turmstraße)", "");
-	stolperstein.location.street = stolperstein.location.street.replace("Spenerstraße Ecke Melanchtonstraße", "Spenerstr. 14");
-	stolperstein.location.street = stolperstein.location.street.replace("Bundesratufer 1", "Bundesratufer 2");
-
-	console.log('- ' + stolperstein.person.lastName + ', ' + stolperstein.person.firstName + ' (patching done)');
-	callback(null, stolperstein);
 }

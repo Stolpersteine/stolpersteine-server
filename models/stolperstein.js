@@ -50,14 +50,17 @@ schema.statics.findExactMatch = function(source, stolperstein, callback) {
 		"source.url": source.url, 
 		"source.name": source.name, 
 //		"source.retrievedAt": source.retrievedAt, 
-		"person.firstName": stolperstein.person.firstName,
-		"person.lastName": stolperstein.person.lastName,
+		"person.name": stolperstein.person.name,
 		"location.street": stolperstein.location.street,
-		"location.city": stolperstein.location.city,
 		"location.zipCode": stolperstein.location.zipCode,
+		"location.city": stolperstein.location.city,
+		"location.sublocality1": stolperstein.location.sublocality1,
+		"location.sublocality2": stolperstein.location.sublocality2,
 		"location.coordinates.latitude": stolperstein.location.coordinates.latitude,
 		"location.coordinates.longitude": stolperstein.location.coordinates.longitude,
-		"description": stolperstein.description
+		"description": stolperstein.description,
+		"imageUrl": stolperstein.imageUrl,
+		"biographyUrl": stolperstein.biographyUrl
 	}, callback);
 }
 

@@ -20,12 +20,12 @@ exports.createImport = function(req, res) {
 				models.stolperstein.Stolperstein.findExactMatch(source, stolpersteinImport, function(err, stolperstein) {
 					if (stolperstein) {
 						existingStolpersteineIds.push(stolperstein.id);
-						console.log("Found stolperstein " + stolpersteinImport.person.lastName + ', ' + stolpersteinImport.person.firstName + ' ' + stolperstein.id);
+//						console.log("Found stolperstein " + stolpersteinImport.person.name + ' ' + stolperstein.id);
 					} else {
 						var newStolperstein = new models.stolperstein.Stolperstein(stolpersteinImport);
 						newStolperstein.source = source;
 						newImport.createActions.stolpersteine.push(newStolperstein);
-						console.log("Stolperstein not found " + stolpersteinImport.person.lastName + ', ' + stolpersteinImport.person.firstName);
+//						console.log("Stolperstein not found " + stolpersteinImport.person.name);
 					}
 					callback(err);
 				});
@@ -37,7 +37,7 @@ exports.createImport = function(req, res) {
 		function(newImport, existingStolpersteineIds, callback) {
 				models.stolperstein.Stolperstein.find({"source.url": source.url, "_id": {$nin: existingStolpersteineIds}}, function(err, stolpersteine) {
 					async.forEach(stolpersteine, function(stolperstein, callback) {
-						console.log('Remove stolperstein ' + stolperstein.person.lastName + ', ' + stolperstein.person.firstName + ' ' + stolperstein.id);
+//						console.log('Remove stolperstein ' + stolperstein.person.name + ' ' + stolperstein.id);
 						newImport.deleteActions.targetIds.push(stolperstein.id);
 						callback(null, newImport);
 					}, function(err) {
