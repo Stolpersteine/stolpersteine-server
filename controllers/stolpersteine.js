@@ -14,13 +14,13 @@ exports.createStolperstein = function(req, res) {
 exports.retrieveStolpersteine = function(req, res) {
 	models.import.Import.findMostRecentExecutedDate(function(executedDate) {
 		// Cache validation
-		var etag = '"' + executedDate.getTime() + '"';
-		var match = req.get('If-None-Match');
-		if (etag === match) {
-			res.send(304);
-			return;
-		}
-		res.set({ 'ETag' : etag });
+//		var etag = '"' + executedDate.getTime() + '"';
+//		var match = req.get('If-None-Match');
+//		if (etag === match) {
+//			res.send(304);
+//			return;
+//		}
+//		res.set({ 'ETag' : etag });
 	
 		// Query
 		var query = {};
