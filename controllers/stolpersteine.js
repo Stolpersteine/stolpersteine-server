@@ -17,8 +17,6 @@ exports.retrieveStolpersteine = function(req, res) {
 		if (mostRecentId) {
 			var etag = '"' + mostRecentId + '"';
 			var match = req.get('If-None-Match');
-			console.log(etag);
-			console.log(match);
 			if (etag === match) {
 				res.send(304);
 				return;
@@ -26,26 +24,38 @@ exports.retrieveStolpersteine = function(req, res) {
 			res.setHeader('ETag', etag);
 		}
 	
-		// Query
-		var query = {};
+		// Queries
+		var queries = [];
 		if (typeof req.query.q !== 'undefined') {
 			var regex = new RegExp('^' + req.query.q, "i");
-			query = {
+			queries.push({
 				$or: [
 					{ "person.name": new RegExp('\\b' + req.query.q, "i") },
 					{ "location.street": regex },
 					{ "location.sublocality1": regex },
 					{ "location.zipCode": regex }
 				]
-			};
+			});
 		}
 
 		if (typeof req.query.street !== 'undefined') {
-			var regex = new RegExp('^' + req.query.street, "i");
-			query = {
-				"location.street": regex
-			};
+			queries.push({
+				"location.street": new RegExp('^' + req.query.street, "i")
+			});
 		}
+
+		if (typeof req.query.source !== 'undefined') {
+			queries.push({
+				"source.name": new RegExp('^' + req.query.source, "i")
+			});
+		}
+		
+		var query = {};
+		if (queries.length >= 1) {
+			query = {
+				$and : queries
+			};
+		};
 	
 		// Pagination
 		var limit = req.query.limit || 10;
