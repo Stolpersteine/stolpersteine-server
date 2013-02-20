@@ -64,5 +64,11 @@ schema.statics.findExactMatch = function(source, stolperstein, callback) {
 	}, callback);
 }
 
+schema.statics.findMostRecentId = function(callback) {
+	this.findOne().select().sort({_id : -1}).exec(function(err, mostRecent) {
+		callback(mostRecent === null ? undefined : mostRecent.id);
+	});
+}
+
 exports.Stolperstein = mongoose.model('Stolperstein', schema, 'stolpersteine');
 exports.StolpersteinSchema = schema;

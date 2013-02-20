@@ -12,16 +12,18 @@ exports.createStolperstein = function(req, res) {
 }
 
 exports.retrieveStolpersteine = function(req, res) {
-	models.import.Import.findMostRecentExecutedDate(function(executedDate) {
+	models.stolperstein.Stolperstein.findMostRecentId(function(mostRecentId) {
 		// Cache validation
-		if (executedDate) {
-			var etag = '"' + executedDate.getTime() + '"';
+		if (mostRecentId) {
+			var etag = '"' + mostRecentId + '"';
 			var match = req.get('If-None-Match');
+			console.log(etag);
+			console.log(match);
 			if (etag === match) {
 				res.send(304);
 				return;
 			}
-			res.set({ 'ETag' : etag });
+			res.setHeader('ETag', etag);
 		}
 	
 		// Query
