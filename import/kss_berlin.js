@@ -41,13 +41,13 @@ request({ uri:uriSource, headers: {'user-agent' : userAgent } }, function(error,
 			var marker = markers[j];
 			
 			var location = {
-				street : marker.$.adresse.trim(),
+				street : marker.$.adresse,
 				city : "Berlin",
-				sublocality1 : marker.$.bezirk.trim(),
-				sublocality2 : marker.$.ortsteil == null ? undefined : marker.$.ortsteil.trim(),
+				sublocality1 : marker.$.bezirk,
+				sublocality2 : marker.$.ortsteil == null ? undefined : marker.$.ortsteil,
 				coordinates : {
-					longitude: marker.$.lng.trim(),
-					latitude: marker.$.lat.trim()
+					longitude: marker.$.lng,
+					latitude: marker.$.lat
 				}
 			};
 
@@ -64,7 +64,7 @@ request({ uri:uriSource, headers: {'user-agent' : userAgent } }, function(error,
 			if (marker.weitere) {
 				console.log('Processing "weitere"');
 				for (var i = 0; i < marker.weitere.length; i++) {
-					location.street = marker.weitere[i].$.adresse.trim();
+					location.street = marker.weitere[i].$.adresse;
 				
 					for (var k = 0; k < marker.weitere[i].person.length; k++) {
 						var person = marker.weitere[i].person[k];
@@ -92,7 +92,7 @@ request({ uri:uriSource, headers: {'user-agent' : userAgent } }, function(error,
 function convertStolperstein(person, location, source) {
 	var stolperstein = {
 		person : {
-			name : person.$.name.trim()
+			name : person.$.name
 		},
 		location : location,
 		source : source

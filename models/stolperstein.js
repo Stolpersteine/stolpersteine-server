@@ -47,20 +47,20 @@ schema.methods.toGeoJSON = function() {
 
 schema.statics.findExactMatch = function(source, stolperstein, callback) {
 	this.findOne({
-		"source.url": source.url, 
-		"source.name": source.name, 
+		"source.url": source.url === undefined ? undefined : source.url.trim(),
+		"source.name": source.name === undefined ? undefined : source.name.trim(),
 //		"source.retrievedAt": source.retrievedAt, 
-		"person.name": stolperstein.person.name,
-		"location.street": stolperstein.location.street,
-		"location.zipCode": stolperstein.location.zipCode,
-		"location.city": stolperstein.location.city,
-		"location.sublocality1": stolperstein.location.sublocality1,
-		"location.sublocality2": stolperstein.location.sublocality2,
-		"location.coordinates.latitude": stolperstein.location.coordinates.latitude,
-		"location.coordinates.longitude": stolperstein.location.coordinates.longitude,
-		"description": stolperstein.description,
-		"imageUrl": stolperstein.imageUrl,
-		"biographyUrl": stolperstein.biographyUrl
+		"person.name": stolperstein.person.name === undefined ? undefined : stolperstein.person.name.trim(),
+		"location.street": stolperstein.location.street === undefined ? undefined : stolperstein.location.street.trim(),
+		"location.zipCode": stolperstein.location.zipCode === undefined ? undefined : stolperstein.location.zipCode.trim(),
+		"location.city": stolperstein.location.city === undefined ? undefined : stolperstein.location.city.trim(),
+		"location.sublocality1": stolperstein.location.sublocality1 === undefined ? undefined : stolperstein.location.sublocality1.trim(),
+		"location.sublocality2": stolperstein.location.sublocality2 === undefined ? undefined : stolperstein.location.sublocality2.trim(),
+		"location.coordinates.latitude": stolperstein.location.coordinates.latitude === undefined ? undefined : stolperstein.location.coordinates.latitude.trim(),
+		"location.coordinates.longitude": stolperstein.location.coordinates.longitude === undefined ? undefined : stolperstein.location.coordinates.longitude.trim(),
+		"description": stolperstein.description === undefined ? undefined : stolperstein.location.description.trim(),
+		"imageUrl": stolperstein.imageUrl === undefined ? undefined : stolperstein.imageUrl.trim(),
+		"biographyUrl": stolperstein.biographyUrl === undefined ? undefined : stolperstein.biographyUrl.trim(),
 	}, callback);
 }
 
