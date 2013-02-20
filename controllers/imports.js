@@ -48,9 +48,6 @@ exports.createImport = function(req, res) {
 		// Store import data
 		function(newImport, callback) {
 			newImport.save(function(err, newImport) {
-				if (!err) {
-					console.log('Created import ' + newImport.id);
-				}
 				callback(err, newImport);
 			});
 		}

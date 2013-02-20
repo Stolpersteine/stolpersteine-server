@@ -132,7 +132,7 @@ describe('Import endpoint', function() {
 	});
 
 	//////////////////////////////////////////////////////////////////////////////
-	describe('ETag support', function() {
+	describe('Validation support', function() {
 		var importId;
 		
 		before(function(done) {
@@ -250,9 +250,9 @@ describe('Import endpoint', function() {
 			client.post('/api/stolpersteine', stolperstein, function(err, req, res, data) { 
 				stolpersteinToRetainId = data.id;
 				
-				stolperstein.person.lastName = "Nachname 2";
+				stolperstein.person.name = "Nachname 2";
 				client.post('/api/stolpersteine', stolperstein, function(err, req, res, data) { 
-					stolperstein.person.lastName = "Nachname 0";
+					stolperstein.person.name = "Nachname 0";
 					stolpersteinToDeleteId = data.id;
 					done(err);
 				});
