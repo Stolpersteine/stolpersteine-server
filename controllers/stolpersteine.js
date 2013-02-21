@@ -30,7 +30,8 @@ exports.retrieveStolpersteine = function(req, res) {
 			var regex = new RegExp('^' + req.query.q, "i");
 			queries.push({
 				$or: [
-					{ "person.name": new RegExp('\\b' + req.query.q, "i") },
+					{ "person.firstName": regex },
+					{ "person.lastName": regex },
 					{ "location.street": regex },
 					{ "location.sublocality1": regex },
 					{ "location.zipCode": regex }

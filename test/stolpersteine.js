@@ -11,7 +11,8 @@ var client = restify.createJsonClient({
 
 var stolpersteinData = {
 	person: {
-		name: "Vorname Nachname"
+		firstName: "Vorname",
+		lastName: "Nachname"
 	},
 	location: {
 		street: "Straße 1",
@@ -67,7 +68,8 @@ describe('Stolpersteine endpoint', function() {
 				expect(res.headers['content-type']).to.be('application/json; charset=utf-8');
 				expect(data).to.be.an(Object);
 				expect(data.id).to.be(stolpersteinId);
-				expect(data.person.name).to.be(stolpersteinData.person.name);
+				expect(data.person.firstName).to.be(stolpersteinData.person.firstName);
+				expect(data.person.lastName).to.be(stolpersteinData.person.lastName);
 				expect(data.location.street).to.be(stolpersteinData.location.street);
 				expect(data.location.zipCode).to.be(stolpersteinData.location.zipCode);
 				expect(data.location.city).to.be(stolpersteinData.location.city);

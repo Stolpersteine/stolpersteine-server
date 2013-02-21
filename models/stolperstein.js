@@ -2,7 +2,8 @@ var mongoose = require('mongoose');
 
 var schema = new mongoose.Schema({
 	person: {
-		name: { type: String, required: true, trim: true },
+		firstName: { type: String, required: true, trim: true },
+		lastName: { type: String, required: true, trim: true }
 	},
 	location: {
 		street: { type: String, required: true, trim: true },
@@ -50,7 +51,8 @@ schema.statics.findExactMatch = function(source, stolperstein, callback) {
 		"source.url": source.url === undefined ? undefined : source.url.trim(),
 		"source.name": source.name === undefined ? undefined : source.name.trim(),
 //		"source.retrievedAt": source.retrievedAt, 
-		"person.name": stolperstein.person.name === undefined ? undefined : stolperstein.person.name.trim(),
+		"person.firstName": stolperstein.person.firstName === undefined ? undefined : stolperstein.person.firstName.trim(),
+		"person.lastName": stolperstein.person.lastName === undefined ? undefined : stolperstein.person.lastName.trim(),
 		"location.street": stolperstein.location.street === undefined ? undefined : stolperstein.location.street.trim(),
 		"location.zipCode": stolperstein.location.zipCode === undefined ? undefined : stolperstein.location.zipCode.trim(),
 		"location.city": stolperstein.location.city === undefined ? undefined : stolperstein.location.city.trim(),

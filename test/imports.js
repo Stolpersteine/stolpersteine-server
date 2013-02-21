@@ -17,7 +17,8 @@ var importData = {
 	}, 
 	stolpersteine: [{
 		person: {
-			name: "Vorname Nachname"
+			firstName: "Vorname",
+			lastName: "Nachname1"
 		},
 		location: {
 			street: "Straße 1",
@@ -30,7 +31,8 @@ var importData = {
 		}
 	}, {
 		person: {
-			name: "Vorname Nachname"
+			firstName: "Vorname",
+			lastName: "Nachname2"
 		},
 		location: {
 			street: "Straße 1",
@@ -245,14 +247,15 @@ describe('Import endpoint', function() {
 		var importId;
 		
 		before(function(done) {
-			var stolperstein = importData.stolpersteine[0];	// 'Nachname 0'
+			var originalLastName = importData.stolpersteine[0].person.lastName;
+			var stolperstein = importData.stolpersteine[0];	// 'Nachname1'
 			stolperstein.source = importData.source;
 			client.post('/api/stolpersteine', stolperstein, function(err, req, res, data) { 
 				stolpersteinToRetainId = data.id;
 				
-				stolperstein.person.name = "Nachname 2";
+				stolperstein.person.lastName = "NachnameXYZ";
 				client.post('/api/stolpersteine', stolperstein, function(err, req, res, data) { 
-					stolperstein.person.name = "Nachname 0";
+					stolperstein.person.lastName = originalLastName;
 					stolpersteinToDeleteId = data.id;
 					done(err);
 				});
@@ -275,7 +278,7 @@ describe('Import endpoint', function() {
 				importId = data.id;
 				
 				expect(data.createActions.stolpersteine.length).to.be(1);
-				expect(data.createActions.stolpersteine[0].person.lastName).to.be(importData.stolpersteine[1].person.lastName);	// 'Nachname 1'
+				expect(data.createActions.stolpersteine[0].person.lastName).to.be(importData.stolpersteine[1].person.lastName);	// 'Nachname2'
 				expect(data.deleteActions.targetIds.length).to.be(1);
 				expect(data.deleteActions.targetIds[0]).to.be(stolpersteinToDeleteId);
 				expect(data.executedAt).to.be(undefined);
