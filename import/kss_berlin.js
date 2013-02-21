@@ -107,6 +107,9 @@ function patchStolperstein(stolperstein) {
 		stolperstein.person.firstName = "Kaufhaus Nathan";
 		stolperstein.person.lastName = "Israel";
 	}
+	
+	stolperstein.location.street = stolperstein.location.street.replace(/str\./g, "straße");
+	stolperstein.location.street = stolperstein.location.street.replace(/Str\./g, "Straße", "g");
 
 	return stolperstein;
 }
