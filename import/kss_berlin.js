@@ -54,24 +54,24 @@ request({ uri:uriSource, headers: {'user-agent' : userAgent } }, function(error,
 			// Convert person tags
 			for (var i = 0; i < marker.person.length; i++) {
 				var person = marker.person[i];
-				console.log('- ' + person.$.name + ' (converting...)');
+//				console.log('- ' + person.$.vorname + ' ' + person.$.nachname + ' (converting...)');
 				var stolperstein = convertStolperstein(person, location, source);
 				stolpersteine.push(stolperstein);
-				console.log('- ' + person.$.name + ' (converting done)');
+//				console.log('- ' + person.$.vorname + ' ' + person.$.nachname + ' (converting done)');
 			}
 			
 			// Convert person tags nested in 'weitere'
 			if (marker.weitere) {
-				console.log('Processing "weitere"');
+//				console.log('Processing "weitere"');
 				for (var i = 0; i < marker.weitere.length; i++) {
 					location.street = marker.weitere[i].$.adresse;
 				
 					for (var k = 0; k < marker.weitere[i].person.length; k++) {
 						var person = marker.weitere[i].person[k];
-						console.log('- ' + person.$.name + ' (converting...)');
+//						console.log('- ' + person.$.vorname + ' ' + person.$.nachname + ' (converting...)');
 						var stolperstein = convertStolperstein(person, location, source);
 						stolpersteine.push(stolperstein);
-						console.log('- ' + person.$.name + ' (converting done)');
+//						console.log('- ' + person.$.vorname + ' ' + person.$.nachname + ' (converting done)');
 					}
 				}
 			}
@@ -92,10 +92,21 @@ request({ uri:uriSource, headers: {'user-agent' : userAgent } }, function(error,
 function convertStolperstein(person, location, source) {
 	var stolperstein = {
 		person : {
-			name : person.$.name
+			firstName : person.$.vorname,
+			lastName : person.$.nachname
 		},
 		location : location,
 		source : source
 	};
+	
+	return patchStolperstein(stolperstein);
+}
+
+function patchStolperstein(stolperstein) {
+	if (stolperstein.person.firstName === "Kaufhaus Nathan Israel") {
+		stolperstein.person.firstName = "Kaufhaus Nathan";
+		stolperstein.person.lastName = "Israel";
+	}
+
 	return stolperstein;
 }
