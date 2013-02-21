@@ -42,6 +42,7 @@ request({ uri:uriSource, headers: {'user-agent' : userAgent } }, function(error,
 			
 			var location = {
 				street : marker.$.adresse,
+				zipCode : marker.$.plz,
 				city : "Berlin",
 				sublocality1 : marker.$.bezirk,
 				sublocality2 : marker.$.ortsteil == null ? undefined : marker.$.ortsteil,
