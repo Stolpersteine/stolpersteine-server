@@ -94,7 +94,8 @@ function convertStolperstein(person, location, source) {
 	var stolperstein = {
 		person : {
 			firstName : person.$.vorname,
-			lastName : person.$.nachname
+			lastName : person.$.nachname,
+			biographyUrl : person.$.url
 		},
 		location : location,
 		source : source
