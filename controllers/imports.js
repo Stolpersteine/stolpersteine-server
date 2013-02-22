@@ -50,7 +50,7 @@ exports.createImport = function(req, res) {
 		}
 	], function (err, newImport) {
 		if (!err) {
-			res.send(201);
+			res.send(201, newImport.id);
 		} else {
 			res.send(400, err);
 		}
