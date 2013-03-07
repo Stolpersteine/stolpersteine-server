@@ -38,7 +38,8 @@
 			"start": "supervisor server.js",
 			"db": "mongod --dbpath ~/tmp/",
 			"dbclient": "mongo",
-			"scrape": "node scraping/app"
+			"scrape": "node scraping/app",
+			"jshint": "jshint --verbose controllers"
 	},
 
   "private": true,
