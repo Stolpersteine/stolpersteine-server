@@ -1,13 +1,16 @@
 /**
  * Stolpersteine
  */
+
+"use strict";
+/* jshint -W024 */
  
-var express = require('express')
-  , http = require('http')
-  , path = require('path')
-  , mongoose = require('mongoose')
-	, controllers = require('./controllers')
-	, middleware = require('./middleware');
+var express = require('express'),
+	http = require('http'),
+	path = require('path'),
+	mongoose = require('mongoose'),
+	controllers = require('./controllers'),
+	middleware = require('./middleware');
 
 var app = express();
 

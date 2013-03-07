@@ -1,3 +1,5 @@
+"use strict";
+
 var mongoose = require('mongoose');
 
 var schema = new mongoose.Schema({
@@ -15,7 +17,7 @@ var schema = new mongoose.Schema({
 		coordinates: {
 			longitude: { type: Number, required: true },
 			latitude: { type: Number, required: true }
-		},
+		}
 	},
 	description: { type: String, trim: true },
 	imageUrl: { type: String, trim: true },
@@ -44,7 +46,7 @@ schema.methods.toGeoJSON = function() {
 			"coordinates": [this.location.longitude, this.location.latitude]
 		}
 	};
-}
+};
 
 schema.statics.findExactMatch = function(source, stolperstein, callback) {
 	this.findOne({
@@ -64,13 +66,13 @@ schema.statics.findExactMatch = function(source, stolperstein, callback) {
 		"description": stolperstein.description === undefined ? undefined : stolperstein.location.description.trim(),
 		"imageUrl": stolperstein.imageUrl === undefined ? undefined : stolperstein.imageUrl.trim()
 	}, callback);
-}
+};
 
 schema.statics.findMostRecentId = function(callback) {
 	this.findOne().select().sort({_id : -1}).exec(function(err, mostRecent) {
 		callback(mostRecent === null ? undefined : mostRecent.id);
 	});
-}
+};
 
 exports.Stolperstein = mongoose.model('Stolperstein', schema, 'stolpersteine');
 exports.StolpersteinSchema = schema;

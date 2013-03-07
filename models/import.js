@@ -1,3 +1,5 @@
+"use strict";
+
 var mongoose = require('mongoose'),
 	async = require('async'),
 	models = require('../models');
@@ -13,7 +15,7 @@ var schema = new mongoose.Schema({
 		stolpersteine: [models.stolperstein.StolpersteinSchema]
 	},
 	deleteActions: {
-		targetIds: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Stolperstein' }],
+		targetIds: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Stolperstein' }]
 	}
 });
 
@@ -33,6 +35,6 @@ schema.statics.findAndDelete = function(source, callback) {
 			oldImport.remove(callback);
 		}, callback);
 	});
-}
+};
 
 exports.Import = mongoose.model('Import', schema);

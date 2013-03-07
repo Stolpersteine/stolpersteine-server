@@ -1,4 +1,6 @@
-const url = require('url');
+"use strict";
+
+var url = require('url');
 
 module.exports = function(options) {
     return function(req, res, next) {
@@ -25,5 +27,5 @@ module.exports = function(options) {
         };
 				*/
         next();
-    }
+    };
 };

@@ -1,3 +1,5 @@
+"use strict";
+
 var models = require('../models'),
 	async = require('async');
 
@@ -11,7 +13,7 @@ exports.createImport = function(req, res) {
 		
 		// Figure out existing stolpersteine
 		function(callback) {
-			var existingStolpersteineIds = new Array();
+			var existingStolpersteineIds = [];
 			var newImport = new models.import.Import();
 			newImport.source = source;
 			
@@ -28,7 +30,7 @@ exports.createImport = function(req, res) {
 					callback(err);
 				});
 			}, function(err) {
-			    callback(err, newImport, existingStolpersteineIds);
+				callback(err, newImport, existingStolpersteineIds);
 			});
 		},
 		// Stolpersteine that don't exist any more
@@ -38,7 +40,7 @@ exports.createImport = function(req, res) {
 						newImport.deleteActions.targetIds.push(stolperstein.id);
 						callback(null, newImport);
 					}, function(err) {
-					    callback(err, newImport);
+						callback(err, newImport);
 					});
 				});
 		},
@@ -50,12 +52,12 @@ exports.createImport = function(req, res) {
 		}
 	], function (err, newImport) {
 		if (!err) {
-			res.send(201, newImport.id);
+			res.send(201, newImport);
 		} else {
 			res.send(400, err);
 		}
 	});
-}
+};
 
 exports.retrieveImports = function(req, res) {
 	models.import.Import.find(function(err, imports) {
@@ -65,7 +67,7 @@ exports.retrieveImports = function(req, res) {
 			res.send(400, err);
 		}
 	});
-}
+};
 
 exports.retrieveImport = function(req, res) {
 	models.import.Import.findById(req.params.id, function(err, importData) {
@@ -75,7 +77,7 @@ exports.retrieveImport = function(req, res) {
 			res.send(404, err);
 		}
 	});
-}
+};
 
 exports.deleteImport = function(req, res) {
 	models.import.Import.findByIdAndRemove(req.params.id, function(err, importData) {
@@ -85,7 +87,7 @@ exports.deleteImport = function(req, res) {
 			res.send(404, err);
 		}
 	});
-}
+};
 
 exports.executeImport = function(req, res) {
 	models.import.Import.findById(req.params.id, function(err, importData) {
@@ -93,11 +95,11 @@ exports.executeImport = function(req, res) {
 			async.parallel([
 				function(callback) {
 					async.forEach(importData.createActions.stolpersteine, function(stolperstein, callback) {
-						var stolperstein = new models.stolperstein.Stolperstein(stolperstein);
+						stolperstein = new models.stolperstein.Stolperstein(stolperstein);
 						stolperstein.source = importData.source;
 						stolperstein.save(callback);
 					}, callback);
-		    },
+				},
 				function(callback) {
 					async.forEach(importData.deleteActions.targetIds, function(targetId, callback) {
 						models.stolperstein.Stolperstein.findByIdAndRemove(targetId, callback);
@@ -107,10 +109,10 @@ exports.executeImport = function(req, res) {
 			function(err, results) {
 				importData.executedAt = new Date();
 				importData.save();
-				res.send(201);
+				res.send(201, importData);
 			});
 		} else {
 			res.send(404, err);
 		}
 	});
-}
+};

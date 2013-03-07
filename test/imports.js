@@ -1,3 +1,6 @@
+"use strict";
+/* global describe:false, it:false, before:false, after:false */
+
 var restify = require('restify'),
 	expect = require('expect.js');
 
@@ -53,6 +56,7 @@ describe('Import endpoint', function() {
 		
 		it('POST /api/imports should get a 201 response', function(done) {
 			client.post('/api/imports', importData, function(err, req, res, data) { 
+				console.log(res.statusCode);
 				expect(err).to.be(null);
 				expect(res.statusCode).to.be(201);
 				expect(data).to.be.an(Object);
@@ -157,11 +161,11 @@ describe('Import endpoint', function() {
 			
 				// As of version 3.0.x, Express only creates an etag when the content is larger than 1024 bytes
 				expect(res.headers['content-length']).to.be.greaterThan(1024);
-				expect(res.headers['etag']).not.to.be(null);
-			
+				expect(res.headers.etag).not.to.be(null);
+
 				var options = {
-				  path: '/api/imports',
-					headers: { 'If-None-Match': res.headers['etag'] }
+					path: '/api/imports',
+					headers: { 'If-None-Match': res.headers.etag }
 				};
 				client.get(options, function(err, req, res, data) { 
 					expect(err).to.be(null);
@@ -178,11 +182,11 @@ describe('Import endpoint', function() {
 			
 				// As of version 3.0.x, Express only creates an etag when the content is larger than 1024 bytes
 				expect(res.headers['content-length']).to.be.greaterThan(1024);
-				expect(res.headers['etag']).not.to.be(null);
+				expect(res.headers.etag).not.to.be(null);
 			
 				var options = {
-				  path: '/api/imports/' + importId,
-					headers: { 'If-None-Match': res.headers['etag'] }
+					path: '/api/imports/' + importId,
+					headers: { 'If-None-Match': res.headers.etag }
 				};
 				client.get(options, function(err, req, res, data) { 
 					expect(err).to.be(null);
@@ -212,7 +216,7 @@ describe('Import endpoint', function() {
 
 		it('GET /api/imports should use gzip', function(done) {
 			var options = {
-			  path: '/api/imports',
+				path: '/api/imports',
 				headers: { 'Accept-Encoding': 'gzip' }
 			};
 		
@@ -227,7 +231,7 @@ describe('Import endpoint', function() {
 
 		it('GET /api/imports/:id should use gzip', function(done) {
 			var options = {
-			  path: '/api/imports/' + importId,
+				path: '/api/imports/' + importId,
 				headers: { 'Accept-Encoding': 'gzip' }
 			};
 		

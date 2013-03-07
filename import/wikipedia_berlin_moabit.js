@@ -1,3 +1,5 @@
+"use strict";
+
 // Problems:
 // - Alexander Fromm, Kirchstr. 7 > wrong coords
 // - Wolff	Bundesratufer 1 (91, 92) -> not found
@@ -12,7 +14,7 @@ var uriSource = url.parse('http://de.m.wikipedia.org/wiki/Liste_der_Stolperstein
 //var urlApi = 'http://127.0.0.1:3000/api';
 var urlApi = 'https://stolpersteine-optionu.rhcloud.com/api';
 var userAgent = 'Stolpersteine/1.0 (http://option-u.com; admin@option-u.com)';
-var additionalGeoHint = ',Moabit'
+var additionalGeoHint = ',Moabit';
 var counter = 0;
 
 request({ uri:uriSource, headers: {'user-agent' : userAgent } }, function(error, response, body) {
@@ -30,8 +32,8 @@ request({ uri:uriSource, headers: {'user-agent' : userAgent } }, function(error,
 		var source = { 
 			url: uriSource.href,
 			name: "Wikipedia",
-			retrievedAt: new Date(response.headers["date"])
-		}
+			retrievedAt: new Date(response.headers.date)
+		};
 		
 		var $ = window.jQuery;
 		var tableRows = $('table.wikitable.sortable tr');
@@ -59,7 +61,7 @@ request({ uri:uriSource, headers: {'user-agent' : userAgent } }, function(error,
 				source: source,
 				stolpersteine: stolpersteine
 			};
-			console.log('importData = ' + importData)
+			console.log('importData = ' + importData);
 			request.post({url: urlApi + '/imports', json: importData}, function(err, res, data) {
 				console.log('Import (' + response.statusCode + ' ' + err + ')');
 				console.log(data);
@@ -97,26 +99,27 @@ function convertStolperstein($, tableRow, callback) {
 			
 	// Laid at date
 	stolperstein.laidAt = {};
+	var number;
 	var laidAtSpan = $(itemRows[3]).find('span');
 	if ($(laidAtSpan).find('span').length) {
 		laidAtSpan = laidAtSpan.find('span');
 	}
 	var laidAtDates = laidAtSpan.text().split('-');
 	if (laidAtDates[0]) {
-		var number = new Number(laidAtDates[0]);
-		if (number != 0) {
+		number = new Number(laidAtDates[0]);
+		if (number !== 0) {
 			stolperstein.laidAt.year = number;
 		}
 	}
 	if (laidAtDates[1]) {
-		var number = new Number(laidAtDates[1]);
-		if (number != 0) {
+		number = new Number(laidAtDates[1]);
+		if (number !== 0) {
 			stolperstein.laidAt.month = number;
 		}
 	}
 	if (laidAtDates[2]) {
-		var number = new Number(laidAtDates[2]);
-		if (number != 0) {
+		number = new Number(laidAtDates[2]);
+		if (number !== 0) {
 			stolperstein.laidAt.date = number;
 		}
 	}
@@ -154,7 +157,7 @@ function geocodeStolperstein(stolperstein, callback) {
 			stolperstein.location.coordinates = {
 				longitude: result.longitude,
 				latitude: result.latitude
-			}
+			};
 		}
 		console.log('- ' + stolperstein.person.lastName + ', ' + stolperstein.person.firstName + ' (geocoding done, err: ' + err + ')');
 		callback(err, stolperstein);
@@ -164,7 +167,7 @@ function geocodeStolperstein(stolperstein, callback) {
 var geocodeAddressMemoized = async.memoize(geocodeAddressRateLimited);
 function geocodeAddressRateLimited(street, city, callback)	{
 	setTimeout(geocodeAddress, 400, street, city, callback);
-};
+}
 
 function geocodeAddress(street, city, callback) {
 	counter++;
@@ -172,14 +175,14 @@ function geocodeAddress(street, city, callback) {
 	var encodedCity = encodeURIComponent(city);
 	var uriGeocode = 'http://maps.googleapis.com/maps/api/geocode/json?sensor=false&components=country:de&address=' + encodedStreet + ',' + encodedCity + additionalGeoHint;
 	request({ uri:uriGeocode, headers: {'user-agent' : userAgent } }, function(error, response, body) {
-	  if (error) {
-	    console.log('Error when contacting maps.googleapis.com site');
+		if (error) {
+			console.log('Error when contacting maps.googleapis.com site');
 			callback(new Error('Error result geocoding'));
-	  }
+		}
 			
 		body = JSON.parse(body);
 		if (body.results.length === 0) {
-	    console.log('Error result geocoding ' + body + '(' + uriGeocode + ')' );
+			console.log('Error result geocoding ' + body + '(' + uriGeocode + ')' );
 			callback(new Error('Error result geocoding'));
 		}
 		
@@ -212,7 +215,7 @@ function geocodeAddress(street, city, callback) {
 			longitude: longitude,
 			latitude: latitude
 		});
-	})
+	});
 }
 
 function logStolperstein(stolperstein) {

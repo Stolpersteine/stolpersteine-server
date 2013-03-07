@@ -1,3 +1,5 @@
+"use strict";
+
 var models = require('../models');
 
 exports.createStolperstein = function(req, res) {
@@ -9,7 +11,7 @@ exports.createStolperstein = function(req, res) {
 			res.send(400, err);
 		}
 	});
-}
+};
 
 exports.retrieveStolpersteine = function(req, res) {
 	models.stolperstein.Stolperstein.findMostRecentId(function(mostRecentId) {
@@ -56,7 +58,7 @@ exports.retrieveStolpersteine = function(req, res) {
 			query = {
 				$and : queries
 			};
-		};
+		}
 	
 		// Pagination
 		var limit = req.query.limit || 10;
@@ -68,7 +70,7 @@ exports.retrieveStolpersteine = function(req, res) {
 			var replacer = res.app.get('json replacer') || null;
 			var spaces = res.app.get('json spaces') || null;
 			stringify = function(stolperstein) {
-				return JSON.stringify(stolperstein, replacer, spaces)
+				return JSON.stringify(stolperstein, replacer, spaces);
 			};
 		} else {
 			stringify = JSON.stringify;
@@ -78,18 +80,18 @@ exports.retrieveStolpersteine = function(req, res) {
 		res.charset = 'utf-8';
 		res.type('application/json');
 		var stream = models.stolperstein.Stolperstein.find(query)
-																								 .select('-__v')
-																								 .limit(limit)
-																								 .skip(skip)
-																								 .lean()
-																								 .stream();
+																									.select('-__v')
+																									.limit(limit)
+																									.skip(skip)
+																									.lean()
+																									.stream();
 		var hasWritten = false;
 		stream.on('data', function(stolperstein) {
 			stolperstein.id = stolperstein._id;
 			delete stolperstein._id;
 		
-		  if (!hasWritten) {
-		    hasWritten = true;
+			if (!hasWritten) {
+				hasWritten = true;
 				res.write('[');
 			} else {
 				res.write(',');
@@ -97,20 +99,20 @@ exports.retrieveStolpersteine = function(req, res) {
 		
 			res.write(stringify(stolperstein));
 		}).on('err', function(err) {
-		  if (!hasWritten) {
+			if (!hasWritten) {
 				res.write('[');
 			}
 			res.write(']');
 			res.end();
 		}).on('close', function() {
-		  if (!hasWritten) {
+			if (!hasWritten) {
 				res.write('[');
 			}
 			res.write(']');
 			res.end();
 		});
 	});
-}
+};
 
 exports.retrieveStolperstein = function(req, res) {
 	models.stolperstein.Stolperstein.findById(req.params.id, function(err, stolperstein) {
@@ -120,7 +122,7 @@ exports.retrieveStolperstein = function(req, res) {
 			res.send(404, err);
 		}
 	});
-}
+};
 
 exports.deleteStolperstein = function(req, res) {
 	models.stolperstein.Stolperstein.findByIdAndRemove(req.params.id, function(err, stolperstein) {
@@ -130,4 +132,4 @@ exports.deleteStolperstein = function(req, res) {
 			res.send(404, err);
 		}
 	});
-}
+};

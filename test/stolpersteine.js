@@ -1,3 +1,6 @@
+"use strict";
+/* global describe:false, it:false, before:false, after:false */
+
 var restify = require('restify'),
 	expect = require('expect.js');
 
@@ -35,15 +38,15 @@ var stolpersteinData = {
 };
 
 function containsId(stolpersteine, id) {
-	var containsId = false;
+	var result = false;
 	for (var i = 0, len = stolpersteine.length; i < len; i++) {
 		if (stolpersteine[i].id === id) {
-			containsId = true;
-	  	break;
+			result = true;
+			break;
 		}
 	}
 	
-	return containsId;
+	return result;
 }
 
 describe('Stolpersteine endpoint', function() {
@@ -170,11 +173,11 @@ describe('Stolpersteine endpoint', function() {
 				expect(res.statusCode).to.be(200);
 			
 				// Manual ETag implementation without content-length
-				expect(res.headers['etag']).not.to.be(null);
+				expect(res.headers.etag).not.to.be(null);
 			
 				var options = {
-				  path: '/api/stolpersteine',
-					headers: { 'If-None-Match': res.headers['etag'] }
+					path: '/api/stolpersteine',
+					headers: { 'If-None-Match': res.headers.etag }
 				};
 				client.get(options, function(err, req, res, data) { 
 					expect(err).to.be(null);
@@ -191,11 +194,11 @@ describe('Stolpersteine endpoint', function() {
 			
 				// As of version 3.0.x, Express only creates an etag when the content is larger than 1024 bytes
 				expect(res.headers['content-length']).to.be.greaterThan(1024);
-				expect(res.headers['etag']).not.to.be(null);
+				expect(res.headers.etag).not.to.be(null);
 			
 				var options = {
-				  path: '/api/stolpersteine/' + stolpersteinId,
-					headers: { 'If-None-Match': res.headers['etag'] }
+					path: '/api/stolpersteine/' + stolpersteinId,
+					headers: { 'If-None-Match': res.headers.etag }
 				};
 				client.get(options, function(err, req, res, data) { 
 					expect(err).to.be(null);
@@ -225,7 +228,7 @@ describe('Stolpersteine endpoint', function() {
 
 		it('GET /api/stolpersteine should use gzip', function(done) {
 			var options = {
-			  path: '/api/stolpersteine',
+				path: '/api/stolpersteine',
 				headers: { 'Accept-Encoding': 'gzip' }
 			};
 		
@@ -240,7 +243,7 @@ describe('Stolpersteine endpoint', function() {
 
 		it('GET /api/stolpersteine/:id should use gzip', function(done) {
 			var options = {
-			  path: '/api/stolpersteine/' + stolpersteinId,
+				path: '/api/stolpersteine/' + stolpersteinId,
 				headers: { 'Accept-Encoding': 'gzip' }
 			};
 		
