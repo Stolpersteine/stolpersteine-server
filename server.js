@@ -19,7 +19,8 @@ console.log('Node.js env = ' + app.get('env'));
 app.configure(function() {
   app.set('port', process.env.OPENSHIFT_INTERNAL_PORT || 3000);
   app.set('host', process.env.OPENSHIFT_INTERNAL_IP || "localhost");
-  app.set('db url', process.env.OPENSHIFT_MONGODB_DB_URL || "mongodb://localhost/");
+  app.set('db url', process.env.MONGODB_DB_URL || process.env.OPENSHIFT_MONGODB_DB_URL || "mongodb://localhost/");
+
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
   app.use(express.logger('dev'));

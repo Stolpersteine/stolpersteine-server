@@ -13,7 +13,8 @@
 # Application start and stop is subject to different timeouts
 # throughout the system.
 
-export NODE_ENV=production
+# Custom settings
+source $OPENSHIFT_DATA_DIR/.env
 
 #  Source utility functions.
 source "$OPENSHIFT_REPO_DIR/.openshift/lib/utils"
