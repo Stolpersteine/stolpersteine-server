@@ -9,8 +9,8 @@ var apiClient = restify.createJsonClient({
 	version: '*',
 	gzip: true,
 	userAgent: 'Stolpersteine/1.0 (http://option-u.com; admin@option-u.com)',
-	url: 'http://127.0.0.1:3000'
-//	url: 'https://stolpersteine-optionu.rhcloud.com'
+//	url: 'http://127.0.0.1:3000'
+	url: 'https://stolpersteine-optionu.rhcloud.com'
 });
 
 var kssUrl = 'http://www.stolpersteine-berlin.de/st_interface/xml/geo/linked';

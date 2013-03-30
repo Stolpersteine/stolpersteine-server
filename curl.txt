@@ -17,4 +17,4 @@ curl -v -d @curl_import.json -H "Content-Type: application/json" http://127.0.0.
 - Import stolpersteine
 node import/kss_berlin.js
 curl -v -d "" http://127.0.0.1:3000/api/imports/<id>/execute
-curl -v -d "" https://stolpersteine-optionu.rhcloud.com/api/imports/<id>/execute
+curl -3 -v -d "" https://stolpersteine-optionu.rhcloud.com/api/imports/<id>/execute
