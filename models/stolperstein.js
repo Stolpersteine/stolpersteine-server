@@ -20,7 +20,6 @@ var schema = new mongoose.Schema({
 		}
 	},
 	description: { type: String, trim: true },
-	imageUrl: { type: String, trim: true },
 	source: {
 		url: { type: String, trim: true, required: true },
 		name: { type: String, trim: true, required: true },
@@ -63,8 +62,7 @@ schema.statics.findExactMatch = function(source, stolperstein, callback) {
 		"location.sublocality2": stolperstein.location.sublocality2 === undefined ? undefined : stolperstein.location.sublocality2.trim(),
 		"location.coordinates.latitude": stolperstein.location.coordinates.latitude === undefined ? undefined : stolperstein.location.coordinates.latitude.trim(),
 		"location.coordinates.longitude": stolperstein.location.coordinates.longitude === undefined ? undefined : stolperstein.location.coordinates.longitude.trim(),
-		"description": stolperstein.description === undefined ? undefined : stolperstein.location.description.trim(),
-		"imageUrl": stolperstein.imageUrl === undefined ? undefined : stolperstein.imageUrl.trim()
+		"description": stolperstein.description === undefined ? undefined : stolperstein.description.trim(),
 	}, callback);
 };
 
