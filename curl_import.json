@@ -6,7 +6,8 @@
 	},
 	"stolpersteine": [{
 		"person": {
-			"name": "Vorname Nachname"
+			"firstName": "Vorname",
+			"lastName": "Nachname"
 		},
 		"location": {
 			"street": "Straße 1",
@@ -16,10 +17,12 @@
 				"longitude": "1.0",
 				"latitude": "1.0"
 			}
-		}
+		},
+		"description": "Beschreibung"
 	}, {
 		"person": {
-			"name": "Vorname Nachname"
+			"firstName": "Vorname",
+			"lastName": "Nachname"
 		},
 		"location": {
 			"street": "Straße 1",
