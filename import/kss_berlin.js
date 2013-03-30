@@ -1,23 +1,32 @@
 "use strict";
 
-var request = require('request'),
+var restify = require('restify'),
 	url = require('url'),
 	parseXml = require('xml2js').parseString,
 	async = require('async');
 	
-var uriSource = url.parse('http://www.stolpersteine-berlin.de/st_interface/xml/geo/linked');
-//var urlApi = 'http://127.0.0.1:3000/api';
-var urlApi = 'https://stolpersteine-optionu.rhcloud.com/api';
-var userAgent = 'Stolpersteine/1.0 (http://option-u.com; admin@option-u.com)';
+var apiClient = restify.createJsonClient({
+	version: '*',
+	gzip: true,
+	userAgent: 'Stolpersteine/1.0 (http://option-u.com; admin@option-u.com)',
+	url: 'http://127.0.0.1:3000'
+//	url: 'https://stolpersteine-optionu.rhcloud.com'
+});
 
+var kssUrl = 'http://www.stolpersteine-berlin.de/st_interface/xml/geo/linked';
+var kssClient = restify.createStringClient({
+	gzip: true,
+	userAgent: 'Stolpersteine/1.0 (http://option-u.com; admin@option-u.com)',
+	url: kssUrl
+});
 var source = { 
-	url: uriSource.href,
+	url: kssUrl,
 	name: "Koordinierungsstelle Stolpersteine Berlin"
 };
 
 // Request data
 console.log('Loading source data...');
-request({ uri:uriSource, headers: {'user-agent' : userAgent } }, function(error, response, body) {
+kssClient.get('', function(error, req, res, data) {
 	console.log('Loading source data done');
   if (error) {
     console.log('Error when loading source data');
@@ -26,7 +35,7 @@ request({ uri:uriSource, headers: {'user-agent' : userAgent } }, function(error,
 
 	// Parse XML
 	console.log('Parsing source data...');
-	parseXml(body, function (err, result) {
+	parseXml(data, function (err, result) {
 		console.log('Parsing source data done');
 		if (error) {
 			console.log('Error when parsing source data');
@@ -36,9 +45,9 @@ request({ uri:uriSource, headers: {'user-agent' : userAgent } }, function(error,
 		// Process marker tags
 		console.log('Found ' + result.markers.$.cnt + ' stolpersteine in ' + result.markers.marker.length + ' markers');
 		var stolpersteine = [];
-		source.retrievedAt = new Date(response.headers.date);
+		source.retrievedAt = new Date(res.headers.date);
 		var markers = result.markers.marker;
-//		markers = markers.slice(0, 1); // restrict test data
+//		markers = markers.slice(0, 100); // restrict test data
 		for (var markerIndex = 0; markerIndex < markers.length; markerIndex++) {
 			var marker = markers[markerIndex];
 			
@@ -59,12 +68,12 @@ request({ uri:uriSource, headers: {'user-agent' : userAgent } }, function(error,
 				var person = marker.person[i];
 				var stolperstein = convertStolperstein(person, location, source);
 				stolpersteine.push(stolperstein);
-//				console.log('- ' + person.$.vorname + ' ' + person.$.nachname + ' (converting done)');
+				console.log('- ' + person.$.vorname + ' ' + person.$.nachname + ' (converting done)');
 			}
 			
 			// Convert person tags nested in 'weitere'
 			if (marker.weitere) {
-//				console.log('Processing "weitere"');
+				console.log('Processing "weitere"');
 				for (var j = 0; j < marker.weitere.length; j++) {
 					location.street = marker.weitere[j].$.adresse;
 				
@@ -72,7 +81,7 @@ request({ uri:uriSource, headers: {'user-agent' : userAgent } }, function(error,
 						var personWeitere = marker.weitere[j].person[k];
 						var stolpersteinWeitere = convertStolperstein(personWeitere, location, source);
 						stolpersteine.push(stolpersteinWeitere);
-//						console.log('- ' + person.$.vorname + ' ' + person.$.nachname + ' (converting done)');
+						console.log('- ' + person.$.vorname + ' ' + person.$.nachname + ' (converting done)');
 					}
 				}
 			}
@@ -83,9 +92,12 @@ request({ uri:uriSource, headers: {'user-agent' : userAgent } }, function(error,
 			stolpersteine: stolpersteine
 		};
 		console.log('importData = ' + importData);
-		request.post({url: urlApi + '/imports', json: importData}, function(err, res, data) {
-			console.log('Import (' + response.statusCode + ' ' + err + ')');
-			console.log(data);
+		apiClient.post('/api/imports', importData, function(err, req, res, data) {
+			if (err) {
+				console.log('Error during import (' + err + ')');
+			} else {
+				console.log(data);
+			}
 		});
 	});
 });
