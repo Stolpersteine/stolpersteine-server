@@ -7,7 +7,6 @@ var restify = require('restify'),
 // init the test client
 var client = restify.createJsonClient({
 	version: '*',
-	gzip: true,
 	url: 'http://127.0.0.1:3000'
 //	url: 'https://stolpersteine-optionu.rhcloud.com/api'
 });
@@ -221,8 +220,7 @@ describe('Import endpoint', function() {
 			};
 		
 			client.get(options, function(err, req, res, data) { 
-				// As of Restify 1.4.x, the JsonClient doesn't automatically decompress gzip'ed data
-	//			expect(err).to.be(null);
+				expect(err).to.be(null);
 				expect(res.statusCode).to.be(200);
 				expect(res.headers['content-encoding']).to.equal("gzip");
 				done();
@@ -236,8 +234,7 @@ describe('Import endpoint', function() {
 			};
 		
 			client.get(options, function(err, req, res, data) { 
-				// As of Restify 1.4.x, the JsonClient doesn't automatically decompress gzip'ed data
-	//			expect(err).to.be(null);
+				expect(err).to.be(null);
 				expect(res.statusCode).to.be(200);
 				expect(res.headers['content-encoding']).to.equal("gzip");
 				done();
