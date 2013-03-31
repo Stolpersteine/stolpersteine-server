@@ -11,7 +11,7 @@ exports.createImport = function(req, res) {
 		// Find and delete old imports
 		models.import.Import.findAndDelete.bind(undefined, source),
 		
-		// Figure out existing stolpersteine
+		// Figure out existing stolpersteine 
 		function(callback) {
 			var existingStolpersteineIds = [];
 			var newImport = new models.import.Import();
