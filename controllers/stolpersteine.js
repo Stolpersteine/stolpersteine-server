@@ -89,7 +89,6 @@ exports.retrieveStolpersteine = function(req, res) {
 		stream.on('data', function(stolperstein) {
 			stolperstein.id = stolperstein._id;
 			delete stolperstein._id;
-			delete stolperstein.hash;			
 		
 			if (!hasWritten) {
 				hasWritten = true;

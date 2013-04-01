@@ -1,7 +1,6 @@
 "use strict";
 
-var mongoose = require('mongoose'),
-	crypto = require('crypto');
+var mongoose = require('mongoose');
 
 var schema = new mongoose.Schema({
 	person: {
@@ -20,13 +19,12 @@ var schema = new mongoose.Schema({
 			latitude: { type: Number, required: true }
 		}
 	},
+	description: { type: String, trim: true },
 	source: {
 		url: { type: String, trim: true, required: true },
 		name: { type: String, trim: true, required: true },
 		retrievedAt: { type: Date, required: true }
-	},
-	description: { type: String, trim: true },
-	hash: { type: String, trim: true }
+	}
 });
 
 schema.virtual('id').get(function() {
@@ -37,7 +35,6 @@ schema.set('toJSON', { transform: function (doc, ret, options) {
 	ret.id = doc._id;
   delete ret._id;
 	delete ret.__v;
-	delete ret.hash;
 }});
 
 schema.methods.toGeoJSON = function() {
@@ -50,36 +47,23 @@ schema.methods.toGeoJSON = function() {
 	};
 };
 
-schema.statics.createHash = function(stolperstein) {
-	var hash = crypto.createHash("md5");
-	hash.update(stolperstein.source.url === undefined ? "" : stolperstein.source.url.trim());
-	hash.update(stolperstein.source.name === undefined ? "" : stolperstein.source.name.trim());
-	hash.update(stolperstein.person.firstName === undefined ? "" : stolperstein.person.firstName.trim());
-	hash.update(stolperstein.person.lastName === undefined ? "" : stolperstein.person.lastName.trim());
-	hash.update(stolperstein.person.biographyUrl === undefined ? "" : stolperstein.person.biographyUrl.trim());
-	hash.update(stolperstein.location.street === undefined ? "" : stolperstein.location.street.trim());
-	hash.update(stolperstein.location.zipCode === undefined ? "" : stolperstein.location.zipCode.trim());
-	hash.update(stolperstein.location.city === undefined ? "" : stolperstein.location.city.trim());
-	hash.update(stolperstein.location.sublocality1 === undefined ? "" : stolperstein.location.sublocality1.trim());
-	hash.update(stolperstein.location.sublocality2 === undefined ? "" : stolperstein.location.sublocality2.trim());
-	hash.update(stolperstein.location.coordinates.latitude === undefined ? "" : '' + parseFloat(stolperstein.location.coordinates.latitude));
-	hash.update(stolperstein.location.coordinates.longitude === undefined ? "" : '' + parseFloat(stolperstein.location.coordinates.longitude));
-	hash.update(stolperstein.description === undefined ? "" : stolperstein.description.trim());
-	
-	return hash.digest('hex');
-};
-
-schema.pre('save', function (next) {
-	if (this.isNew) {
-		this.hash = exports.Stolperstein.createHash(this);
-	}
-	next();
-});
-
 schema.statics.findExactMatch = function(source, stolperstein, callback) {
-	stolperstein.source = source;
-	var hash = exports.Stolperstein.createHash(stolperstein);
-	this.findOne({ hash: hash	}, callback);
+	this.findOne({
+		"source.url": source.url === undefined ? undefined : source.url.trim(),
+		"source.name": source.name === undefined ? undefined : source.name.trim(),
+//		"source.retrievedAt": source.retrievedAt, 
+		"person.firstName": stolperstein.person.firstName === undefined ? undefined : stolperstein.person.firstName.trim(),
+		"person.lastName": stolperstein.person.lastName === undefined ? undefined : stolperstein.person.lastName.trim(),
+		"person.biographyUrl": stolperstein.person.biographyUrl === undefined ? undefined : stolperstein.person.biographyUrl.trim(),
+		"location.street": stolperstein.location.street === undefined ? undefined : stolperstein.location.street.trim(),
+		"location.zipCode": stolperstein.location.zipCode === undefined ? undefined : stolperstein.location.zipCode.trim(),
+		"location.city": stolperstein.location.city === undefined ? undefined : stolperstein.location.city.trim(),
+		"location.sublocality1": stolperstein.location.sublocality1 === undefined ? undefined : stolperstein.location.sublocality1.trim(),
+		"location.sublocality2": stolperstein.location.sublocality2 === undefined ? undefined : stolperstein.location.sublocality2.trim(),
+		"location.coordinates.latitude": stolperstein.location.coordinates.latitude === undefined ? undefined : stolperstein.location.coordinates.latitude.trim(),
+		"location.coordinates.longitude": stolperstein.location.coordinates.longitude === undefined ? undefined : stolperstein.location.coordinates.longitude.trim(),
+		"description": stolperstein.description === undefined ? undefined : stolperstein.description.trim(),
+	}, callback);
 };
 
 schema.statics.findMostRecentId = function(callback) {
