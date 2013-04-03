@@ -17,8 +17,8 @@ var app = express();
 console.log('Node.js env = ' + app.get('env'));
 
 app.configure(function() {
-  app.set('port', process.env.OPENSHIFT_INTERNAL_PORT || 3000);
-  app.set('host', process.env.OPENSHIFT_INTERNAL_IP || "localhost");
+  app.set('port', process.env.VCAP_APP_PORT || process.env.OPENSHIFT_INTERNAL_PORT || 3000);
+  app.set('host', process.env.VCAP_APP_HOST || process.env.OPENSHIFT_INTERNAL_IP || "localhost");
   app.set('db url', process.env.MONGODB_DB_URL || process.env.OPENSHIFT_MONGODB_DB_URL || "mongodb://localhost/");
 
   app.set('views', __dirname + '/views');
