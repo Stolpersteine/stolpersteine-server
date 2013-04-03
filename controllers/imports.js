@@ -4,11 +4,6 @@ var models = require('../models'),
 	async = require('async');
 
 exports.createImport = function(req, res) {
-	var start = +new Date;
-	var counter1 = 0;
-	var counter2 = 0;
-	var counter3 = 0;
-	
 	var source = req.body.source;
 	var stolpersteineImport = req.body.stolpersteine;
 	
@@ -18,18 +13,13 @@ exports.createImport = function(req, res) {
 		
 		// Figure out existing stolpersteine
 		function(callback) {
-			console.log('before find existing: ' + (+new Date - start))
-			
 			var existingStolpersteineIds = [];
 			var newImport = new models.import.Import();
 			newImport.source = source;
 			
 			async.forEach(stolpersteineImport, function(stolpersteinImport, callback) {
-//				var start1 = +new Date;
 				// Check if stolperstein exists
 				models.stolperstein.Stolperstein.findExactMatch(source, stolpersteinImport, function(err, stolperstein) {
-//					counter1 += (+new Date - start1);
-//					console.log('counter1: ' + (+new Date - start1));
 					if (stolperstein) {
 						existingStolpersteineIds.push(stolperstein.id);
 					} else {
@@ -40,13 +30,11 @@ exports.createImport = function(req, res) {
 					callback(err);
 				});
 			}, function(err) {
-				console.log('counter1: ' + counter1 + ' counter2: ' + counter2 + ' counter3: ' + counter3);
 				callback(err, newImport, existingStolpersteineIds);
 			});
 		},
 		// Stolpersteine that don't exist any more
 		function(newImport, existingStolpersteineIds, callback) {
-			console.log('before delete: ' + (+new Date - start))
 				models.stolperstein.Stolperstein.find({"source.url": source.url, "_id": {$nin: existingStolpersteineIds}}, function(err, stolpersteine) {
 					async.forEach(stolpersteine, function(stolperstein, callback) {
 						newImport.deleteActions.targetIds.push(stolperstein.id);
@@ -58,19 +46,16 @@ exports.createImport = function(req, res) {
 		},
 		// Store import data
 		function(newImport, callback) {
-			console.log('before save: ' + (+new Date - start))
 			newImport.save(function(err, newImport) {
 				callback(err, newImport);
 			});
 		}
 	], function (err, newImport) {
-		console.log('before send: ' + (+new Date - start))
 		if (!err) {
 			res.send(201, newImport);
 		} else {
 			res.send(400, err);
 		}
-		console.log('after send: ' + (+new Date - start))
 	});
 };
 
