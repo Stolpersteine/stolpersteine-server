@@ -53,8 +53,8 @@ describe('Stolpersteine endpoint', function() {
 	describe('Life cycle', function() {
 		var stolpersteinId = 0;
 		
-		it('POST /api/stolpersteine should get a 201 response', function(done) {
-			client.post('/api/stolpersteine', stolpersteinData, function(err, req, res, data) { 
+		it('POST /v1/stolpersteine should get a 201 response', function(done) {
+			client.post('/v1/stolpersteine', stolpersteinData, function(err, req, res, data) { 
 				expect(err).to.be(null);
 				expect(res.statusCode).to.be(201);
 				expect(data).to.be.an(Object);
@@ -64,8 +64,8 @@ describe('Stolpersteine endpoint', function() {
 			}); 
 		});
 
-		it('GET /api/stolpersteine/:id should get a 200 response', function(done) {
-			client.get('/api/stolpersteine/' + stolpersteinId, function(err, req, res, data) { 
+		it('GET /v1/stolpersteine/:id should get a 200 response', function(done) {
+			client.get('/v1/stolpersteine/' + stolpersteinId, function(err, req, res, data) { 
 				expect(err).to.be(null);
 				expect(res.statusCode).to.be(200);
 				expect(res.headers['content-type']).to.be('application/json; charset=utf-8');
@@ -90,8 +90,8 @@ describe('Stolpersteine endpoint', function() {
 			}); 
 		});
 
-		it('GET /api/stolpersteine should get a 200 response', function(done) {
-			client.get('/api/stolpersteine', function(err, req, res, data) { 
+		it('GET /v1/stolpersteine should get a 200 response', function(done) {
+			client.get('/v1/stolpersteine', function(err, req, res, data) { 
 				expect(err).to.be(null);
 				expect(res.statusCode).to.be(200);
 				expect(data).to.be.an(Array);
@@ -101,11 +101,11 @@ describe('Stolpersteine endpoint', function() {
 			}); 
 		});
 	
-		it('DELETE /api/stolpersteine/:id should get a 204 response', function(done) {
-			client.del('/api/stolpersteine/' + stolpersteinId, function(err, req, res, data) { 
+		it('DELETE /v1/stolpersteine/:id should get a 204 response', function(done) {
+			client.del('/v1/stolpersteine/' + stolpersteinId, function(err, req, res, data) { 
 				expect(err).to.be(null);
 				expect(res.statusCode).to.be(204);
-				client.get('/api/stolpersteine/' + stolpersteinId, function(err, req, res, data) { 
+				client.get('/v1/stolpersteine/' + stolpersteinId, function(err, req, res, data) { 
 					expect(err).not.to.be(null);
 					expect(res.statusCode).to.be(404);
 					done();
@@ -116,32 +116,32 @@ describe('Stolpersteine endpoint', function() {
 	
 	//////////////////////////////////////////////////////////////////////////////
 	describe('Invalid IDs', function() {
-		it('GET /api/stolpersteine/:id with invalid id should get a 404 response', function(done) {
-			client.get('/api/stolpersteine/0', function(err, req, res, data) { 
+		it('GET /v1/stolpersteine/:id with invalid id should get a 404 response', function(done) {
+			client.get('/v1/stolpersteine/0', function(err, req, res, data) { 
 				expect(err).not.to.be(null);
 				expect(res.statusCode).to.be(404);
 				done();
 			}); 
 		}); 
 		
-		it('GET /api/imports/:id with non-existent id should get a 404 response', function(done) {
-			client.get('/api/stolpersteine/000000000000000000000000', function(err, req, res, data) { 
+		it('GET /v1/imports/:id with non-existent id should get a 404 response', function(done) {
+			client.get('/v1/stolpersteine/000000000000000000000000', function(err, req, res, data) { 
 				expect(err).not.to.be(null);
 				expect(res.statusCode).to.be(404);
 				done();
 			}); 
 		}); 
 
-		it('DELETE /api/stolpersteine/:id with invalid id should get a 404 response', function(done) {
-			client.del('/api/stolpersteine/0', function(err, req, res, data) { 
+		it('DELETE /v1/stolpersteine/:id with invalid id should get a 404 response', function(done) {
+			client.del('/v1/stolpersteine/0', function(err, req, res, data) { 
 				expect(err).not.to.be(null);
 				expect(res.statusCode).to.be(404);
 				done();
 			}); 
 		});
 		
-		it('DELETE /api/stolpersteine/:id with non-existent id should get a 404 response', function(done) {
-			client.del('/api/stolpersteine/000000000000000000000000', function(err, req, res, data) { 
+		it('DELETE /v1/stolpersteine/:id with non-existent id should get a 404 response', function(done) {
+			client.del('/v1/stolpersteine/000000000000000000000000', function(err, req, res, data) { 
 				expect(err).not.to.be(null);
 				expect(res.statusCode).to.be(404);
 				done();
@@ -154,20 +154,20 @@ describe('Stolpersteine endpoint', function() {
 		var stolpersteinId;
 		
 		before(function(done) {
-			client.post('/api/stolpersteine', stolpersteinData, function(err, req, res, data) { 
+			client.post('/v1/stolpersteine', stolpersteinData, function(err, req, res, data) { 
 				stolpersteinId = data.id;
 				done(err);
 			}); 
 		});
 
 		after(function(done) {
-			client.del('/api/stolpersteine/' + stolpersteinId, function(err, req, res, data) {
+			client.del('/v1/stolpersteine/' + stolpersteinId, function(err, req, res, data) {
 				done(err);
 			});
 		});
 		
-		it('GET /api/stolpersteine with etag should get a 304 response', function(done) {
-			client.get('/api/stolpersteine', function(err, req, res, data) { 
+		it('GET /v1/stolpersteine with etag should get a 304 response', function(done) {
+			client.get('/v1/stolpersteine', function(err, req, res, data) { 
 				expect(err).to.be(null);
 				expect(res.statusCode).to.be(200);
 			
@@ -175,7 +175,7 @@ describe('Stolpersteine endpoint', function() {
 				expect(res.headers.etag).not.to.be(null);
 			
 				var options = {
-					path: '/api/stolpersteine',
+					path: '/v1/stolpersteine',
 					headers: { 'If-None-Match': res.headers.etag }
 				};
 				client.get(options, function(err, req, res, data) { 
@@ -186,8 +186,8 @@ describe('Stolpersteine endpoint', function() {
 			}); 
 		});
 
-		it('GET /api/stolpersteine/:id with etag should get a 304 response', function(done) {
-			client.get('/api/stolpersteine/' + stolpersteinId, function(err, req, res, data) { 
+		it('GET /v1/stolpersteine/:id with etag should get a 304 response', function(done) {
+			client.get('/v1/stolpersteine/' + stolpersteinId, function(err, req, res, data) { 
 				expect(err).to.be(null);
 				expect(res.statusCode).to.be(200);
 			
@@ -196,7 +196,7 @@ describe('Stolpersteine endpoint', function() {
 				expect(res.headers.etag).not.to.be(null);
 			
 				var options = {
-					path: '/api/stolpersteine/' + stolpersteinId,
+					path: '/v1/stolpersteine/' + stolpersteinId,
 					headers: { 'If-None-Match': res.headers.etag }
 				};
 				client.get(options, function(err, req, res, data) { 
@@ -213,21 +213,21 @@ describe('Stolpersteine endpoint', function() {
 		var stolpersteinId;
 		
 		before(function(done) {
-			client.post('/api/stolpersteine', stolpersteinData, function(err, req, res, data) { 
+			client.post('/v1/stolpersteine', stolpersteinData, function(err, req, res, data) { 
 				stolpersteinId = data.id;
 				done(err);
 			}); 
 		});
 
 		after(function(done) {
-			client.del('/api/stolpersteine/' + stolpersteinId, function(err, req, res, data) {
+			client.del('/v1/stolpersteine/' + stolpersteinId, function(err, req, res, data) {
 				done(err);
 			});
 		});
 
-		it('GET /api/stolpersteine should use gzip', function(done) {
+		it('GET /v1/stolpersteine should use gzip', function(done) {
 			var options = {
-				path: '/api/stolpersteine',
+				path: '/v1/stolpersteine',
 				headers: { 'Accept-Encoding': 'gzip' }
 			};
 		
@@ -239,9 +239,9 @@ describe('Stolpersteine endpoint', function() {
 			}); 
 		});
 
-		it('GET /api/stolpersteine/:id should use gzip', function(done) {
+		it('GET /v1/stolpersteine/:id should use gzip', function(done) {
 			var options = {
-				path: '/api/stolpersteine/' + stolpersteinId,
+				path: '/v1/stolpersteine/' + stolpersteinId,
 				headers: { 'Accept-Encoding': 'gzip' }
 			};
 		
@@ -259,20 +259,20 @@ describe('Stolpersteine endpoint', function() {
 		var stolpersteinId;
 		
 		before(function(done) {
-			client.post('/api/stolpersteine', stolpersteinData, function(err, req, res, data) { 
+			client.post('/v1/stolpersteine', stolpersteinData, function(err, req, res, data) { 
 				stolpersteinId = data.id;
 				done(err);
 			}); 
 		});
 
 		after(function(done) {
-			client.del('/api/stolpersteine/' + stolpersteinId, function(err, req, res, data) {
+			client.del('/v1/stolpersteine/' + stolpersteinId, function(err, req, res, data) {
 				done(err);
 			});
 		});
 
-		it('GET /api/stolpersteine?q=<keyword> should not have any results for non-matching keyword', function(done) {
-			client.get('/api/stolpersteine?source=integration&q=xyz', function(err, req, res, data) { 
+		it('GET /v1/stolpersteine?q=<keyword> should not have any results for non-matching keyword', function(done) {
+			client.get('/v1/stolpersteine?source=integration&q=xyz', function(err, req, res, data) { 
 				expect(err).to.be(null);
 				expect(res.statusCode).to.be(200);
 				expect(data).to.be.an(Array);
@@ -282,8 +282,8 @@ describe('Stolpersteine endpoint', function() {
 			}); 
 		});
 
-		it('GET /api/stolpersteine?q=<keyword> should have results for matching first name', function(done) {
-			client.get('/api/stolpersteine?source=integration&q=vorna', function(err, req, res, data) { 
+		it('GET /v1/stolpersteine?q=<keyword> should have results for matching first name', function(done) {
+			client.get('/v1/stolpersteine?source=integration&q=vorna', function(err, req, res, data) { 
 				expect(err).to.be(null);
 				expect(res.statusCode).to.be(200);
 				expect(data).to.be.an(Array);
@@ -294,8 +294,8 @@ describe('Stolpersteine endpoint', function() {
 			}); 
 		});
 
-		it('GET /api/stolpersteine?q=<keyword> should have results for matching last name', function(done) {
-			client.get('/api/stolpersteine?source=integration&q=nachna', function(err, req, res, data) { 
+		it('GET /v1/stolpersteine?q=<keyword> should have results for matching last name', function(done) {
+			client.get('/v1/stolpersteine?source=integration&q=nachna', function(err, req, res, data) { 
 				expect(err).to.be(null);
 				expect(res.statusCode).to.be(200);
 				expect(data).to.be.an(Array);
@@ -306,8 +306,8 @@ describe('Stolpersteine endpoint', function() {
 			}); 
 		});
 
-		it('GET /api/stolpersteine?q=<keyword> should have results for matching street', function(done) {
-			client.get('/api/stolpersteine?source=integration&q=stra', function(err, req, res, data) { 
+		it('GET /v1/stolpersteine?q=<keyword> should have results for matching street', function(done) {
+			client.get('/v1/stolpersteine?source=integration&q=stra', function(err, req, res, data) { 
 				expect(err).to.be(null);
 				expect(res.statusCode).to.be(200);
 				expect(data).to.be.an(Array);
@@ -318,8 +318,8 @@ describe('Stolpersteine endpoint', function() {
 			}); 
 		});
 
-		it('GET /api/stolpersteine?q=<keyword> should have results for matching zip code', function(done) {
-			client.get('/api/stolpersteine?source=integration&q=1000', function(err, req, res, data) { 
+		it('GET /v1/stolpersteine?q=<keyword> should have results for matching zip code', function(done) {
+			client.get('/v1/stolpersteine?source=integration&q=1000', function(err, req, res, data) { 
 				expect(err).to.be(null);
 				expect(res.statusCode).to.be(200);
 				expect(data).to.be.an(Array);
@@ -330,8 +330,8 @@ describe('Stolpersteine endpoint', function() {
 			}); 
 		});
 
-		it('GET /api/stolpersteine?q=<keyword> should have results for matching sublocality', function(done) {
-			client.get('/api/stolpersteine?source=integration&q=Bezi', function(err, req, res, data) { 
+		it('GET /v1/stolpersteine?q=<keyword> should have results for matching sublocality', function(done) {
+			client.get('/v1/stolpersteine?source=integration&q=Bezi', function(err, req, res, data) { 
 				expect(err).to.be(null);
 				expect(res.statusCode).to.be(200);
 				expect(data).to.be.an(Array);
@@ -348,20 +348,20 @@ describe('Stolpersteine endpoint', function() {
 		var stolpersteinId;
 		
 		before(function(done) {
-			client.post('/api/stolpersteine', stolpersteinData, function(err, req, res, data) { 
+			client.post('/v1/stolpersteine', stolpersteinData, function(err, req, res, data) { 
 				stolpersteinId = data.id;
 				done(err);
 			}); 
 		});
 
 		after(function(done) {
-			client.del('/api/stolpersteine/' + stolpersteinId, function(err, req, res, data) {
+			client.del('/v1/stolpersteine/' + stolpersteinId, function(err, req, res, data) {
 				done(err);
 			});
 		});
 
-		it('GET /api/stolpersteine?street=<street> should not have any results for non-matching street', function(done) {
-			client.get('/api/stolpersteine?source=integration&street=xyz', function(err, req, res, data) { 
+		it('GET /v1/stolpersteine?street=<street> should not have any results for non-matching street', function(done) {
+			client.get('/v1/stolpersteine?source=integration&street=xyz', function(err, req, res, data) { 
 				expect(err).to.be(null);
 				expect(res.statusCode).to.be(200);
 				expect(data).to.be.an(Array);
@@ -371,8 +371,8 @@ describe('Stolpersteine endpoint', function() {
 			}); 
 		});
 
-		it('GET /api/stolpersteine?street=<street> should have results for matching street', function(done) {
-			client.get('/api/stolpersteine?source=integration&street=' + encodeURIComponent('straße'), function(err, req, res, data) { 
+		it('GET /v1/stolpersteine?street=<street> should have results for matching street', function(done) {
+			client.get('/v1/stolpersteine?source=integration&street=' + encodeURIComponent('straße'), function(err, req, res, data) { 
 				expect(err).to.be(null);
 				expect(res.statusCode).to.be(200);
 				expect(data).to.be.an(Array);
@@ -389,20 +389,20 @@ describe('Stolpersteine endpoint', function() {
 		var stolpersteinId;
 		
 		before(function(done) {
-			client.post('/api/stolpersteine', stolpersteinData, function(err, req, res, data) { 
+			client.post('/v1/stolpersteine', stolpersteinData, function(err, req, res, data) { 
 				stolpersteinId = data.id;
 				done(err);
 			}); 
 		});
 
 		after(function(done) {
-			client.del('/api/stolpersteine/' + stolpersteinId, function(err, req, res, data) {
+			client.del('/v1/stolpersteine/' + stolpersteinId, function(err, req, res, data) {
 				done(err);
 			});
 		});
 
-		it('GET /api/stolpersteine?source=<source> should not have any results for npn-matching source', function(done) {
-			client.get('/api/stolpersteine?source=xyz', function(err, req, res, data) { 
+		it('GET /v1/stolpersteine?source=<source> should not have any results for npn-matching source', function(done) {
+			client.get('/v1/stolpersteine?source=xyz', function(err, req, res, data) { 
 				expect(err).to.be(null);
 				expect(res.statusCode).to.be(200);
 				expect(data).to.be.an(Array);
@@ -412,8 +412,8 @@ describe('Stolpersteine endpoint', function() {
 			}); 
 		});
 
-		it('GET /api/stolpersteine?source=<source> should have results for matching source', function(done) {
-			client.get('/api/stolpersteine?source=integration', function(err, req, res, data) { 
+		it('GET /v1/stolpersteine?source=<source> should have results for matching source', function(done) {
+			client.get('/v1/stolpersteine?source=integration', function(err, req, res, data) { 
 				expect(err).to.be(null);
 				expect(res.statusCode).to.be(200);
 				expect(data).to.be.an(Array);
@@ -430,11 +430,11 @@ describe('Stolpersteine endpoint', function() {
 		var stolpersteinId0, stolpersteinId1, stolpersteinId2;
 		
 		before(function(done) {
-			client.post('/api/stolpersteine', stolpersteinData, function(err, req, res, data) { 
+			client.post('/v1/stolpersteine', stolpersteinData, function(err, req, res, data) { 
 				stolpersteinId0 = data.id;
-				client.post('/api/stolpersteine', stolpersteinData, function(err, req, res, data) { 
+				client.post('/v1/stolpersteine', stolpersteinData, function(err, req, res, data) { 
 					stolpersteinId1 = data.id;
-					client.post('/api/stolpersteine', stolpersteinData, function(err, req, res, data) { 
+					client.post('/v1/stolpersteine', stolpersteinData, function(err, req, res, data) { 
 						stolpersteinId2 = data.id;
 						done(err);
 					});
@@ -443,17 +443,17 @@ describe('Stolpersteine endpoint', function() {
 		});
 
 		after(function(done) {
-			client.del('/api/stolpersteine/' + stolpersteinId0, function(err, req, res, data) {
-				client.del('/api/stolpersteine/' + stolpersteinId1, function(err, req, res, data) {
-					client.del('/api/stolpersteine/' + stolpersteinId2, function(err, req, res, data) {
+			client.del('/v1/stolpersteine/' + stolpersteinId0, function(err, req, res, data) {
+				client.del('/v1/stolpersteine/' + stolpersteinId1, function(err, req, res, data) {
+					client.del('/v1/stolpersteine/' + stolpersteinId2, function(err, req, res, data) {
 						done(err);
 					});
 				});
 			});
 		});
 
-		it('GET /api/stolpersteine?limit=<limit>&offset=<offset> should have 1 result for (1, 0)', function(done) {
-			client.get('/api/stolpersteine?source=integration&limit=1&offset=0', function(err, req, res, data) { 
+		it('GET /v1/stolpersteine?limit=<limit>&offset=<offset> should have 1 result for (1, 0)', function(done) {
+			client.get('/v1/stolpersteine?source=integration&limit=1&offset=0', function(err, req, res, data) { 
 				expect(err).to.be(null);
 				expect(res.statusCode).to.be(200);
 				expect(data).to.be.an(Array);
@@ -463,8 +463,8 @@ describe('Stolpersteine endpoint', function() {
 			}); 
 		});
 
-		it('GET /api/stolpersteine?limit=<limit> should have 1 result for limit 1', function(done) {
-			client.get('/api/stolpersteine?source=integration&limit=1', function(err, req, res, data) { 
+		it('GET /v1/stolpersteine?limit=<limit> should have 1 result for limit 1', function(done) {
+			client.get('/v1/stolpersteine?source=integration&limit=1', function(err, req, res, data) { 
 				expect(err).to.be(null);
 				expect(res.statusCode).to.be(200);
 				expect(data).to.be.an(Array);
@@ -474,8 +474,8 @@ describe('Stolpersteine endpoint', function() {
 			}); 
 		});
 
-		it('GET /api/stolpersteine?limit=<limit>&offset=<offset> should have 3 results for (3, 0)', function(done) {
-			client.get('/api/stolpersteine?source=integration&limit=3&offset=0', function(err, req, res, data) { 
+		it('GET /v1/stolpersteine?limit=<limit>&offset=<offset> should have 3 results for (3, 0)', function(done) {
+			client.get('/v1/stolpersteine?source=integration&limit=3&offset=0', function(err, req, res, data) { 
 				expect(err).to.be(null);
 				expect(res.statusCode).to.be(200);
 				expect(data).to.be.an(Array);
@@ -488,8 +488,8 @@ describe('Stolpersteine endpoint', function() {
 			}); 
 		});
 		
-		it('GET /api/stolpersteine?limit=<limit> should have 3 results for limit 0', function(done) {
-			client.get('/api/stolpersteine?source=integration&limit=0', function(err, req, res, data) { 
+		it('GET /v1/stolpersteine?limit=<limit> should have 3 results for limit 0', function(done) {
+			client.get('/v1/stolpersteine?source=integration&limit=0', function(err, req, res, data) { 
 				expect(err).to.be(null);
 				expect(res.statusCode).to.be(200);
 				expect(data).to.be.an(Array);
@@ -502,8 +502,8 @@ describe('Stolpersteine endpoint', function() {
 			}); 
 		});
 		
-		it('GET /api/stolpersteine?limit=<limit>&offset=<offset> should have 1 result for (1, 2)', function(done) {
-			client.get('/api/stolpersteine?source=integration&limit=1&offset=2', function(err, req, res, data) { 
+		it('GET /v1/stolpersteine?limit=<limit>&offset=<offset> should have 1 result for (1, 2)', function(done) {
+			client.get('/v1/stolpersteine?source=integration&limit=1&offset=2', function(err, req, res, data) { 
 				expect(err).to.be(null);
 				expect(res.statusCode).to.be(200);
 				expect(data).to.be.an(Array);
@@ -513,8 +513,8 @@ describe('Stolpersteine endpoint', function() {
 			}); 
 		});
 
-		it('GET /api/stolpersteine?limit=<limit>&offset=<offset> should have 0 results for (1, 3)', function(done) {
-			client.get('/api/stolpersteine?source=integration&limit=1&offset=3', function(err, req, res, data) { 
+		it('GET /v1/stolpersteine?limit=<limit>&offset=<offset> should have 0 results for (1, 3)', function(done) {
+			client.get('/v1/stolpersteine?source=integration&limit=1&offset=3', function(err, req, res, data) { 
 				expect(err).to.be(null);
 				expect(res.statusCode).to.be(200);
 				expect(data).to.be.an(Array);

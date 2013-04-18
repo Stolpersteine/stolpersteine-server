@@ -53,8 +53,8 @@ describe('Import endpoint', function() {
 	describe('Life cycle', function() {
 		var importId = 0;
 		
-		it('POST /api/imports should get a 201 response', function(done) {
-			client.post('/api/imports', importData, function(err, req, res, data) { 
+		it('POST /v1/imports should get a 201 response', function(done) {
+			client.post('/v1/imports', importData, function(err, req, res, data) { 
 				console.log(res.statusCode);
 				expect(err).to.be(null);
 				expect(res.statusCode).to.be(201);
@@ -65,8 +65,8 @@ describe('Import endpoint', function() {
 			}); 
 		});
 
-		it('GET /api/imports/:id should get a 200 response', function(done) {
-			client.get('/api/imports/' + importId, function(err, req, res, data) { 
+		it('GET /v1/imports/:id should get a 200 response', function(done) {
+			client.get('/v1/imports/' + importId, function(err, req, res, data) { 
 				expect(err).to.be(null);
 				expect(res.statusCode).to.be(200);
 				expect(res.headers['content-type']).to.be('application/json; charset=utf-8');
@@ -77,8 +77,8 @@ describe('Import endpoint', function() {
 			}); 
 		});
 
-		it('GET /api/imports should get a 200 response', function(done) {
-			client.get('/api/imports', function(err, req, res, data) { 
+		it('GET /v1/imports should get a 200 response', function(done) {
+			client.get('/v1/imports', function(err, req, res, data) { 
 				expect(err).to.be(null);
 				expect(res.statusCode).to.be(200);
 				expect(data).to.be.an(Array);
@@ -88,11 +88,11 @@ describe('Import endpoint', function() {
 			}); 
 		});
 	
-		it('DELETE /api/imports/:id should get a 204 response', function(done) {
-			client.del('/api/imports/' + importId, function(err, req, res, data) { 
+		it('DELETE /v1/imports/:id should get a 204 response', function(done) {
+			client.del('/v1/imports/' + importId, function(err, req, res, data) { 
 				expect(err).to.be(null);
 				expect(res.statusCode).to.be(204);
-				client.get('/api/imports/' + importId, function(err, req, res, data) { 
+				client.get('/v1/imports/' + importId, function(err, req, res, data) { 
 					expect(err).not.to.be(null);
 					expect(res.statusCode).to.be(404);
 					done();
@@ -103,32 +103,32 @@ describe('Import endpoint', function() {
 	
 	//////////////////////////////////////////////////////////////////////////////
 	describe('Invalid IDs', function() {
-		it('GET /api/imports/:id with invalid id should get a 404 response', function(done) {
-			client.get('/api/imports/0', function(err, req, res, data) { 
+		it('GET /v1/imports/:id with invalid id should get a 404 response', function(done) {
+			client.get('/v1/imports/0', function(err, req, res, data) { 
 				expect(err).not.to.be(null);
 				expect(res.statusCode).to.be(404);
 				done();
 			}); 
 		}); 
 		
-		it('GET /api/imports/:id with non-existent id should get a 404 response', function(done) {
-			client.get('/api/imports/000000000000000000000000', function(err, req, res, data) { 
+		it('GET /v1/imports/:id with non-existent id should get a 404 response', function(done) {
+			client.get('/v1/imports/000000000000000000000000', function(err, req, res, data) { 
 				expect(err).not.to.be(null);
 				expect(res.statusCode).to.be(404);
 				done();
 			}); 
 		}); 
 
-		it('DELETE /api/imports/:id with invalid id should get a 404 response', function(done) {
-			client.del('/api/imports/0', function(err, req, res, data) { 
+		it('DELETE /v1/imports/:id with invalid id should get a 404 response', function(done) {
+			client.del('/v1/imports/0', function(err, req, res, data) { 
 				expect(err).not.to.be(null);
 				expect(res.statusCode).to.be(404);
 				done();
 			}); 
 		});
 		
-		it('DELETE /api/imports/:id with non-existent id should get a 404 response', function(done) {
-			client.del('/api/imports/000000000000000000000000', function(err, req, res, data) { 
+		it('DELETE /v1/imports/:id with non-existent id should get a 404 response', function(done) {
+			client.del('/v1/imports/000000000000000000000000', function(err, req, res, data) { 
 				expect(err).not.to.be(null);
 				expect(res.statusCode).to.be(404);
 				done();
@@ -141,20 +141,20 @@ describe('Import endpoint', function() {
 		var importId;
 		
 		before(function(done) {
-			client.post('/api/imports', importData, function(err, req, res, data) { 
+			client.post('/v1/imports', importData, function(err, req, res, data) { 
 				importId = data.id;
 				done(err);
 			}); 
 		});
 
 		after(function(done) {
-			client.del('/api/imports/' + importId, function(err, req, res, data) {
+			client.del('/v1/imports/' + importId, function(err, req, res, data) {
 				done(err);
 			});
 		});
 		
-		it('GET /api/imports with etag should get a 304 response', function(done) {
-			client.get('/api/imports', function(err, req, res, data) { 
+		it('GET /v1/imports with etag should get a 304 response', function(done) {
+			client.get('/v1/imports', function(err, req, res, data) { 
 				expect(err).to.be(null);
 				expect(res.statusCode).to.be(200);
 			
@@ -163,7 +163,7 @@ describe('Import endpoint', function() {
 				expect(res.headers.etag).not.to.be(null);
 
 				var options = {
-					path: '/api/imports',
+					path: '/v1/imports',
 					headers: { 'If-None-Match': res.headers.etag }
 				};
 				client.get(options, function(err, req, res, data) { 
@@ -174,8 +174,8 @@ describe('Import endpoint', function() {
 			}); 
 		});
 
-		it('GET /api/imports/:id with etag should get a 304 response', function(done) {
-			client.get('/api/imports/' + importId, function(err, req, res, data) { 
+		it('GET /v1/imports/:id with etag should get a 304 response', function(done) {
+			client.get('/v1/imports/' + importId, function(err, req, res, data) { 
 				expect(err).to.be(null);
 				expect(res.statusCode).to.be(200);
 			
@@ -184,7 +184,7 @@ describe('Import endpoint', function() {
 				expect(res.headers.etag).not.to.be(null);
 			
 				var options = {
-					path: '/api/imports/' + importId,
+					path: '/v1/imports/' + importId,
 					headers: { 'If-None-Match': res.headers.etag }
 				};
 				client.get(options, function(err, req, res, data) { 
@@ -201,21 +201,21 @@ describe('Import endpoint', function() {
 		var importId;
 		
 		before(function(done) {
-			client.post('/api/imports', importData, function(err, req, res, data) { 
+			client.post('/v1/imports', importData, function(err, req, res, data) { 
 				importId = data.id;
 				done(err);
 			}); 
 		});
 
 		after(function(done) {
-			client.del('/api/imports/' + importId, function(err, req, res, data) {
+			client.del('/v1/imports/' + importId, function(err, req, res, data) {
 				done(err);
 			});
 		});
 
-		it('GET /api/imports should use gzip', function(done) {
+		it('GET /v1/imports should use gzip', function(done) {
 			var options = {
-				path: '/api/imports',
+				path: '/v1/imports',
 				headers: { 'Accept-Encoding': 'gzip' }
 			};
 		
@@ -227,9 +227,9 @@ describe('Import endpoint', function() {
 			}); 
 		});
 
-		it('GET /api/imports/:id should use gzip', function(done) {
+		it('GET /v1/imports/:id should use gzip', function(done) {
 			var options = {
-				path: '/api/imports/' + importId,
+				path: '/v1/imports/' + importId,
 				headers: { 'Accept-Encoding': 'gzip' }
 			};
 		
@@ -251,11 +251,11 @@ describe('Import endpoint', function() {
 			var originalLastName = importData.stolpersteine[0].person.lastName;
 			var stolperstein = importData.stolpersteine[0];	// 'Nachname1'
 			stolperstein.source = importData.source;
-			client.post('/api/stolpersteine', stolperstein, function(err, req, res, data) { 
+			client.post('/v1/stolpersteine', stolperstein, function(err, req, res, data) { 
 				stolpersteinToRetainId = data.id;
 				
 				stolperstein.person.lastName = "NachnameXYZ";
-				client.post('/api/stolpersteine', stolperstein, function(err, req, res, data) { 
+				client.post('/v1/stolpersteine', stolperstein, function(err, req, res, data) { 
 					stolperstein.person.lastName = originalLastName;
 					stolpersteinToDeleteId = data.id;
 					done(err);
@@ -264,9 +264,9 @@ describe('Import endpoint', function() {
 		});
 
 		after(function(done) {
-			client.del('/api/stolpersteine/' + stolpersteinToRetainId, function(err, req, res, data) {
-				client.del('/api/stolpersteine/' + stolpersteinToDeleteId, function(err, req, res, data) {
-					client.del('/api/stolpersteine/' + stolpersteinToCreateId, function(err, req, res, data) {
+			client.del('/v1/stolpersteine/' + stolpersteinToRetainId, function(err, req, res, data) {
+				client.del('/v1/stolpersteine/' + stolpersteinToDeleteId, function(err, req, res, data) {
+					client.del('/v1/stolpersteine/' + stolpersteinToCreateId, function(err, req, res, data) {
 						done();
 					});
 				});
@@ -274,7 +274,7 @@ describe('Import endpoint', function() {
 		});
 		
 		it('Import creates delta list', function(done) {
-			client.post('/api/imports', importData, function(err, req, res, data) {
+			client.post('/v1/imports', importData, function(err, req, res, data) {
 				stolpersteinToCreateId = data.createActions.stolpersteine[0].id;
 				importId = data.id;
 				
@@ -288,15 +288,15 @@ describe('Import endpoint', function() {
 		});
 		
 		it('Import execution', function(done) {
-			client.post('/api/imports/' + importId + '/execute', importData, function(err, req, res, data) {
+			client.post('/v1/imports/' + importId + '/execute', importData, function(err, req, res, data) {
 				expect(err).to.be(null);
 				expect(res.statusCode).to.be(201);
 				expect(data.executedAt).not.to.be(undefined);
-				client.get('/api/stolpersteine/' + stolpersteinToRetainId, function(err, req, res, data) {
+				client.get('/v1/stolpersteine/' + stolpersteinToRetainId, function(err, req, res, data) {
 					expect(res.statusCode).to.be(200);
-					client.get('/api/stolpersteine/' + stolpersteinToCreateId, function(err, req, res, data) {
+					client.get('/v1/stolpersteine/' + stolpersteinToCreateId, function(err, req, res, data) {
 						expect(res.statusCode).to.be(200);
-						client.get('/api/stolpersteine/' + stolpersteinToDeleteId, function(err, req, res, data) {
+						client.get('/v1/stolpersteine/' + stolpersteinToDeleteId, function(err, req, res, data) {
 							expect(res.statusCode).to.be(404);
 							done();
 						});
