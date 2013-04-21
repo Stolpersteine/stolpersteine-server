@@ -341,6 +341,18 @@ describe('Stolpersteine endpoint', function() {
 				done();
 			}); 
 		});
+
+		it('GET /v1/stolpersteine?q=<keywords> should have results for multiple keywords', function(done) {
+			client.get('/v1/stolpersteine?q=vor%20nach', function(err, req, res, data) { 
+				expect(err).to.be(null);
+				expect(res.statusCode).to.be(200);
+				expect(data).to.be.an(Array);
+				expect(data.length).to.be.greaterThan(0);
+				expect(containsId(data, stolpersteinId)).to.be(true);
+				
+				done();
+			}); 
+		});
 	});
 	
 	//////////////////////////////////////////////////////////////////////////////

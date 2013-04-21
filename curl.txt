@@ -1,5 +1,5 @@
-local: http://127.0.0.1:3000/api
-remote: https://stolpersteine-optionu.rhcloud.com/api
+local: http://127.0.0.1:3000/v1
+remote: https://stolpersteine-api.eu01.aws.af.cm/v1
 
 - Start servers
 mongod --dbpath ~/tmp/
@@ -7,14 +7,13 @@ supervisor server.js
 mongo -> db client
 
 - Search
-curl -v http://127.0.0.1:3000/api/stolpersteine
-curl -v https://stolpersteine-optionu.rhcloud.com/api/stolpersteine
+curl -v http://127.0.0.1:3000/v1/stolpersteine
 
 - Debug curl local
-curl -v -d @curl_stolperstein.json -H "Content-Type: application/json" http://127.0.0.1:3000/api/stolpersteine
-curl -v -d @curl_import.json -H "Content-Type: application/json" http://127.0.0.1:3000/api/imports
+curl -v -d @curl_stolperstein.json -H "Content-Type: application/json" http://127.0.0.1:3000/v1/stolpersteine
+curl -v -d @curl_import.json -H "Content-Type: application/json" http://127.0.0.1:3000/v1/imports
 
 - Import stolpersteine
 node import/kss_berlin.js
-curl -v -d "" http://127.0.0.1:3000/api/imports/<id>/execute
-curl -3 -v -d "" https://stolpersteine-optionu.rhcloud.com/api/imports/<id>/execute
+curl -v -d "" http://127.0.0.1:3000/v1/imports/<id>/execute
+curl -v -d "" https://stolpersteine-api.eu01.aws.af.cm/v1/imports/<id>/execute

@@ -1,6 +1,7 @@
 {
 	"person": {
-		"name": "Vorname Nachname"
+		"firstName": "Vorname",
+		"lastName": "Nachname"
 	},
 	"location": {
 		"street": "Straße 1",

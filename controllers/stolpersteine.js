@@ -29,16 +29,19 @@ exports.retrieveStolpersteine = function(req, res) {
 		// Queries
 		var queries = [];
 		if (typeof req.query.q !== 'undefined') {
-			var regex = new RegExp('^' + req.query.q, "i");
-			queries.push({
-				$or: [
-					{ "person.firstName": regex },
-					{ "person.lastName": regex },
-					{ "location.street": regex },
-					{ "location.sublocality1": regex },
-					{ "location.zipCode": regex }
-				]
-			});
+			var keywords = req.query.q.split(" ");
+			for (var i = 0; i < keywords.length; i++) {
+				var regex = new RegExp('^' + keywords[i], "i");
+				queries.push({
+					$or: [
+						{ "person.firstName": regex },
+						{ "person.lastName": regex },
+						{ "location.street": regex },
+						{ "location.sublocality1": regex },
+						{ "location.zipCode": regex }
+					]
+				});
+			}
 		}
 
 		if (typeof req.query.street !== 'undefined') {
@@ -59,6 +62,8 @@ exports.retrieveStolpersteine = function(req, res) {
 				$and : queries
 			};
 		}
+		
+		console.log(query);
 	
 		// Pagination
 		var limit = req.query.limit || 10;
