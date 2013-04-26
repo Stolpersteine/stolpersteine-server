@@ -10,7 +10,7 @@ var apiClient = restify.createJsonClient({
 	userAgent: 'Stolpersteine/1.0 (http://option-u.com; admin@option-u.com)',
 //	url: 'http://127.0.0.1:3000'
 //	url: 'https://stolpersteine-optionu.rhcloud.com'
-	 url: 'https://stolpersteine.eu01.aws.af.cm'
+	 url: 'https://stolpersteine-api.eu01.aws.af.cm'
 });
 
 var kssUrl = 'http://www.stolpersteine-berlin.de/st_interface/xml/geo/linked';
@@ -91,13 +91,15 @@ kssClient.get('', function(error, req, res, data) {
 			stolpersteine: stolpersteine
 		};
 		console.log('importData = ' + importData);
-		apiClient.post('/api/imports', importData, function(err, req, res, data) {
+		apiClient.post('/v1/imports', importData, function(err, req, res, data) {
 			if (err) {
+				console.log(data);
 				console.log('Error during import (' + err + ')');
 			} else {
 				console.log(data);
 				console.log('Done.')
 			}
+			return;
 		});
 	});
 });
