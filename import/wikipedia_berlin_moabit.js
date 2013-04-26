@@ -13,7 +13,7 @@ var request = require('request'),
 var uriSource = url.parse('http://de.m.wikipedia.org/wiki/Liste_der_Stolpersteine_in_Berlin-Moabit');
 //var urlApi = 'http://127.0.0.1:3000/api';
 var urlApi = 'https://stolpersteine-optionu.rhcloud.com/api';
-var userAgent = 'Stolpersteine/1.0 (http://option-u.com; admin@option-u.com)';
+var userAgent = 'Stolpersteine/1.0 (http://option-u.com; stolpersteine@option-u.com)';
 var additionalGeoHint = ',Moabit';
 var counter = 0;
 

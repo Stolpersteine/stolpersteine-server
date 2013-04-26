@@ -15,7 +15,7 @@ var apiClient = restify.createJsonClient({
 
 var kssUrl = 'http://www.stolpersteine-berlin.de/st_interface/xml/geo/linked';
 var kssClient = restify.createStringClient({
-	userAgent: 'Stolpersteine/1.0 (http://option-u.com; admin@option-u.com)',
+	userAgent: 'Stolpersteine/1.0 (http://option-u.com; stolpersteine@option-u.com)',
 	url: kssUrl
 });
 var source = { 
