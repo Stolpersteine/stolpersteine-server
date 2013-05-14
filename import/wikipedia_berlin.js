@@ -1,74 +1,76 @@
 "use strict";
 
-// Problems:
-// - Alexander Fromm, Kirchstr. 7 > wrong coords
-// - Wolff	Bundesratufer 1 (91, 92) -> not found
-// - Marianne Peukert, Spenerstraße Ecke Melanchtonstraße -> invalid zip
-
 var request = require('request'),
 	jsdom = require('jsdom'),
 	url = require('url'),
 	util = require('util'),
 	async = require('async');
 	
-var uriSource = url.parse('http://de.m.wikipedia.org/wiki/Liste_der_Stolpersteine_in_Berlin-Moabit');
+var uriSources = [
+	url.parse('http://de.m.wikipedia.org/wiki/Liste_der_Stolpersteine_in_Berlin-Moabit'),
+	url.parse('http://de.m.wikipedia.org/wiki/Liste_der_Stolpersteine_in_Berlin-Britz')
+];
 //var urlApi = 'http://127.0.0.1:3000/api';
 var urlApi = 'https://stolpersteine-optionu.rhcloud.com/api';
 var userAgent = 'Stolpersteine/1.0 (http://option-u.com; stolpersteine@option-u.com)';
 
 var numImages = 0;
 
-request({ uri:uriSource, headers: {'user-agent' : userAgent } }, function(error, response, body) {
-  if (error) {
-    console.log('Error when contacting site');
-		return;
-  }
+for (var i = 0; i < uriSources.length; i++) {
+	var uriSource = uriSources[i];
+	
+	request({ uri:uriSource, headers: {'user-agent' : userAgent } }, function(error, response, body) {
+	  if (error) {
+	    console.log('Error when contacting site');
+			return;
+	  }
   
-  jsdom.env({
-    html: body,
-    scripts: ['http://code.jquery.com/jquery-1.7.min.js']
-  }, function (err, window) {
-		var stolpersteine = [];
+	  jsdom.env({
+	    html: body,
+	    scripts: ['http://code.jquery.com/jquery-1.7.min.js']
+	  }, function (err, window) {
+			var stolpersteine = [];
 		
-		var source = { 
-			url: uriSource.href,
-			name: "Wikipedia",
-			retrievedAt: new Date(response.headers.date)
-		};
-		
-		var $ = window.jQuery;
-		var tableRows = $('table.wikitable.sortable tr');
-		tableRows = tableRows.slice(1, tableRows.length); // first item is table header row
-		console.log('Num table rows: ' + tableRows.length);
-//		tableRows = tableRows.slice(91, 92);	// restrict test data
-		async.forEachLimit(tableRows, 1, function(tableRow, callback) {
-			async.waterfall([
-				convertStolperstein.bind(undefined, $, tableRow),
-				patchStolperstein,
-				addSourceToStolperstein.bind(undefined, source)
-			], function(err, stolperstein) {
-				console.log(util.inspect(stolperstein));
-				if (!err) {
-					stolpersteine.push(stolperstein);
-				} else {
-					console.log('Error processing stolperstein (' + err + ')');
-				}
-				callback(err);
-			});
-		}, function() {
-			console.log('Done processing ' + stolpersteine.length + ' stolperstein(e), ' + numImages + ' image(s)');
-			var importData = {
-				source: source,
-				stolpersteine: stolpersteine
+			var source = { 
+				url: uriSource.href,
+				name: "Wikipedia",
+				retrievedAt: new Date(response.headers.date)
 			};
-//			console.log('importData = ' + importData);
-//			request.post({url: urlApi + '/imports', json: importData}, function(err, res, data) {
-//				console.log('Import (' + response.statusCode + ' ' + err + ')');
-//				console.log(data);
-//			});
+		
+			var $ = window.jQuery;
+			var tableRows = $('table.wikitable.sortable tr');
+			tableRows = tableRows.slice(1, tableRows.length); // first item is table header row
+			console.log('Num table rows: ' + tableRows.length);
+	//		tableRows = tableRows.slice(91, 92);	// restrict test data
+			async.forEachLimit(tableRows, 1, function(tableRow, callback) {
+				async.waterfall([
+					convertStolperstein.bind(undefined, $, tableRow),
+					patchStolperstein,
+					addSourceToStolperstein.bind(undefined, source)
+				], function(err, stolperstein) {
+					console.log(util.inspect(stolperstein));
+					if (!err) {
+						stolpersteine.push(stolperstein);
+					} else {
+						console.log('Error processing stolperstein (' + err + ')');
+					}
+					callback(err);
+				});
+			}, function() {
+				console.log('Done processing ' + stolpersteine.length + ' stolperstein(e), ' + numImages + ' image(s)');
+				var importData = {
+					source: source,
+					stolpersteine: stolpersteine
+				};
+	//			console.log('importData = ' + importData);
+	//			request.post({url: urlApi + '/imports', json: importData}, function(err, res, data) {
+	//				console.log('Import (' + response.statusCode + ' ' + err + ')');
+	//				console.log(data);
+	//			});
+			});
 		});
 	});
-});
+}
 
 function convertStolperstein($, tableRow, callback) {
 	var stolperstein = {};
