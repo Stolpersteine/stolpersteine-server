@@ -3,6 +3,7 @@
 var restify = require('restify'),
 	url = require('url'),
 	parseXml = require('xml2js').parseString,
+	util = require('util'),
 	async = require('async');
 	
 var apiClient = restify.createJsonClient({
@@ -67,7 +68,7 @@ kssClient.get('', function(error, req, res, data) {
 				var person = marker.person[i];
 				var stolperstein = convertStolperstein(person, location, source);
 				stolpersteine.push(stolperstein);
-				console.log('- ' + person.$.vorname + ' ' + person.$.nachname + ' (converting done)');
+				console.log('- ' + person.$.vorname + ' ' + person.$.nachname);
 			}
 			
 			// Convert person tags nested in 'weitere'
@@ -80,7 +81,7 @@ kssClient.get('', function(error, req, res, data) {
 						var personWeitere = marker.weitere[j].person[k];
 						var stolpersteinWeitere = convertStolperstein(personWeitere, location, source);
 						stolpersteine.push(stolpersteinWeitere);
-						console.log('- ' + person.$.vorname + ' ' + person.$.nachname + ' (converting done)');
+						console.log('- ' + person.$.vorname + ' ' + person.$.nachname);
 					}
 				}
 			}
@@ -90,13 +91,12 @@ kssClient.get('', function(error, req, res, data) {
 			source: source,
 			stolpersteine: stolpersteine
 		};
-		console.log('importData = ' + importData);
+		console.log(util.inspect(importData, { depth: null }));
 		apiClient.post('/v1/imports', importData, function(err, req, res, data) {
+			console.log(util.inspect(data, { depth: null }));
 			if (err) {
-				console.log(data);
 				console.log('Error during import (' + err + ')');
 			} else {
-				console.log(data);
 				console.log('Done.')
 			}
 			return;
