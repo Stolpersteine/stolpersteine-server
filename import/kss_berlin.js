@@ -81,9 +81,10 @@ kssClient.get('', function(error, req, res, data) {
 						var personWeitere = marker.weitere[j].person[k];
 						var stolpersteinWeitere = convertStolperstein(personWeitere, location, source);
 						stolpersteine.push(stolpersteinWeitere);
-						console.log('- ' + person.$.vorname + ' ' + person.$.nachname);
+						console.log('- ' + personWeitere.$.vorname + ' ' + personWeitere.$.nachname);
 					}
 				}
+				console.log('Finished processing "weitere"');
 			}
 		}
 		console.log('Converted ' + stolpersteine.length + ' stolperstein(e)');
