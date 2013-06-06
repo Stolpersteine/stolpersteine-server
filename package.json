@@ -42,7 +42,7 @@
 		"jshint": "jshint --verbose controllers",
 		"npm 1": "npm ls",
 		"npm 2": "npm view <package> version",
-		"npm 3": "npm update"
+		"npm 3": "npm install"
 	},
 
   "private": true,
