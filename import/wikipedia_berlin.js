@@ -5,16 +5,14 @@ var request = require('request'),
 	url = require('url'),
 	util = require('util'),
 	async = require('async');
-	
+
 var uriSources = [
-	url.parse('http://de.m.wikipedia.org/wiki/Liste_der_Stolpersteine_in_Berlin-Moabit'),
-	url.parse('http://de.m.wikipedia.org/wiki/Liste_der_Stolpersteine_in_Berlin-Britz')
+	url.parse('http://de.m.wikipedia.org/wiki/Liste_der_Stolpersteine_in_Berlin-Britz'),
+	url.parse('http://de.m.wikipedia.org/wiki/Liste_der_Stolpersteine_in_Berlin-Moabit')
 ];
 //var urlApi = 'http://127.0.0.1:3000/api';
 var urlApi = 'https://stolpersteine-optionu.rhcloud.com/api';
 var userAgent = 'Stolpersteine/1.0 (http://option-u.com; stolpersteine@option-u.com)';
-
-var numImages = 0;
 
 for (var i = 0; i < uriSources.length; i++) {
 	var uriSource = uriSources[i];
@@ -29,7 +27,7 @@ for (var i = 0; i < uriSources.length; i++) {
 	    html: body,
 	    scripts: ['http://code.jquery.com/jquery-1.7.min.js']
 	  }, function (err, window) {
-			var stolpersteine = [];
+			var images = [];
 		
 			var source = { 
 				url: uriSource.href,
@@ -44,23 +42,25 @@ for (var i = 0; i < uriSources.length; i++) {
 	//		tableRows = tableRows.slice(91, 92);	// restrict test data
 			async.forEachLimit(tableRows, 1, function(tableRow, callback) {
 				async.waterfall([
-					convertStolperstein.bind(undefined, $, tableRow),
-					patchStolperstein,
-					addSourceToStolperstein.bind(undefined, source)
-				], function(err, stolperstein) {
-					console.log(util.inspect(stolperstein));
+					convertImage.bind(undefined, $, tableRow),
+					patchImage,
+					addSourceToImage.bind(undefined, source)
+				], function(err, image) {
 					if (!err) {
-						stolpersteine.push(stolperstein);
+						if (image.imageCanonicalUrl) {
+							images.push(image);
+							console.log(util.inspect(image));
+						}
 					} else {
-						console.log('Error processing stolperstein (' + err + ')');
+						console.log('Error processing image (' + err + ')');
 					}
 					callback(err);
 				});
 			}, function() {
-				console.log('Done processing ' + stolpersteine.length + ' stolperstein(e), ' + numImages + ' image(s)');
+				console.log('Done processing ' + tableRows.length + ' stolperstein(e), ' + images.length + ' image(s)');
 				var importData = {
 					source: source,
-					stolpersteine: stolpersteine
+					images: images
 				};
 	//			console.log('importData = ' + importData);
 	//			request.post({url: urlApi + '/imports', json: importData}, function(err, res, data) {
@@ -72,8 +72,8 @@ for (var i = 0; i < uriSources.length; i++) {
 	});
 }
 
-function convertStolperstein($, tableRow, callback) {
-	var stolperstein = {};
+function convertImage($, tableRow, callback) {
+	var image = {};
 	var itemRows = $(tableRow).find('td');
 			
 	// Person
@@ -82,67 +82,41 @@ function convertStolperstein($, tableRow, callback) {
 		nameSpan = nameSpan.find('span');
 	}
 	var names = nameSpan.text().split(',');
-	stolperstein.person = {
+	image.person = {
 		lastName: names[0].trim(),
 		firstName: names[1].trim()
 	};
-	console.log('- ' + stolperstein.person.lastName + ', ' + stolperstein.person.firstName);
+	console.log('- ' + image.person.lastName + ', ' + image.person.firstName);
 
 	// Image
 	var imageTag = $(itemRows[0]).find('img');
-	stolperstein.imageUrl = uriSource.protocol + imageTag.attr('src');
-	stolperstein.imageUrl = stolperstein.imageUrl.replace('/100px-', '/1024px-'); // width
-			
+	image.imageUrl = uriSource.protocol + imageTag.attr('src');
+	image.imageUrl = image.imageUrl.replace('/100px-', '/1024px-'); // width
+	
+	var linkTag = $(itemRows[0]).find('a');
+	image.imageCanonicalUrl = linkTag.attr('href');
+	image.imageCanonicalUrl = image.imageCanonicalUrl.replace('/wiki/Datei:', '');
+
 	// Location
-	stolperstein.location = {
+	image.location = {
 		street: $(itemRows[2]).text().trim(),
 		city: "Berlin"
 	};
-			
-	// Laid at date
-	stolperstein.laidAt = {};
-	var number;
-	var laidAtSpan = $(itemRows[3]).find('span');
-	if ($(laidAtSpan).find('span').length) {
-		laidAtSpan = laidAtSpan.find('span');
-	}
-	var laidAtDates = laidAtSpan.text().split('-');
-	if (laidAtDates[0]) {
-		number = new Number(laidAtDates[0]);
-		if (number !== 0) {
-			stolperstein.laidAt.year = number;
-		}
-	}
-	if (laidAtDates[1]) {
-		number = new Number(laidAtDates[1]);
-		if (number !== 0) {
-			stolperstein.laidAt.month = number;
-		}
-	}
-	if (laidAtDates[2]) {
-		number = new Number(laidAtDates[2]);
-		if (number !== 0) {
-			stolperstein.laidAt.date = number;
-		}
-	}
 	
-	callback(null, stolperstein);
+	callback(null, image);
 }
 
-function patchStolperstein(stolperstein, callback) {
-	if (/Photo-request.svg.png$/.test(stolperstein.imageUrl)) {
-		delete stolperstein.imageUrl;
+function patchImage(image, callback) {
+	if (/Photo-request.svg.png$/.test(image.imageUrl)) {
+		delete image.imageUrl;
+		delete image.imageCanonicalUrl;
 	}
 	
-	if (stolperstein.imageUrl) {
-		numImages++;
-	}
-	
-	callback(null, stolperstein);
+	callback(null, image);
 }
 
-function addSourceToStolperstein(source, stolperstein, callback) {
-	stolperstein.source = source;
+function addSourceToImage(source, image, callback) {
+	image.source = source;
 	
-	callback(null, stolperstein);
+	callback(null, image);
 }
