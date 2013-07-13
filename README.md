@@ -23,7 +23,7 @@ Searches database for stolperstein data. Multiple search parameters are AND'ed t
 
 Retrieve the first 100 stolpersteine in the database:
 
-    curl "<base URL>/stolpersteine?offset=0&limit=10"
+    curl "<base URL>/stolpersteine?offset=0&limit=100"
 
 Retrieve the next 100 stolpersteine:
 
