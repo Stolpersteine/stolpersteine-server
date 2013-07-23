@@ -105,6 +105,7 @@ kssClient.get('', function(error, req, res, data) {
 
 function convertStolperstein(person, location, source) {
 	var stolperstein = {
+		type : "stolperstein",
 		person : {
 			firstName : person.$.vorname,
 			lastName : person.$.nachname,
