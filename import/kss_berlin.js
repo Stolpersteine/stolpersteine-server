@@ -9,18 +9,15 @@ var restify = require('restify'),
 var apiClient = restify.createJsonClient({
 	version: '*',
 	userAgent: 'Stolpersteine/1.0 (http://option-u.com; admin@option-u.com)',
-//	url: 'http://127.0.0.1:3000'
-//	url: 'https://stolpersteine-optionu.rhcloud.com'
-	 url: 'https://stolpersteine-api.eu01.aws.af.cm'
+	url: 'https://stolpersteine-api.eu01.aws.af.cm'
 });
 
-var kssUrl = 'http://www.stolpersteine-berlin.de/st_interface/xml/geo/linked';
 var kssClient = restify.createStringClient({
 	userAgent: 'Stolpersteine/1.0 (http://option-u.com; stolpersteine@option-u.com)',
-	url: kssUrl
+	url: 'http://www.stolpersteine-berlin.de/st_interface/xml/geo/linked'
 });
 var source = { 
-	url: kssUrl,
+	url: kssClient.url.href,
 	name: "Koordinierungsstelle Stolpersteine Berlin"
 };
 
@@ -98,6 +95,7 @@ kssClient.get('', function(error, req, res, data) {
 			if (err) {
 				console.log('Error during import (' + err + ')');
 			} else {
+				console.log('Import command: curl -v -d "" ' + apiClient.url.href + 'v1/imports/' + data.id + '/execute')
 				console.log('Done.')
 			}
 			return;
