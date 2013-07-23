@@ -18,6 +18,7 @@ var importData = {
 		retrievedAt: new Date()
 	}, 
 	stolpersteine: [{
+		type: "stolperstein",
 		person: {
 			firstName: "Vorname",
 			lastName: "Nachname1"
@@ -32,6 +33,7 @@ var importData = {
 			}
 		}
 	}, {
+		type: "stolperschwelle",
 		person: {
 			firstName: "Vorname",
 			lastName: "Nachname2"

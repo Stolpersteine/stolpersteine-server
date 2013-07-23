@@ -3,6 +3,7 @@
 var mongoose = require('mongoose');
 
 var schema = new mongoose.Schema({
+	type: { type: String, enum: ['stolperstein', 'stolperschwelle'], required: true },
 	person: {
 		firstName: { type: String, required: true, trim: true },
 		lastName: { type: String, required: true, trim: true },
@@ -52,6 +53,7 @@ schema.statics.findExactMatch = function(source, stolperstein, callback) {
 		"source.url": source.url === undefined ? undefined : source.url.trim(),
 		"source.name": source.name === undefined ? undefined : source.name.trim(),
 //		"source.retrievedAt": source.retrievedAt, 
+		"type": stolperstein.type === undefined ? undefined : stolperstein.type.trim(),
 		"person.firstName": stolperstein.person.firstName === undefined ? undefined : stolperstein.person.firstName.trim(),
 		"person.lastName": stolperstein.person.lastName === undefined ? undefined : stolperstein.person.lastName.trim(),
 		"person.biographyUrl": stolperstein.person.biographyUrl === undefined ? undefined : stolperstein.person.biographyUrl.trim(),

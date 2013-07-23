@@ -1,7 +1,6 @@
 "use strict";
 
 var restify = require('restify'),
-	url = require('url'),
 	parseXml = require('xml2js').parseString,
 	util = require('util'),
 	async = require('async');
@@ -10,6 +9,7 @@ var apiClient = restify.createJsonClient({
 	version: '*',
 	userAgent: 'Stolpersteine/1.0 (http://option-u.com; admin@option-u.com)',
 	url: 'https://stolpersteine-api.eu01.aws.af.cm'
+//	url: 'http://127.0.0.1:3000'
 });
 
 var kssClient = restify.createStringClient({

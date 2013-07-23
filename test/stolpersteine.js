@@ -12,6 +12,7 @@ var client = restify.createJsonClient({
 });
 
 var stolpersteinData = {
+	type: "stolperstein",	
 	person: {
 		firstName: "Vorname",
 		lastName: "Nachname",
@@ -71,6 +72,7 @@ describe('Stolpersteine endpoint', function() {
 				expect(res.headers['content-type']).to.be('application/json; charset=utf-8');
 				expect(data).to.be.an(Object);
 				expect(data.id).to.be(stolpersteinId);
+				expect(data.type).to.be(stolpersteinData.type);
 				expect(data.person.firstName).to.be(stolpersteinData.person.firstName);
 				expect(data.person.lastName).to.be(stolpersteinData.person.lastName);
 				expect(data.person.biographyUrl).to.be(stolpersteinData.person.biographyUrl);

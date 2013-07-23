@@ -4,7 +4,9 @@ remote: https://stolpersteine-api.eu01.aws.af.cm/v1
 - Start servers
 mongod --dbpath ~/tmp/
 supervisor server.js
+
 mongo -> db client
+npm test -> test
 
 - Search
 curl -v http://127.0.0.1:3000/v1/stolpersteine
