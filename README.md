@@ -2,7 +2,40 @@
 
 [![Build Status](https://travis-ci.org/optionu/stolpersteine-server.png?branch=master)](https://travis-ci.org/optionu/stolpersteine-server)
 
-API server for [Stolperstein](http://en.wikipedia.org/wiki/Stolperstein) data. 
+API server for [Stolperstein](http://en.wikipedia.org/wiki/Stolperstein) data.
+
+## Stolpersteine API
+
+### `GET /stolpersteine`
+
+*Description*
+
+Searches database for stolperstein data. Multiple search parameters are AND'ed together. Keyword searches are case insensitive and find items that start with the search term.
+
+| Parameter     | Description                                         | Default |
+| ------------- | --------------------------------------------------- | ------- |
+| offset        | starts returning stolpersteine at the given index   | 0       |
+| limit         | limits the number of items returned in a query      | 10      |
+| q             | searches all stolpersteine for one or more keywords |         |
+| street        | searches street names                               |         |
+
+*Examples*
+
+Retrieve the first 100 stolpersteine in the database:
+
+    curl "<base URL>/stolpersteine?offset=0&limit=100"
+
+Retrieve the next 100 stolpersteine:
+
+    curl "<base URL>/stolpersteine?offset=100&limit=100"
+
+Find all stolpersteine in streets starting with the word "calvin" (e.g. Calvinstraße):
+
+    curl "<base URL>/stolpersteine?street=calvin&limit=0"
+
+Find a maximum of 10 stolpersteine that include the terms "herta" and "mitte" (e.g. Herta Jalowitz in Berlin-Mitte):
+
+    curl "<base URL>/stolpersteine?q=herta+mitte"
 
 ## Contact
 
