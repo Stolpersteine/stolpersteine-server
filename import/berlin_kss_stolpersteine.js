@@ -2,8 +2,7 @@
 
 var restify = require('restify'),
 	parseXml = require('xml2js').parseString,
-	util = require('util'),
-	async = require('async');
+	util = require('util');
 	
 var apiClient = restify.createJsonClient({
 	version: '*',
@@ -85,11 +84,12 @@ kssClient.get('', function(error, req, res, data) {
 			}
 		}
 		console.log('Converted ' + stolpersteine.length + ' stolperstein(e)');
+		
 		var importData = {
 			source: source,
 			stolpersteine: stolpersteine
 		};
-		console.log('Importing data...');
+		console.log('Importing ' + stolpersteine.length + ' stolperstein(e)...');
 //		console.log(util.inspect(importData, false, null));
 		apiClient.post('/v1/imports', importData, function(err, req, res, data) {
 			console.log('Import data:');

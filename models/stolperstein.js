@@ -5,7 +5,7 @@ var mongoose = require('mongoose');
 var schema = new mongoose.Schema({
 	type: { type: String, enum: ['stolperstein', 'stolperschwelle'], required: true },
 	person: {
-		firstName: { type: String, required: true, trim: true },
+		firstName: { type: String, trim: true },
 		lastName: { type: String, required: true, trim: true },
 		biographyUrl: { type: String, trim: true }
 	},
