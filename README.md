@@ -18,6 +18,7 @@ Searches database for stolperstein data. Multiple search parameters are AND'ed t
 | limit         | limits the number of items returned in a query      | 10      |
 | q             | searches all stolpersteine for one or more keywords |         |
 | street        | searches street names                               |         |
+| city          | searches city names                                 |         |
 
 *Examples*
 
