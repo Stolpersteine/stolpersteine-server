@@ -41,7 +41,7 @@ var importData = {
 		type: "stolperschwelle",
 		person: {
 			lastName: "Jüdischer Betraum",
-			biographyUrl: "http://de.wikipedia.org/wiki/Liste_der_Stolpersteine_in_Berlin-Friedenau"
+			biographyUrl: "http://de.m.wikipedia.org/wiki/Liste_der_Stolpersteine_in_Berlin-Friedenau#Stolperschwellen"
 		},
 		location: {
 			street: "Stierstraße 21",
@@ -58,7 +58,7 @@ var importData = {
 		type: "stolperschwelle",
 		person: {
 			lastName: "Gossner-Mission",
-			biographyUrl: "http://de.wikipedia.org/wiki/Liste_der_Stolpersteine_in_Berlin-Friedenau"
+			biographyUrl: "http://de.m.wikipedia.org/wiki/Liste_der_Stolpersteine_in_Berlin-Friedenau#Stolperschwellen"
 		},
 		location: {
 			street: "Handjerystraße 20A",
@@ -77,7 +77,7 @@ var importData = {
 console.log('Importing ' + importData.stolpersteine.length + ' stolperstein(e)...');
 console.log(util.inspect(importData, false, null));
 apiClient.post('/v1/imports', importData, function(err, req, res, data) {
-	console.log('Import data:');
+	console.log('Resulting import data:');
 	console.log(util.inspect(data, false, null));
 	if (err) {
 		console.log('Error during import (' + err + ')');

@@ -112,7 +112,7 @@ kssClient.get('', function(error, req, res, data) {
 		console.log('Importing ' + stolpersteine.length + ' stolperstein(e)...');
 //		console.log(util.inspect(importData, false, null));
 		apiClient.post('/v1/imports', importData, function(err, req, res, data) {
-			console.log('Import data:');
+			console.log('Resulting import data:');
 			console.log(util.inspect(data, false, null));
 			if (err) {
 				console.log('Error during import (' + err + ')');
