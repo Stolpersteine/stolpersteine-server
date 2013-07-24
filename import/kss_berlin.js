@@ -89,9 +89,11 @@ kssClient.get('', function(error, req, res, data) {
 			source: source,
 			stolpersteine: stolpersteine
 		};
-		console.log(util.inspect(importData, { depth: null }));
+		console.log('Importing data...');
+//		console.log(util.inspect(importData, false, null));
 		apiClient.post('/v1/imports', importData, function(err, req, res, data) {
-			console.log(util.inspect(data, { depth: null }));
+			console.log('Import data:');
+			console.log(util.inspect(data, false, null));
 			if (err) {
 				console.log('Error during import (' + err + ')');
 			} else {
