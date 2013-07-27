@@ -36,7 +36,7 @@ var kssClient = restify.createStringClient({
 	url: 'http://www.stolpersteine-berlin.de/st_interface/xml/geo/linked'
 });
 var source = { 
-	url: kssClient.url.href,
+	url: 'http://www.stolpersteine-berlin.de',
 	name: "Koordinierungsstelle Stolpersteine Berlin"
 };
 
