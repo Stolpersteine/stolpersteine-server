@@ -82,6 +82,7 @@ apiClient.post('/v1/imports', importData, function(err, req, res, data) {
 	if (err) {
 		console.log('Error during import (' + err + ')');
 	} else {
+		console.log(data.deleteActions.targetIds.length + ' delete action(s), ' + data.createActions.stolpersteine.length + ' create action(s)');
 		console.log('Import command: curl -v -d "" ' + apiClient.url.href + 'v1/imports/' + data.id + '/execute')
 		console.log('Done.')
 	}
