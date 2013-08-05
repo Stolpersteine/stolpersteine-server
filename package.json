@@ -1,40 +1,39 @@
 {
-  "name": "Stolpersteine",
-  "version": "1.0.0",
-  "description": "Stolpersteine",
-  "author": {
-    "name": "Option-U Software",
-    "email": "admin@option-u.com",
-    "url":  "http://www.option-u.com/"
-  },
+	"name": "Stolpersteine",
+	"version": "1.0.0",
+	"description": "Stolpersteine",
+	"author": {
+    	"name": "Option-U Software",
+    	"email": "admin@option-u.com",
+    	"url":  "http://www.option-u.com/"
+  	},
 
-  "homepage": "http://www.option-u.com/",
+	"homepage": "http://www.option-u.com/",
 
-  "engines": {
-    "node": ">= 0.8.22",
-    "npm": ">= 1.0.0"
-  },
-
-  "dependencies": {
-	"express": "3.2.x",
-	"mongoose": "3.6.x",
-	"jsdom": "0.5.x",
-	"xml2js": "0.2.x",
-	"request": "2.16.x",
-	"async": "0.2.x"
-  },
-
-  "devDependencies": {
-	"mocha" : "1.7.x",
-	"restify": "2.5.x",
-	"should": "1.2.x",
-	"expect.js": "0.2.x"
+	"engines": {
+		"node": ">= 0.8.22",
+		"npm": ">= 1.0.0"
 	},
-	
-  "bundleDependencies": [],
-	
+
+	"dependencies": {
+		"express": "3.2.x",
+		"mongoose": "3.6.x",
+		"jsdom": "0.5.x",
+		"xml2js": "0.2.x",
+		"async": "0.2.x"
+	},
+
+	"devDependencies": {
+		"mocha" : "1.7.x",
+		"restify": "2.5.x",
+		"should": "1.2.x",
+		"expect.js": "0.2.x"
+	},
+
+	"bundleDependencies": [],
+
 	"scripts": {
-	    "test": "mocha -R spec",
+		"test": "mocha -R spec",
 		"start": "server.js",
 		"db": "mongod --dbpath ~/tmp/",
 		"dbclient": "mongo",
@@ -45,6 +44,6 @@
 		"npm 3": "npm install"
 	},
 
-  "private": true,
-  "main": "server.js"
+	"private": true,
+	"main": "server.js"
 }
