@@ -42,12 +42,12 @@ var source = {
 
 // Request data
 console.log('Loading source data...');
-kssClient.get('', function(error, req, res, data) {
+kssClient.get('', function(error, request, response, data) {
 	console.log('Loading source data done');
-  if (error) {
-    console.log('Error when loading source data');
+  	if (error) {
+    	console.log('Error when loading source data');
 		return;
-  }
+  	}
 
 	// Parse XML
 	console.log('Parsing source data...');
@@ -61,7 +61,7 @@ kssClient.get('', function(error, req, res, data) {
 		// Process marker tags
 		console.log('Found ' + result.markers.$.cnt + ' stolpersteine in ' + result.markers.marker.length + ' markers');
 		var stolpersteine = [];
-		source.retrievedAt = new Date(res.headers.date);
+		source.retrievedAt = new Date(response.headers.date);
 		var markers = result.markers.marker;
 //		markers = markers.slice(0, 100); // restrict test data
 		for (var markerIndex = 0; markerIndex < markers.length; markerIndex++) {
@@ -111,7 +111,7 @@ kssClient.get('', function(error, req, res, data) {
 		};
 		console.log('Importing ' + stolpersteine.length + ' stolperstein(e)...');
 //		console.log(util.inspect(importData, false, null));
-		apiClient.post('/v1/imports', importData, function(err, req, res, data) {
+		apiClient.post('/v1/imports', importData, function(err, request, response, data) {
 			console.log('Resulting import data:');
 			console.log(util.inspect(data, false, null));
 			if (err) {
