@@ -20,16 +20,23 @@
 
 "use strict";
 
-var request = require('request'),
+var restify = require('restify'),
 	jsdom = require('jsdom'),
 	url = require('url'),
 	util = require('util'),
 	async = require('async');
 
 var uriSources = [
-	url.parse('http://de.m.wikipedia.org/wiki/Liste_der_Stolpersteine_in_Berlin-Britz'),
-	url.parse('http://de.m.wikipedia.org/wiki/Liste_der_Stolpersteine_in_Berlin-Moabit')
+	'/Liste_der_Stolpersteine_in_Berlin-Britz'
+//	'/Liste_der_Stolpersteine_in_Berlin-Moabit'
 ];
+
+var wikipediaClient = restify.createStringClient({
+	version: '*',
+	userAgent: 'Stolpersteine/1.0 (http://option-u.com; admin@option-u.com)',
+	url: 'http://de.m.wikipedia.org'
+});
+
 //var urlApi = 'http://127.0.0.1:3000/api';
 var urlApi = 'https://stolpersteine-optionu.rhcloud.com/api';
 var userAgent = 'Stolpersteine/1.0 (http://option-u.com; stolpersteine@option-u.com)';
@@ -37,16 +44,18 @@ var userAgent = 'Stolpersteine/1.0 (http://option-u.com; stolpersteine@option-u.
 for (var i = 0; i < uriSources.length; i++) {
 	var uriSource = uriSources[i];
 	
-	request({ uri:uriSource, headers: {'user-agent' : userAgent } }, function(error, response, body) {
-	  if (error) {
-	    console.log('Error when contacting site');
+	console.log('Loading source data for ' + uriSource + '...');
+	wikipediaClient.get('/wiki/Liste_der_Stolpersteine_in_Berlin-Britz', function(error, request, response, data) {
+		console.log('Loading source data done');
+  		if (error) {
+    		console.log('Error when loading source data');
 			return;
-	  }
+  		}
   
-	  jsdom.env({
-	    html: body,
-	    scripts: ['http://code.jquery.com/jquery-1.7.min.js']
-	  }, function (err, window) {
+	  	jsdom.env({
+	    	html: data,
+	    	scripts: ['http://code.jquery.com/jquery-1.7.min.js']
+	  	}, function (error, window) {
 			var images = [];
 		
 			var source = { 
@@ -59,22 +68,24 @@ for (var i = 0; i < uriSources.length; i++) {
 			var tableRows = $('table.wikitable.sortable tr');
 			tableRows = tableRows.slice(1, tableRows.length); // first item is table header row
 			console.log('Num table rows: ' + tableRows.length);
-	//		tableRows = tableRows.slice(91, 92);	// restrict test data
+			tableRows = tableRows.slice(1, 2);	// restrict test data
 			async.forEachLimit(tableRows, 1, function(tableRow, callback) {
 				async.waterfall([
 					convertImage.bind(undefined, $, tableRow),
 					patchImage,
-					addSourceToImage.bind(undefined, source)
-				], function(err, image) {
-					if (!err) {
+					addSourceToImage.bind(undefined, source),
+					addMetaToImage,
+					logImage,
+				], function(error, image) {
+					if (!error) {
 						if (image.imageCanonicalUrl) {
 							images.push(image);
 							console.log(util.inspect(image));
 						}
 					} else {
-						console.log('Error processing image (' + err + ')');
+						console.log('Error processing image (' + error + ')');
 					}
-					callback(err);
+					callback(error);
 				});
 			}, function() {
 				console.log('Done processing ' + tableRows.length + ' stolperstein(e), ' + images.length + ' image(s)');
@@ -82,11 +93,6 @@ for (var i = 0; i < uriSources.length; i++) {
 					source: source,
 					images: images
 				};
-	//			console.log('importData = ' + importData);
-	//			request.post({url: urlApi + '/imports', json: importData}, function(err, res, data) {
-	//				console.log('Import (' + response.statusCode + ' ' + err + ')');
-	//				console.log(data);
-	//			});
 			});
 		});
 	});
@@ -106,8 +112,7 @@ function convertImage($, tableRow, callback) {
 		lastName: names[0].trim(),
 		firstName: names[1].trim()
 	};
-	console.log('- ' + image.person.lastName + ', ' + image.person.firstName);
-
+	
 	// Image
 	var imageTag = $(itemRows[0]).find('img');
 	image.imageUrl = uriSource.protocol + imageTag.attr('src');
@@ -137,6 +142,18 @@ function patchImage(image, callback) {
 
 function addSourceToImage(source, image, callback) {
 	image.source = source;
+	
+	callback(null, image);
+}
+
+function addMetaToImage(image, callback) {
+
+	
+	callback(null, image);
+}
+
+function logImage(image, callback) {
+	console.log('- ' + image.person.lastName + ', ' + image.person.firstName);
 	
 	callback(null, image);
 }
