@@ -22,7 +22,7 @@
 
 var restify = require('restify'),
 	jsdom = require('jsdom'),
-	url = require('url'),
+	parseXml = require('xml2js').parseString,
 	util = require('util'),
 	async = require('async');
 
@@ -31,22 +31,24 @@ var uriSources = [
 //	'/Liste_der_Stolpersteine_in_Berlin-Moabit'
 ];
 
+var userAgent = 'Stolpersteine/1.0 (http://option-u.com; stolpersteine@option-u.com)';
+
 var wikipediaClient = restify.createStringClient({
-	version: '*',
-	userAgent: 'Stolpersteine/1.0 (http://option-u.com; admin@option-u.com)',
+	userAgent: userAgent,
 	url: 'http://de.m.wikipedia.org'
 });
 
-//var urlApi = 'http://127.0.0.1:3000/api';
-var urlApi = 'https://stolpersteine-optionu.rhcloud.com/api';
-var userAgent = 'Stolpersteine/1.0 (http://option-u.com; stolpersteine@option-u.com)';
+var toolserverClient = restify.createStringClient({
+	userAgent: userAgent,
+	url: 'http://toolserver.org'
+});
 
 for (var i = 0; i < uriSources.length; i++) {
 	var uriSource = uriSources[i];
 	
 	console.log('Loading source data for ' + uriSource + '...');
 	wikipediaClient.get('/wiki/Liste_der_Stolpersteine_in_Berlin-Britz', function(error, request, response, data) {
-		console.log('Loading source data done');
+		console.log('done');
   		if (error) {
     		console.log('Error when loading source data');
 			return;
@@ -78,7 +80,7 @@ for (var i = 0; i < uriSources.length; i++) {
 					logImage,
 				], function(error, image) {
 					if (!error) {
-						if (image.imageCanonicalUrl) {
+						if (image.canonicalUrl) {
 							images.push(image);
 							console.log(util.inspect(image));
 						}
@@ -115,12 +117,12 @@ function convertImage($, tableRow, callback) {
 	
 	// Image
 	var imageTag = $(itemRows[0]).find('img');
-	image.imageUrl = uriSource.protocol + imageTag.attr('src');
-	image.imageUrl = image.imageUrl.replace('/100px-', '/1024px-'); // width
+	image.url = 'http:' + imageTag.attr('src');
+	image.url = image.url.replace('/100px-', '/1024px-'); // width
 	
 	var linkTag = $(itemRows[0]).find('a');
-	image.imageCanonicalUrl = linkTag.attr('href');
-	image.imageCanonicalUrl = image.imageCanonicalUrl.replace('/wiki/Datei:', '');
+	image.canonicalUrl = linkTag.attr('href');
+	image.canonicalUrl = image.canonicalUrl.replace('/wiki/Datei:', '');
 
 	// Location
 	image.location = {
@@ -133,8 +135,8 @@ function convertImage($, tableRow, callback) {
 
 function patchImage(image, callback) {
 	if (/Photo-request.svg.png$/.test(image.imageUrl)) {
-		delete image.imageUrl;
-		delete image.imageCanonicalUrl;
+		delete image.url;
+		delete image.canonicalUrl;
 	}
 	
 	callback(null, image);
@@ -147,13 +149,16 @@ function addSourceToImage(source, image, callback) {
 }
 
 function addMetaToImage(image, callback) {
-
-	
-	callback(null, image);
+	console.log('Loading image data...');
+	toolserverClient.get('/~magnus/commonsapi.php?image=' + image.canonicalUrl, function(error, request, response, data) {
+		console.log('done');
+		parseXml(data, function (error, result) {
+			console.log(result.response.file[0].name[0]);
+			callback(error, image);
+		});
+	});
 }
 
-function logImage(image, callback) {
-	console.log('- ' + image.person.lastName + ', ' + image.person.firstName);
-	
+function logImage(image, callback) {	
 	callback(null, image);
 }
