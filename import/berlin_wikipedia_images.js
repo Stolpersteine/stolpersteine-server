@@ -95,6 +95,7 @@ for (var i = 0; i < uriSources.length; i++) {
 					source: source,
 					images: images
 				};
+				process.exit();
 			});
 		});
 	});
