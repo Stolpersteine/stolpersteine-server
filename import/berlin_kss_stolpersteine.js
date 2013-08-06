@@ -51,7 +51,7 @@ kssClient.get('', function(error, request, response, data) {
 
 	// Parse XML
 	console.log('Parsing source data...');
-	parseXml(data, function (err, result) {
+	parseXml(data, function (error, result) {
 		console.log('Parsing source data done');
 		if (error) {
 			console.log('Error when parsing source data');
