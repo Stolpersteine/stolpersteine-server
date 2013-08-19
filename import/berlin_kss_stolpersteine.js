@@ -121,7 +121,7 @@ kssClient.get('', function(error, request, response, data) {
 				console.log('Import command: curl -v -d "" ' + apiClient.url.href + 'v1/imports/' + data.id + '/execute')
 				console.log('Done.')
 			}
-			return;
+			process.exit();
 		});
 	});
 });
