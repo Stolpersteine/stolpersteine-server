@@ -146,14 +146,14 @@ function patchStolperstein(stolperstein) {
 		stolperstein.person.firstName = "Kaufhaus Nathan";
 		stolperstein.person.lastName = "Israel";
 	}
-	
+
 	// Normalize abbreviated street
 	stolperstein.location.street = stolperstein.location.street.replace(/str\./g, "straße");
-	stolperstein.location.street = stolperstein.location.street.replace(/Str\./g, "Straße", "g");
+	stolperstein.location.street = stolperstein.location.street.replace(/Str\./g, "Straße");
 
 	// Normalize white space between street and number
-	stolperstein.location.street = stolperstein.location.street.replace(/traße\.(\d+)/g, "traße $1", "g");
-	stolperstein.location.street = stolperstein.location.street.replace(/traße\s+(\d+)/g, "traße $1", "g");
+	stolperstein.location.street = stolperstein.location.street.replace(/traße(\d+)/g, "traße $1");
+	stolperstein.location.street = stolperstein.location.street.replace(/traße\s+(\d+)/g, "traße $1");
 
 	return stolperstein;
 }
