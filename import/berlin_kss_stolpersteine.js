@@ -45,7 +45,7 @@ console.log('Loading source data...');
 kssClient.get('', function(error, request, response, data) {
 	console.log('Loading source data done');
   	if (error) {
-    	console.log('Error when loading source data');
+    	console.log('Error while loading source data');
 		return;
   	}
 

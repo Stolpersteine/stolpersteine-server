@@ -50,7 +50,7 @@ for (var i = 0; i < uriSources.length; i++) {
 	wikipediaClient.get('/wiki/Liste_der_Stolpersteine_in_Berlin-Britz', function(error, request, response, data) {
 		console.log('done');
   		if (error) {
-    		console.log('Error when loading source data');
+    		console.log('Error while loading source data');
 			return;
   		}
   
