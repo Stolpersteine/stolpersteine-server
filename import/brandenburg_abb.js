@@ -49,18 +49,45 @@ kssClient.get('', function(error, request, response, data) {
 		return;
  	}
 
+	
 	csv()
 	.from(data)
-	.to.array( function(rows){
-	  csv()
-	  .from.array(rows)
-	  .to.string(function(text) {
-	    console.log(text);
-			
-			process.exit();
-	  });
+	.on('record', function(row, index) {
+		if (index == 0) {
+			return;	// column names
+		} else if (index > 1) {
+			return;
+		}
+		
+	  console.log('#' + index + ' ' + JSON.stringify(row));
+		var stolperstein = {
+			type : "stolperstein",
+			location : {}
+		};
+		stolperstein.location.coordinates = convertCoordinates(row[0]);
+		console.log(stolperstein);
+	})
+	.on('end', function(count) {
+	  console.log('Number of lines: ' + count);
+		process.exit();
+	})
+	.on('error', function(error) {
+	  console.log(error.message);
+		process.exit();
 	});
 });
+
+function convertCoordinates(row) {
+	var coordinates = row.match(/\(([0-9. ]+?)\)/)[0];
+	coordinates = coordinates.replace(/^\(/, "");
+	coordinates = coordinates.replace(/\)$/, "");
+	coordinates = coordinates.split(" ");
+	
+	return {
+		longitude : coordinates[0],
+		latitude : coordinates[1]
+	};
+}
 
 function convertStolperstein(person, location, source) {
 	var stolperstein = {
