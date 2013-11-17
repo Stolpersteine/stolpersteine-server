@@ -436,7 +436,7 @@ describe('Stolpersteine endpoint', function() {
 			});
 		});
 
-		it('GET /v1/stolpersteine?city=<city> should not have any results for non-matching street', function(done) {
+		it('GET /v1/stolpersteine?city=<city> should not have any results for non-matching city', function(done) {
 			client.get('/v1/stolpersteine?source=integration&city=xyz', function(err, req, res, data) { 
 				expect(err).to.be(null);
 				expect(res.statusCode).to.be(200);
@@ -447,8 +447,49 @@ describe('Stolpersteine endpoint', function() {
 			}); 
 		});
 
-		it('GET /v1/stolpersteine?city=<city> should have results for matching street', function(done) {
+		it('GET /v1/stolpersteine?city=<city> should have results for matching city', function(done) {
 			client.get('/v1/stolpersteine?source=integration&city=stadt', function(err, req, res, data) { 
+				expect(err).to.be(null);
+				expect(res.statusCode).to.be(200);
+				expect(data).to.be.an(Array);
+				expect(data.length).to.be.greaterThan(0);
+				expect(containsId(data, stolpersteinId)).to.be(true);
+				
+				done();
+			}); 
+		});
+	});
+
+	//////////////////////////////////////////////////////////////////////////////
+	describe('Search state', function() {
+		var stolpersteinId;
+		
+		before(function(done) {
+			client.post('/v1/stolpersteine', stolpersteinData, function(err, req, res, data) { 
+				stolpersteinId = data.id;
+				done(err);
+			}); 
+		});
+
+		after(function(done) {
+			client.del('/v1/stolpersteine/' + stolpersteinId, function(err, req, res, data) {
+				done(err);
+			});
+		});
+
+		it('GET /v1/stolpersteine?state=<state> should not have any results for non-matching state', function(done) {
+			client.get('/v1/stolpersteine?source=integration&state=xyz', function(err, req, res, data) { 
+				expect(err).to.be(null);
+				expect(res.statusCode).to.be(200);
+				expect(data).to.be.an(Array);
+				expect(data.length).to.be(0);
+				
+				done();
+			}); 
+		});
+
+		it('GET /v1/stolpersteine?state=<state> should have results for matching state', function(done) {
+			client.get('/v1/stolpersteine?source=integration&state=bundesland', function(err, req, res, data) { 
 				expect(err).to.be(null);
 				expect(res.statusCode).to.be(200);
 				expect(data).to.be.an(Array);

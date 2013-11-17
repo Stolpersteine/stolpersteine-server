@@ -76,6 +76,12 @@ exports.retrieveStolpersteine = function(req, res) {
 			});
 		}
 
+		if (typeof req.query.state !== 'undefined') {
+			queries.push({
+				"location.state": new RegExp('^' + req.query.state, "i")
+			});
+		}
+
 		if (typeof req.query.source !== 'undefined') {
 			queries.push({
 				"source.name": new RegExp('^' + req.query.source, "i")
