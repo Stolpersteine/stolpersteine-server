@@ -52,20 +52,23 @@ kssClient.get('', function(error, request, response, data) {
 	
 	csv()
 	.from(data)
+	.from.options({trim : true})
 	.on('record', function(row, index) {
 		if (index == 0) {
 			return;	// column names
-		} else if (index > 1) {
-			return;
 		}
-		
-	  console.log('#' + index + ' ' + JSON.stringify(row));
-		var stolperstein = {
-			type : "stolperstein",
-			location : {}
-		};
-		stolperstein.location.coordinates = convertCoordinates(row[0]);
-		console.log(stolperstein);
+
+		if (index == 1) {
+		  console.log('#' + index + ' ' + JSON.stringify(row));
+			
+			var stolperstein = {
+				type : "stolperstein",
+				location : {}
+			};
+			stolperstein.location.coordinates = convertCoordinates(row[0].trim());
+			stolperstein.person = convertPerson(row[1].trim());
+			console.log(stolperstein);
+		}
 	})
 	.on('end', function(count) {
 	  console.log('Number of lines: ' + count);
@@ -77,8 +80,8 @@ kssClient.get('', function(error, request, response, data) {
 	});
 });
 
-function convertCoordinates(row) {
-	var coordinates = row.match(/\(([0-9. ]+?)\)/)[0];
+function convertCoordinates(column) {
+	var coordinates = column.match(/\(([0-9. ]+?)\)/)[0];
 	coordinates = coordinates.replace(/^\(/, "");
 	coordinates = coordinates.replace(/\)$/, "");
 	coordinates = coordinates.split(" ");
@@ -86,6 +89,15 @@ function convertCoordinates(row) {
 	return {
 		longitude : coordinates[0],
 		latitude : coordinates[1]
+	};
+}
+
+function convertPerson(column) {
+	console.log("/" + column + "/");
+	var names = column.split(" ");
+	return {
+		firstName : names.slice(0, names.length - 1).join(" "),	// everything else, except last word
+		lastName : names[names.length - 1]											// last word
 	};
 }
 
