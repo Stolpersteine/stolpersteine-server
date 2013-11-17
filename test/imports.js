@@ -47,6 +47,7 @@ var importData = {
 			street: "Straße 1",
 			zipCode: "10000",
 			city: "Stadt",
+			state: "Bundesland",
 			coordinates: {
 				longitude: "0.0",
 				latitude: "0.0"
@@ -62,6 +63,7 @@ var importData = {
 			street: "Straße 1",
 			zipCode: "10000",
 			city: "Stadt",
+			state: "Bundesland",
 			coordinates: {
 				longitude: "0.0",
 				latitude: "0.0"

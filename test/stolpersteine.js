@@ -42,6 +42,7 @@ var stolpersteinData = {
 		street: "Straße 1",
 		zipCode: "10000",
 		city: "Stadt",
+		state: "Bundesland",
 		sublocality1: "Bezirk",
 		sublocality2: "Ortsteil",
 		coordinates: {
