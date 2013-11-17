@@ -12,13 +12,14 @@ API server for [Stolperstein](http://en.wikipedia.org/wiki/Stolperstein) data.
 
 Searches database for stolperstein data. Multiple search parameters are AND'ed together. Keyword searches are case insensitive and find items that start with the search term.
 
-| Parameter     | Description                                         | Default |
-| ------------- | --------------------------------------------------- | ------- |
-| offset        | starts returning stolpersteine at the given index   | 0       |
-| limit         | limits the number of items returned in a query      | 10      |
-| q             | searches all stolpersteine for one or more keywords |         |
-| street        | searches street names                               |         |
-| city          | searches city names                                 |         |
+| Parameter     | Description                                           | Default |
+| ------------- | ----------------------------------------------------- | ------- |
+| offset        | starts returning stolpersteine at the given index     | 0       |
+| limit         | limits the number of items returned in a query        | 10      |
+| q             | searches all stolpersteine for one or more keywords   |         |
+| street        | searches street names                                 |         |
+| city          | searches city names, e.g. "Berlin"                    |         |
+| state         | searches state names, e.g. "Brandenburg"              |         |
 
 *Examples*
 
