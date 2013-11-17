@@ -63,8 +63,8 @@ kssClient.get('', function(error, request, response, data) {
 			
 			var stolperstein = {
 				type : "stolperstein",
-				location : {}
 			};
+			stolperstein.location = convertLocation(row[2].trim());
 			stolperstein.location.coordinates = convertCoordinates(row[0].trim());
 			stolperstein.person = convertPerson(row[1].trim());
 			console.log(stolperstein);
@@ -81,6 +81,7 @@ kssClient.get('', function(error, request, response, data) {
 });
 
 function convertCoordinates(column) {
+	// "GEOMETRYCOLLECTION(POINT(<lng> <lat>))"
 	var coordinates = column.match(/\(([0-9. ]+?)\)/)[0];
 	coordinates = coordinates.replace(/^\(/, "");
 	coordinates = coordinates.replace(/\)$/, "");
@@ -93,11 +94,21 @@ function convertCoordinates(column) {
 }
 
 function convertPerson(column) {
-	console.log("/" + column + "/");
+	// "<title> <first> <last>"
 	var names = column.split(" ");
 	return {
-		firstName : names.slice(0, names.length - 1).join(" "),	// everything else, except last word
-		lastName : names[names.length - 1]											// last word
+		firstName : names.slice(0, names.length - 1).join(" "),
+		lastName : names[names.length - 1]
+	};
+}
+
+function convertLocation(column) {
+	// "<street>, <zip> <city>"
+	var locations = column.match(/(.*), ([0-9]*) (.*)/);
+	return {
+		street : locations[1],
+		zipCode : locations[2],
+		city : locations[3],
 	};
 }
 
