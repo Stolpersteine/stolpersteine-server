@@ -82,14 +82,10 @@ kssClient.get('', function(error, request, response, data) {
 
 function convertCoordinates(column) {
 	// "GEOMETRYCOLLECTION(POINT(<lng> <lat>))"
-	var coordinates = column.match(/\(([0-9. ]+?)\)/)[0];
-	coordinates = coordinates.replace(/^\(/, "");
-	coordinates = coordinates.replace(/\)$/, "");
-	coordinates = coordinates.split(" ");
-	
+	var coordinates = column.match(/\(([0-9.]*) ([0-9.]*)\)/);	
 	return {
-		longitude : coordinates[0],
-		latitude : coordinates[1]
+		longitude : coordinates[1],
+		latitude : coordinates[2]
 	};
 }
 
