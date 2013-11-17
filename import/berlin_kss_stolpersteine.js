@@ -73,6 +73,7 @@ kssClient.get('', function(error, request, response, data) {
 				city : "Berlin",
 				sublocality1 : marker.$.bezirk,
 				sublocality2 : marker.$.ortsteil === null ? undefined : marker.$.ortsteil,
+				state : "Berlin",
 				coordinates : {
 					longitude: marker.$.lng,
 					latitude: marker.$.lat

@@ -105,6 +105,7 @@ function convertLocation(column) {
 		street : locations[1],
 		zipCode : locations[2],
 		city : locations[3],
+		state : "Brandenburg"
 	};
 }
 

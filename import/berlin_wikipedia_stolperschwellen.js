@@ -46,9 +46,10 @@ var importData = {
 		location: {
 			street: "Stierstraße 21",
 			zipCode: "12159",
+			city: "Berlin",
 			sublocality1: "Tempelhof-Schöneberg",
 			sublocality2: "Friedenau",
-			city: "Berlin",
+			state : "Berlin",
 			coordinates: {
 				longitude: "13.3375",
 				latitude: "52.473888888889"
@@ -63,9 +64,10 @@ var importData = {
 		location: {
 			street: "Handjerystraße 20A",
 			zipCode: "12159",
+			city: "Berlin",
 			sublocality1: "Tempelhof-Schöneberg",
 			sublocality2: "Friedenau",
-			city: "Berlin",
+			state : "Berlin",
 			coordinates: {
 				longitude: "13.332777777778",
 				latitude: "52.474166666667"
@@ -86,5 +88,5 @@ apiClient.post('/v1/imports', importData, function(err, req, res, data) {
 		console.log('Import command: curl -v -d "" ' + apiClient.url.href + 'v1/imports/' + data.id + '/execute')
 		console.log('Done.')
 	}
-	return;
+	process.exit();
 });

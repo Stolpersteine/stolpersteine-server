@@ -35,6 +35,7 @@ var schema = new mongoose.Schema({
 		city: { type: String, required: true, trim: true },
 		sublocality1: { type: String, trim: true },
 		sublocality2: { type: String, trim: true },
+		state: { type: String, required: true, trim: true },
 		coordinates: {
 			longitude: { type: Number, required: true },
 			latitude: { type: Number, required: true }
@@ -82,6 +83,7 @@ schema.statics.findExactMatch = function(source, stolperstein, callback) {
 		"location.city": stolperstein.location.city === undefined ? undefined : stolperstein.location.city.trim(),
 		"location.sublocality1": stolperstein.location.sublocality1 === undefined ? undefined : stolperstein.location.sublocality1.trim(),
 		"location.sublocality2": stolperstein.location.sublocality2 === undefined ? undefined : stolperstein.location.sublocality2.trim(),
+		"location.state": stolperstein.location.state === undefined ? undefined : stolperstein.location.state.trim(),
 		"location.coordinates.latitude": stolperstein.location.coordinates.latitude === undefined ? undefined : stolperstein.location.coordinates.latitude.trim(),
 		"location.coordinates.longitude": stolperstein.location.coordinates.longitude === undefined ? undefined : stolperstein.location.coordinates.longitude.trim(),
 		"description": stolperstein.description === undefined ? undefined : stolperstein.description.trim(),
