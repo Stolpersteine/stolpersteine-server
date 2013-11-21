@@ -85,7 +85,7 @@ kssClient.get('', function(error, request, response, data) {
 				var person = marker.person[i];
 				var stolperstein = convertStolperstein(person, location, source);
 				stolpersteine.push(stolperstein);
-				console.log('- ' + person.$.vorname + ' ' + person.$.nachname);
+				console.log(JSON.stringify(stolperstein));
 			}
 			
 			// Convert person tags nested in 'weitere'
@@ -98,7 +98,7 @@ kssClient.get('', function(error, request, response, data) {
 						var personWeitere = marker.weitere[j].person[k];
 						var stolpersteinWeitere = convertStolperstein(personWeitere, location, source);
 						stolpersteine.push(stolpersteinWeitere);
-						console.log('- ' + personWeitere.$.vorname + ' ' + personWeitere.$.nachname);
+						console.log(JSON.stringify(stolpersteinWeitere));
 					}
 				}
 				console.log('Finished processing "weitere"');
