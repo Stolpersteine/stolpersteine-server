@@ -18,6 +18,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+// http://www.adaltas.com/projects/node-csv/
+
 "use strict";
 
 var restify = require('restify'),
@@ -45,11 +47,29 @@ console.log('Loading source data...');
 kssClient.get('', function(error, request, response, data) {
 	console.log('Loading source data done');
  	if (error) {
-   	console.log('Error while loading source data');
+   	console.log('Error while loading source data ' + error);
 		return;
  	}
 
-	
+	readCsvData(data, function(error, stolpersteine) {
+	 	if (error) {
+	   	console.log('Error while reading CSV data ' + error);
+			return;
+	 	}
+		
+//		for (var i = 0; i < stolpersteine.length; i++) {
+//			var stolperstein = stolpersteine[i];
+//			console.log(stolperstein.location.city);
+//		}
+		console.log(stolpersteine.length + " stolperstein(e)");
+
+		process.exit();
+	});
+});
+
+function readCsvData(data, callback) {
+	var stolpersteine = [];
+	var processingError = null;
 	csv()
 	.from(data)
 	.from.options({trim : true})
@@ -57,8 +77,13 @@ kssClient.get('', function(error, request, response, data) {
 		if (index == 0) {
 			return;	// column names
 		}
+		
+		if (processingError) {
+			return;	// ignore after first error
+		}
 
-		if (index == 1) {
+//		if (index < 100) {
+			row = patchCsv(row);
 		  console.log('#' + index + ' ' + JSON.stringify(row));
 			
 			var stolperstein = {
@@ -67,25 +92,29 @@ kssClient.get('', function(error, request, response, data) {
 			stolperstein.location = convertLocation(row[2].trim());
 			stolperstein.location.coordinates = convertCoordinates(row[0].trim());
 			stolperstein.person = convertPerson(row[1].trim());
-			console.log(stolperstein);
-		}
+			
+			console.log(JSON.stringify(stolperstein));
+			
+			stolpersteine.push(stolperstein);
+//		}
 	})
 	.on('end', function(count) {
-	  console.log('Number of lines: ' + count);
-		process.exit();
+		console.log('end');
+	  console.log('Read ' + count + ' line(s) of CSV data');
+		callback(null, stolpersteine);
 	})
 	.on('error', function(error) {
-	  console.log(error.message);
-		process.exit();
+		processingError = error;
+		callback(error, null);
 	});
-});
+}
 
 function convertCoordinates(column) {
 	// "GEOMETRYCOLLECTION(POINT(<lng> <lat>))"
-	var coordinates = column.match(/\(([0-9.]*) ([0-9.]*)\)/);	
+	var coordinates = column.match(/\([ ]*([0-9.,]*)[ ]*([0-9.,]*)[ ]*\)/);	
 	return {
-		longitude : coordinates[1],
-		latitude : coordinates[2]
+		longitude : coordinates[1].replace(",", ".").trim(),
+		latitude : coordinates[2].replace(",", ".").trim()
 	};
 }
 
@@ -100,7 +129,7 @@ function convertPerson(column) {
 
 function convertLocation(column) {
 	// "<street>, <zip> <city>"
-	var locations = column.match(/(.*), ([0-9]*) (.*)/);
+	var locations = column.match(/(.*),[ ]*([0-9]*) (.*)/);
 	return {
 		street : locations[1],
 		zipCode : locations[2],
@@ -109,34 +138,12 @@ function convertLocation(column) {
 	};
 }
 
-function convertStolperstein(person, location, source) {
-	var stolperstein = {
-		type : "stolperstein",
-		person : {
-			firstName : person.$.vorname,
-			lastName : person.$.nachname,
-			biographyUrl : person.$.url
-		},
-		location : location,
-		source : source
-	};
-	
-	return patchStolperstein(stolperstein);
-}
+function patchCsv(row)
+{
+	row[2] = row[2].replace("Friedrichshagener Straße 32 15556 Schöneiche", "Friedrichshagener Straße 32, 15556 Schöneiche");
+	row[2] = row[2].replace("Große Oderstraße 46", "Große Oderstraße 46, 15230 Frankfurt (Oder)");
+	row[2] = row[2].replace("Friedrichstraße 21B 16269 Wriezen ", "Friedrichstraße 21B, 16269 Wriezen");
+	row[0] = row[0].replace("(13.860317\r\n53.315064)", "(13.860317 53.315064)");
 
-function patchStolperstein(stolperstein) {
-	if (stolperstein.person.firstName === "Kaufhaus Nathan Israel") {
-		stolperstein.person.firstName = "Kaufhaus Nathan";
-		stolperstein.person.lastName = "Israel";
-	}
-
-	// Normalize abbreviated street
-	stolperstein.location.street = stolperstein.location.street.replace(/str\./g, "straße");
-	stolperstein.location.street = stolperstein.location.street.replace(/Str\./g, "Straße");
-
-	// Normalize white space between street and number
-	stolperstein.location.street = stolperstein.location.street.replace(/traße(\d+)/g, "traße $1");
-	stolperstein.location.street = stolperstein.location.street.replace(/traße\s+(\d+)/g, "traße $1");
-
-	return stolperstein;
+	return row;
 }
