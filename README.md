@@ -44,7 +44,7 @@ Find a maximum of 10 stolpersteine that include the terms "herta" and "mitte" (e
 [Claus Höfele](http://github.com/choefele)  
 [@claushoefele](https://twitter.com/claushoefele)
 
-## Licence
+## Licence (MIT)
 
 Copyright (C) 2013 Option-U Software
 
