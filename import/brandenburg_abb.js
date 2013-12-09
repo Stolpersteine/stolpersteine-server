@@ -22,21 +22,17 @@
 
 "use strict";
 
-var restify = require('restify'),
+var request = require('request'),
 	csv = require('csv'),
 	util = require('util');
 	
-var apiClient = restify.createJsonClient({
-	version: '*',
-	userAgent: 'Stolpersteine/1.0 (http://option-u.com; admin@option-u.com)',
-//	url: 'https://stolpersteine-api.eu01.aws.af.cm'
-	url: 'http://127.0.0.1:3000'
-});
-
-var kssClient = restify.createStringClient({
-	userAgent: 'Stolpersteine/1.0 (http://option-u.com; stolpersteine@option-u.com)',
-	url: 'http://www.aktionsbuendnis-brandenburg.de/aktionen-positionen/stolpersteine_export.csv'
-});
+var sourceOptions = {
+	url: 'http://www.aktionsbuendnis-brandenburg.de/aktionen-positionen/stolpersteine_export.csv',
+	headers: {
+		'User-Agent': 'Stolpersteine/1.0 (http://option-u.com; admin@option-u.com)'
+	}
+};
+	
 var source = { 
 	url: 'http://www.aktionsbuendnis-brandenburg.de',
 	name: "Aktionsbündnis Brandenburg"
@@ -44,7 +40,7 @@ var source = {
 
 // Request data
 console.log('Loading source data...');
-kssClient.get('', function(error, request, response, data) {
+request.get(sourceOptions, function(error, response, data) {     
 	console.log('Loading source data done');
  	if (error) {
    	console.log('Error while loading source data ' + error);

@@ -22,21 +22,19 @@
 
 "use strict";
 
-var restify = require('restify'),
+var request = require('request'),
 	csv = require('csv'),
-	util = require('util');
+	util = require('util'),
+	iconv = require('iconv-lite');
 	
-var apiClient = restify.createJsonClient({
-	version: '*',
-	userAgent: 'Stolpersteine/1.0 (http://option-u.com; admin@option-u.com)',
-//	url: 'https://stolpersteine-api.eu01.aws.af.cm'
-	url: 'http://127.0.0.1:3000'
-});
+var sourceOptions = {
+	url: 'http://geoinfo.bochum.de/geoinfo/Stolpersteine/Stolpersteine.csv',
+	encoding: null,
+	headers: {
+		'User-Agent': 'Stolpersteine/1.0 (http://option-u.com; admin@option-u.com)'
+	}
+};
 
-var kssClient = restify.createStringClient({
-	userAgent: 'Stolpersteine/1.0 (http://option-u.com; stolpersteine@option-u.com)',
-	url: 'http://geoinfo.bochum.de/geoinfo/Stolpersteine/Stolpersteine.csv'
-});
 var source = { 
 	url: 'http://www.bochum.de/',
 	name: "Stadt Bochum"
@@ -44,13 +42,14 @@ var source = {
 
 // Request data
 console.log('Loading source data...');
-kssClient.get('', function(error, request, response, data) {
+request.get(sourceOptions, function(error, response, data) {     
+	data = iconv.decode(data, "iso-8859-1");
 	console.log('Loading source data done');
  	if (error) {
    	console.log('Error while loading source data ' + error);
 		return;
  	}
-
+	
 	readCsvData(data, function(error, stolpersteine) {
 	 	if (error) {
 	   	console.log('Error while reading CSV data ' + error);
@@ -72,7 +71,7 @@ function readCsvData(data, callback) {
 	var processingError = null;
 	csv()
 	.from(data)
-	.from.options({trim : true, delimiter : ';'})
+	.from.options({trim : true, delimiter : ';', encoding : 'latin1'})
 	.on('record', function(row, index) {
 		if (index == 0) {
 			return;	// column names

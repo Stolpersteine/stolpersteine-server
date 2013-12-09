@@ -20,9 +20,11 @@
 		"mongoose": "3.6.x",
 		"jsdom": "0.5.x",
 		"restify": "2.5.x",
+		"request": "2.29.x",
 		"xml2js": "0.2.x",
 		"csv": "0.3.x",
-		"async": "0.2.x"
+		"async": "0.2.x",
+		"iconv-lite": "0.2.x"
 	},
 
 	"devDependencies": {
