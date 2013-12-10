@@ -37,7 +37,8 @@ var sourceOptions = {
 
 var source = { 
 	url: 'http://www.bochum.de/',
-	name: "Stadt Bochum"
+	name: "Stadt Bochum",
+	retrievedAt : new Date()
 };
 
 // Request data
@@ -61,8 +62,6 @@ request.get(sourceOptions, function(error, response, data) {
 //			console.log(stolperstein.location.city);
 //		}
 		console.log(stolpersteine.length + " stolperstein(e)");
-
-		process.exit();
 	});
 });
 
@@ -71,7 +70,7 @@ function readCsvData(data, callback) {
 	var processingError = null;
 	csv()
 	.from(data)
-	.from.options({trim : true, delimiter : ';', encoding : 'latin1'})
+	.from.options({trim : true, delimiter : ';'})
 	.on('record', function(row, index) {
 		if (index == 0) {
 			return;	// column names
@@ -81,22 +80,21 @@ function readCsvData(data, callback) {
 			return;	// ignore after first error
 		}
 
-//		if (index < 100) {
+		if (index < 2) {
 			row = patchCsv(row);
-		  console.log('#' + index + ' ' + JSON.stringify(row));
-/*			
+			console.log('#' + index + ' ' + JSON.stringify(row));
+
 			var stolperstein = {
 				type : "stolperstein",
+				source : source
 			};
-			stolperstein.location = convertLocation(row[2].trim());
-			stolperstein.location.coordinates = convertCoordinates(row[0].trim());
-			stolperstein.person = convertPerson(row[1].trim());
+			stolperstein.person = convertPerson(row[2].trim(), row[8].trim());
+			stolperstein.location = convertLocation(row[3].trim(), row[10].trim(), row[9].trim());
 			
 			console.log(JSON.stringify(stolperstein));
 			
 			stolpersteine.push(stolperstein);
-*/
-//		}
+		}
 	})
 	.on('end', function(count) {
 		console.log('end');
@@ -109,36 +107,31 @@ function readCsvData(data, callback) {
 	});
 }
 
-function convertCoordinates(column) {
-	// "GEOMETRYCOLLECTION(POINT(<lng> <lat>))"
-	var coordinates = column.match(/\([ ]*([0-9.,]*)[ ]*([0-9.,]*)[ ]*\)/);	
-	return {
-		longitude : coordinates[1].replace(",", ".").trim(),
-		latitude : coordinates[2].replace(",", ".").trim()
-	};
-}
-
-function convertPerson(column) {
-	// "<title> <first> <last>"
-	var names = column.split(" ");
-	return {
-		firstName : names.slice(0, names.length - 1).join(" "),
-		lastName : names[names.length - 1]
-	};
-}
-
-function convertLocation(column) {
-	// "<street>, <zip> <city>"
-	var locations = column.match(/(.*),[ ]*([0-9]*) (.*)/);
-	return {
-		street : locations[1],
-		zipCode : locations[2],
-		city : locations[3],
-		state : "Brandenburg"
-	};
-}
-
-function patchCsv(row)
-{
+function patchCsv(row) {
 	return row;
+}
+
+function convertPerson(name, biography) {
+	// "<last>, <first>, <add>", "<url>"
+	var names = name.split(", ");
+	return {
+		firstName : names[1],
+		lastName : names[0],
+		biographyUrl: biography
+	};
+}
+
+function convertLocation(street, latitude, longitude) {
+	// "<street>", "<lat,lat>", "<lng,lng>"
+	var parsedLatitude = parseFloat(latitude.replace(",", ".")) / 100000;
+	var parsedLongitude = parseFloat(longitude.replace(",", ".")) / 100000;
+	return {
+		street : street,
+		city : "Bochum",
+		state : "Nordrhein-Westfalen",
+		coordinates: {
+			latitude : parsedLatitude,
+			longitude : parsedLongitude
+		}
+	};
 }
