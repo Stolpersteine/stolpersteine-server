@@ -24,8 +24,8 @@
 
 var request = require('request'),
 	csv = require('csv'),
-	util = require('util'),
-	iconv = require('iconv-lite');
+	iconv = require('iconv-lite'),
+	util = require('util');
 	
 var sourceOptions = {
 	url: 'http://geoinfo.bochum.de/geoinfo/Stolpersteine/Stolpersteine.csv',
@@ -35,8 +35,17 @@ var sourceOptions = {
 	}
 };
 
+var apiOptions = {
+	// url: 'https://stolpersteine-api.eu01.aws.af.cm',
+	url: 'http://127.0.0.1:3000/v1/imports',
+	headers: {
+		'User-Agent': 'Stolpersteine/1.0 (http://option-u.com; admin@option-u.com)',
+		'Content-Type' : 'application/json'
+	}
+};
+
 var source = { 
-	url: 'http://www.bochum.de/',
+	url: "http://www.bochum.de",
 	name: "Stadt Bochum",
 	retrievedAt : new Date()
 };
@@ -53,7 +62,7 @@ request.get(sourceOptions, function(error, response, data) {
 	
 	readCsvData(data, function(error, stolpersteine) {
 	 	if (error) {
-	   	console.log('Error while reading CSV data ' + error);
+	   		console.log('Error while reading CSV data ' + error);
 			return;
 	 	}
 		
@@ -61,7 +70,21 @@ request.get(sourceOptions, function(error, response, data) {
 //			var stolperstein = stolpersteine[i];
 //			console.log(stolperstein.location.city);
 //		}
-		console.log(stolpersteine.length + " stolperstein(e)");
+		// console.log(stolpersteine.length + " stolperstein(e)");
+		
+		uploadStolpersteine(stolpersteine, function(error, data) {
+			console.log('Resulting import data:');
+			console.log(util.inspect(data, false, null));
+			
+			if (error) {
+				console.log('Error during import (' + error + ')');
+			} else {
+				console.log(data.deleteActions);
+				console.log(data.deleteActions.targetIds.length + ' delete action(s), ' + data.createActions.stolpersteine.length + ' create action(s)');
+				console.log('Import command: curl -v -d "" ' + apiOptions.url + "/" + data.id + '/execute')
+				console.log('Done.')
+			}
+		});
 	});
 });
 
@@ -80,13 +103,12 @@ function readCsvData(data, callback) {
 			return;	// ignore after first error
 		}
 
-		if (index < 2) {
+		// if (index < 2) {
 			row = patchCsv(row);
 			console.log('#' + index + ' ' + JSON.stringify(row));
 
 			var stolperstein = {
-				type : "stolperstein",
-				source : source
+				type : "stolperstein"
 			};
 			stolperstein.person = convertPerson(row[2].trim(), row[8].trim());
 			stolperstein.location = convertLocation(row[3].trim(), row[10].trim(), row[9].trim());
@@ -94,11 +116,11 @@ function readCsvData(data, callback) {
 			console.log(JSON.stringify(stolperstein));
 			
 			stolpersteine.push(stolperstein);
-		}
+		// }
 	})
 	.on('end', function(count) {
 		console.log('end');
-	  console.log('Read ' + count + ' line(s) of CSV data');
+		console.log('Read ' + count + ' line(s) of CSV data');
 		callback(null, stolpersteine);
 	})
 	.on('error', function(error) {
@@ -123,8 +145,8 @@ function convertPerson(name, biography) {
 
 function convertLocation(street, latitude, longitude) {
 	// "<street>", "<lat,lat>", "<lng,lng>"
-	var parsedLatitude = parseFloat(latitude.replace(",", ".")) / 100000;
-	var parsedLongitude = parseFloat(longitude.replace(",", ".")) / 100000;
+	var parsedLatitude = "" + parseFloat(latitude.replace(",", ".")) / 100000;
+	var parsedLongitude = "" + parseFloat(longitude.replace(",", ".")) / 100000;
 	return {
 		street : street,
 		city : "Bochum",
@@ -134,4 +156,17 @@ function convertLocation(street, latitude, longitude) {
 			longitude : parsedLongitude
 		}
 	};
+}
+
+function uploadStolpersteine(stolpersteine, callback) {
+	var importData = {
+		source: source,
+		stolpersteine: stolpersteine
+	};
+	
+	console.log('Importing ' + stolpersteine.length + ' stolperstein(e)...');
+	apiOptions.body = JSON.stringify(importData);
+	request.post(apiOptions, function(error, response, data) {     
+		callback(error, JSON.parse(data));
+	});
 }

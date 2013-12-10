@@ -32,10 +32,11 @@ var sourceOptions = {
 		'User-Agent': 'Stolpersteine/1.0 (http://option-u.com; admin@option-u.com)'
 	}
 };
-	
+
 var source = { 
 	url: 'http://www.aktionsbuendnis-brandenburg.de',
-	name: "Aktionsbündnis Brandenburg"
+	name: "Aktionsbündnis Brandenburg",
+	retrievedAt : new Date()
 };
 
 // Request data
@@ -53,13 +54,11 @@ request.get(sourceOptions, function(error, response, data) {
 			return;
 	 	}
 		
-//		for (var i = 0; i < stolpersteine.length; i++) {
-//			var stolperstein = stolpersteine[i];
-//			console.log(stolperstein.location.city);
-//		}
+		for (var i = 0; i < stolpersteine.length; i++) {
+			var stolperstein = stolpersteine[i];
+			console.log(stolperstein.location.street + "/" + stolperstein.location.zipCode + "/" + stolperstein.location.city);
+		}
 		console.log(stolpersteine.length + " stolperstein(e)");
-
-		process.exit();
 	});
 });
 
@@ -78,25 +77,25 @@ function readCsvData(data, callback) {
 			return;	// ignore after first error
 		}
 
-//		if (index < 100) {
+		// if (index < 2) {
 			row = patchCsv(row);
-		  console.log('#' + index + ' ' + JSON.stringify(row));
+			console.log('#' + index + ' ' + JSON.stringify(row));
 			
 			var stolperstein = {
 				type : "stolperstein",
+				source : source
 			};
-			stolperstein.location = convertLocation(row[2].trim());
-			stolperstein.location.coordinates = convertCoordinates(row[0].trim());
+			stolperstein.location = convertLocation(row[2].trim(), row[0].trim());
 			stolperstein.person = convertPerson(row[1].trim());
 			
 			console.log(JSON.stringify(stolperstein));
 			
 			stolpersteine.push(stolperstein);
-//		}
+		// }
 	})
 	.on('end', function(count) {
 		console.log('end');
-	  console.log('Read ' + count + ' line(s) of CSV data');
+		console.log('Read ' + count + ' line(s) of CSV data');
 		callback(null, stolpersteine);
 	})
 	.on('error', function(error) {
@@ -105,41 +104,39 @@ function readCsvData(data, callback) {
 	});
 }
 
-function convertCoordinates(column) {
-	// "GEOMETRYCOLLECTION(POINT(<lng> <lat>))"
-	var coordinates = column.match(/\([ ]*([0-9.,]*)[ ]*([0-9.,]*)[ ]*\)/);	
-	return {
-		longitude : coordinates[1].replace(",", ".").trim(),
-		latitude : coordinates[2].replace(",", ".").trim()
-	};
+function patchCsv(row) {
+	row[0] = row[0].replace("(13.860317\r\n53.315064)", "(13.860317 53.315064)");
+
+	row[1] = row[1].replace("Emilia Loewenheim, geb. Becker", "Emilia Loewenheim");
+
+	row[2] = row[2].replace("Friedrichshagener Straße 32 15556 Schöneiche", "Friedrichshagener Straße 32, 15556 Schöneiche");
+	row[2] = row[2].replace("Große Oderstraße 46", "Große Oderstraße 46, 15230 Frankfurt (Oder)");
+	row[2] = row[2].replace("Friedrichstraße 21B 16269 Wriezen ", "Friedrichstraße 21B, 16269 Wriezen");
+
+	return row;
 }
 
-function convertPerson(column) {
+function convertPerson(name) {
 	// "<title> <first> <last>"
-	var names = column.split(" ");
+	var names = name.split(" ");
 	return {
-		firstName : names.slice(0, names.length - 1).join(" "),
-		lastName : names[names.length - 1]
+		firstName : names.slice(0, names.length - 1).join(" ").trim(),
+		lastName : names[names.length - 1].trim()
 	};
 }
 
-function convertLocation(column) {
-	// "<street>, <zip> <city>"
-	var locations = column.match(/(.*),[ ]*([0-9]*) (.*)/);
+function convertLocation(location, coordinates) {
+	// "<street>, <zip> <city>", "GEOMETRYCOLLECTION(POINT(<lng> <lat>))"
+	var locations = location.match(/(.*),[ ]*([0-9]*) (.*)/);
+	var coordinates = coordinates.match(/\([ ]*([0-9.,]*)[ ]*([0-9.,]*)[ ]*\)/);
 	return {
 		street : locations[1],
 		zipCode : locations[2],
 		city : locations[3],
-		state : "Brandenburg"
+		state : "Brandenburg",
+		coordinates : {
+			longitude : parseFloat(coordinates[1].replace(",", ".").trim()),
+			latitude : parseFloat(coordinates[2].replace(",", ".").trim())
+		}
 	};
-}
-
-function patchCsv(row)
-{
-	row[2] = row[2].replace("Friedrichshagener Straße 32 15556 Schöneiche", "Friedrichshagener Straße 32, 15556 Schöneiche");
-	row[2] = row[2].replace("Große Oderstraße 46", "Große Oderstraße 46, 15230 Frankfurt (Oder)");
-	row[2] = row[2].replace("Friedrichstraße 21B 16269 Wriezen ", "Friedrichstraße 21B, 16269 Wriezen");
-	row[0] = row[0].replace("(13.860317\r\n53.315064)", "(13.860317 53.315064)");
-
-	return row;
 }

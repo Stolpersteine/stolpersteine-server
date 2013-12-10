@@ -35,9 +35,11 @@ var kssClient = restify.createStringClient({
 	userAgent: 'Stolpersteine/1.0 (http://option-u.com; stolpersteine@option-u.com)',
 	url: 'http://www.stolpersteine-berlin.de/st_interface/xml/geo/linked'
 });
+
 var source = { 
 	url: 'http://www.stolpersteine-berlin.de',
-	name: "Koordinierungsstelle Stolpersteine Berlin"
+	name: "Koordinierungsstelle Stolpersteine Berlin",
+	retrievedAt : new Date()
 };
 
 // Request data
@@ -61,7 +63,6 @@ kssClient.get('', function(error, request, response, data) {
 		// Process marker tags
 		console.log('Found ' + result.markers.$.cnt + ' stolpersteine in ' + result.markers.marker.length + ' markers');
 		var stolpersteine = [];
-		source.retrievedAt = new Date(response.headers.date);
 		var markers = result.markers.marker;
 //		markers = markers.slice(0, 100); // restrict test data
 		for (var markerIndex = 0; markerIndex < markers.length; markerIndex++) {
