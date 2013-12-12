@@ -54,7 +54,7 @@ var source = {
 console.log('Loading source data...');
 request.get(sourceOptions, function(error, response, data) {     
 	data = iconv.decode(data, "iso-8859-1");
-	console.log('Loading source data done');
+	console.log('Loading source data done.');
  	if (error) {
    	console.log('Error while loading source data ' + error);
 		return;
@@ -71,7 +71,7 @@ request.get(sourceOptions, function(error, response, data) {
 //			console.log(stolperstein.location.city);
 //		}
 		// console.log(stolpersteine.length + " stolperstein(e)");
-		
+
 		uploadStolpersteine(stolpersteine, function(error, data) {
 			console.log('Resulting import data:');
 			console.log(util.inspect(data, false, null));
@@ -103,7 +103,7 @@ function readCsvData(data, callback) {
 			return;	// ignore after first error
 		}
 
-		// if (index < 2) {
+//		if (index < 2) {
 			row = patchCsv(row);
 			console.log('#' + index + ' ' + JSON.stringify(row));
 
@@ -111,12 +111,14 @@ function readCsvData(data, callback) {
 				type : "stolperstein"
 			};
 			stolperstein.person = convertPerson(row[2].trim(), row[8].trim());
-			stolperstein.location = convertLocation(row[3].trim(), row[10].trim(), row[9].trim());
+			stolperstein.location = convertLocation(row[3].trim(), row[12].trim(), row[11].trim());
+			
+			stolperstein = patchStolperstein(stolperstein);
 			
 			console.log(JSON.stringify(stolperstein));
 			
 			stolpersteine.push(stolperstein);
-		// }
+//		 }
 	})
 	.on('end', function(count) {
 		console.log('end');
@@ -133,20 +135,37 @@ function patchCsv(row) {
 	return row;
 }
 
+function patchStolperstein(stolperstein) {
+	// Normalize abbreviated street
+	stolperstein.location.street = stolperstein.location.street.replace(/str\./g, "straße");
+	stolperstein.location.street = stolperstein.location.street.replace(/Str\./g, "Straße");
+
+	// Normalize white space between street and number
+	stolperstein.location.street = stolperstein.location.street.replace(/traße(\d+)/g, "traße $1");
+	stolperstein.location.street = stolperstein.location.street.replace(/traße\s+(\d+)/g, "traße $1");
+
+	return stolperstein;
+}
+
 function convertPerson(name, biography) {
 	// "<last>, <first>, <add>", "<url>"
 	var names = name.split(", ");
-	return {
+	var person = {
 		firstName : names[1],
 		lastName : names[0],
-		biographyUrl: biography
 	};
+	
+	if (biography.length > 0) {
+		person.biographyUrl = biography;
+	}
+	
+	return person;
 }
 
 function convertLocation(street, latitude, longitude) {
 	// "<street>", "<lat,lat>", "<lng,lng>"
-	var parsedLatitude = "" + parseFloat(latitude.replace(",", ".")) / 100000;
-	var parsedLongitude = "" + parseFloat(longitude.replace(",", ".")) / 100000;
+	var parsedLatitude = latitude.replace(",", ".");
+	var parsedLongitude = longitude.replace(",", ".");
 	return {
 		street : street,
 		city : "Bochum",
