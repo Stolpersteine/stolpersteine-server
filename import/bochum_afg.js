@@ -36,8 +36,8 @@ var sourceOptions = {
 };
 
 var apiOptions = {
-	// url: 'https://stolpersteine-api.eu01.aws.af.cm',
-	url: 'http://127.0.0.1:3000/v1/imports',
+	url: 'https://stolpersteine-api.eu01.aws.af.cm/v1/imports',
+//	url: 'http://127.0.0.1:3000/v1/imports',
 	headers: {
 		'User-Agent': 'Stolpersteine/1.0 (http://option-u.com; admin@option-u.com)',
 		'Content-Type' : 'application/json'
