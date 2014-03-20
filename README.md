@@ -39,6 +39,38 @@ Find a maximum of 10 stolpersteine that include the terms "herta" and "mitte" (e
 
     curl "<base URL>/stolpersteine?q=herta+mitte"
 
+## Installation for development
+
+Currently, the production system uses MongoDB 2.4.5 and Node.js 0.8.14.
+
+### MongoDB
+
+1. Download [MongoDB](https://www.mongodb.org/downloads)
+2. Unpack and copy to any directory
+3. Add the `bin` directory to `/etc/paths`
+4. Start new terminal and run `mongod --dbpath ~/Downloads/`
+
+MongoDB can be used with `mongo` client.
+
+### Node.js
+
+1. Download [Node.js](http://nodejs.org/download/) and install package
+2. Install nodemon to restart Node.js when files have changed with `sudo npm install -g nodemon`
+3. Start with `nodemon server.js`
+
+API answers at [http://127.0.0.1:3000/v1/stolpersteine](http://127.0.0.1:3000/v1/stolpersteine)
+
+### Unit tests
+
+1. Install mocha with `sudo npm install -g mocha`
+2. `npm test`
+
+### Run import script
+
+1. Modify `import/berlin_kss_stolpersteine.js` or any other import script to use localhost
+2. Run `node import/berlin_kss_stolpersteine.js` to import data
+3. Execute curl request printed in terminal to commit import to database
+
 ## Contact
 
 [Claus Höfele](http://github.com/choefele)  
