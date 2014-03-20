@@ -41,7 +41,7 @@ Find a maximum of 10 stolpersteine that include the terms "herta" and "mitte" (e
 
 ## Installation for development
 
-Currently, the production system uses MongoDB 2.4.5 and Node.js 0.8.14.
+Currently, the production system uses MongoDB 2.4.5 and Node.js 0.10.22.
 
 ### MongoDB
 

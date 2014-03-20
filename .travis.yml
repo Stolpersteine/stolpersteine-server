@@ -5,4 +5,4 @@ before_script:
   - "node server.js &"
   - "sleep 5"
 node_js:
-  - "0.8"
+  - "0.10"
