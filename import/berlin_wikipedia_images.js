@@ -120,7 +120,8 @@ for (var i = 0; i < uriSources.length; i++) {
 	
 	console.log('Loading source data for ' + uriSource + '...');
 	wikipediaClient.get('/wiki'+ uriSource , function(error, request, response, data) {
-		console.log('Loaded source data for ' + uriSource + '...');
+		//console.log(request)
+		console.log('Loaded source data for ' + request.path + '...');
   		if (error) {
     		console.log('Error while loading source data');
 			return;
