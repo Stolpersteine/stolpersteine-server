@@ -96,7 +96,7 @@ var uriSources = [
 	'/Liste_der_Stolpersteine_in_Berlin-Heiligensee',
 	'/Liste_der_Stolpersteine_in_Berlin-Frohnau',
 	'/Liste_der_Stolpersteine_in_Berlin-Hermsdorf',
-	'/Liste_der_Stolpersteine_in_Berlin-Waidmannslust'
+	'/Liste_der_Stolpersteine_in_Berlin-Waidmannslust',
 	'/Liste_der_Stolpersteine_in_Berlin-Lübars',
 	'/Liste_der_Stolpersteine_in_Berlin-Wittenau',
 	'/Liste_der_Stolpersteine_in_Berlin-Märkisches_Viertel',
@@ -119,8 +119,8 @@ for (var i = 0; i < uriSources.length; i++) {
 	var uriSource = uriSources[i];
 	
 	console.log('Loading source data for ' + uriSource + '...');
-	wikipediaClient.get('/wiki/Liste_der_Stolpersteine_in_Berlin-Britz', function(error, request, response, data) {
-		console.log('done');
+	wikipediaClient.get('/wiki'+ uriSource , function(error, request, response, data) {
+		console.log('Loaded source data for ' + uriSource + '...');
   		if (error) {
     		console.log('Error while loading source data');
 			return;
