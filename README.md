@@ -21,6 +21,26 @@ Searches database for stolperstein data. Multiple search parameters are AND'ed t
 | city          | searches city names, e.g. "Berlin"                    |         |
 | state         | searches state names, e.g. "Brandenburg"              |         |
 
+*Output*
+
+| Attribute                      | Example                                              | Type   | Required |
+| ------------------------------ | ---------------------------------------------------- | ------ | -------- |
+| type                           | "stolperstein" oder "stolperschwelle"                | string | yes      |
+| person.firstName               | "Herta"                                              | string |          |
+| person.lastName                | "Abraham"                                            | string | yes      |
+| person.biographyUrl            | "http://www.stolpersteine-berlin.de/de/biografie/3"  | string |          |
+| location.street                | "Wallstraße 84"                                      | string | yes      |
+| location.zipCode               | "10179"                                              | string |          |
+| location.city                  | "Berlin"                                             | string | yes      |
+| location.sublocality1          | "Mitte"                                              | string |          |
+| location.sublocality2          | "Hansaviertel"                                       | string |          |
+| location.state                 | "Berlin"                                             | string | yes      |
+| location.coordinates.longitude | 13.40811                                             | number | yes      |
+| location.coordinates.latitude  | 52.51201                                             | number | yes      |
+| description                    | "Verlegt am 14.1.1999"                               | string |          |
+| source.url                     | "http://www.stolpersteine-berlin.de"                 | string | yes      |
+| source.name                    | "Koordinierungsstelle Stolpersteine Berlin"          | string | yes      |
+
 *Examples*
 
 Retrieve the first 100 stolpersteine in the database:
