@@ -24,6 +24,8 @@ var mongoose = require('mongoose');
 
 var schema = new mongoose.Schema({
 	type: { type: String, enum: ['stolperstein', 'stolperschwelle'], required: true },
+	createdAt: { type: Date },
+	updatedAt: { type: Date },
 	person: {
 		firstName: { type: String, trim: true },
 		lastName: { type: String, required: true, trim: true },
@@ -53,9 +55,18 @@ schema.virtual('id').get(function() {
     return this._id;
 });
 
+schema.pre('save', function(next) {
+	var now = new Date();
+	this.updatedAt = now;
+	if (!this.createdAt) {
+		this.createdAt = now;
+	}
+	next();
+});
+
 schema.set('toJSON', { transform: function (doc, ret, options) {
 	ret.id = doc._id;
-  delete ret._id;
+ 	delete ret._id;
 	delete ret.__v;
 }});
 
@@ -73,7 +84,6 @@ schema.statics.findExactMatch = function(source, stolperstein, callback) {
 	this.findOne({
 		"source.url": source.url === undefined ? undefined : source.url.trim(),
 		"source.name": source.name === undefined ? undefined : source.name.trim(),
-//		"source.retrievedAt": source.retrievedAt, 
 		"type": stolperstein.type === undefined ? undefined : stolperstein.type.trim(),
 		"person.firstName": stolperstein.person.firstName === undefined ? undefined : stolperstein.person.firstName.trim(),
 		"person.lastName": stolperstein.person.lastName === undefined ? undefined : stolperstein.person.lastName.trim(),
@@ -86,7 +96,9 @@ schema.statics.findExactMatch = function(source, stolperstein, callback) {
 		"location.state": stolperstein.location.state === undefined ? undefined : stolperstein.location.state.trim(),
 		"location.coordinates.latitude": stolperstein.location.coordinates.latitude === undefined ? undefined : stolperstein.location.coordinates.latitude.trim(),
 		"location.coordinates.longitude": stolperstein.location.coordinates.longitude === undefined ? undefined : stolperstein.location.coordinates.longitude.trim(),
-		"description": stolperstein.description === undefined ? undefined : stolperstein.description.trim(),
+		"description": stolperstein.description === undefined ? undefined : stolperstein.description.trim()
+		
+		// not checked: retrievedAt
 	}, callback);
 };
 

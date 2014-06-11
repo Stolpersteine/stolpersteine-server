@@ -108,6 +108,8 @@ describe('Stolpersteine endpoint', function() {
 				expect(data.source.name).to.be(stolpersteinData.source.name);
 				expect(data.source.retrievedAt).not.to.be(null);
 				expect(data.description).to.be(stolpersteinData.description);
+				expect(data.createdAt).not.to.be(undefined);
+				expect(data.updatedAt).to.be(data.createdAt);
 				expect(data.__v).to.be(undefined);
 				done();
 			}); 
