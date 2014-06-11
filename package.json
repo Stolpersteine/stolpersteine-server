@@ -36,15 +36,7 @@
 	"bundleDependencies": [],
 
 	"scripts": {
-		"test": "mocha -R spec",
-		"start": "server.js",
-		"db": "mongod --dbpath ~/tmp/",
-		"dbclient": "mongo",
-		"scrape": "node scraping/app",
-		"jshint": "jshint --verbose controllers",
-		"npm 1": "npm ls",
-		"npm 2": "npm view <package> version",
-		"npm 3": "npm install"
+		"test": "mocha -R spec"
 	},
 
 	"private": true,
