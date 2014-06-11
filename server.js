@@ -37,8 +37,9 @@ app.set('host', process.env.VCAP_APP_HOST || process.env.OPENSHIFT_INTERNAL_IP |
 app.set('db url', process.env.MONGODB_DB_URL || process.env.OPENSHIFT_MONGODB_DB_URL || "mongodb://127.0.0.1/");
 
 app.use(express.logger('dev'));
-app.use('/v1', express.json());
-app.use('/v1', express.urlencoded());
+app.use(express.bodyParser({
+  limit: '10mb'
+}));
 app.use('/v1', express.methodOverride());
 app.use('/v1', express.compress());
 app.use('/v1', middleware.filter());
