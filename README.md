@@ -12,6 +12,8 @@ API server for [Stolperstein](http://en.wikipedia.org/wiki/Stolperstein) data.
 
 Searches database for stolperstein data. Multiple search parameters are AND'ed together. Keyword searches are case insensitive and find items that start with the search term.
 
+*Input*
+
 | Parameter     | Description                                           | Default |
 | ------------- | ----------------------------------------------------- | ------- |
 | offset        | starts returning stolpersteine at the given index     | 0       |
