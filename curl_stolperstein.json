@@ -1,21 +1,19 @@
 {
+	"type": "stolperstein",
 	"person": {
 		"firstName": "Vorname",
-		"lastName": "Nachname"
+		"lastName": "Nachname",
+		"biographyUrl" : "http://example.com"
 	},
 	"location": {
 		"street": "Straße 1",
 		"zipCode": "10000",
 		"city": "Stadt",
+		"state": "State",
 		"coordinates": {
 			"longitude": "1.0",
 			"latitude": "1.0"
 		}
-	},
-	"laidAt" : { 
-		"year": "2012",
-		"month": "11",
-		"date": "12"
 	},
 	"source": {
 		"url": "http://curl.example.com",
