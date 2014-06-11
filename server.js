@@ -32,23 +32,23 @@ var app = express();
 
 console.log('Node.js env = ' + app.get('env'));
 
-app.configure(function() {
-  app.set('port', process.env.VCAP_APP_PORT || process.env.OPENSHIFT_INTERNAL_PORT || 3000);
-  app.set('host', process.env.VCAP_APP_HOST || process.env.OPENSHIFT_INTERNAL_IP || "127.0.0.1");
-  app.set('db url', process.env.MONGODB_DB_URL || process.env.OPENSHIFT_MONGODB_DB_URL || "mongodb://127.0.0.1/");
+app.set('port', process.env.VCAP_APP_PORT || process.env.OPENSHIFT_INTERNAL_PORT || 3000);
+app.set('host', process.env.VCAP_APP_HOST || process.env.OPENSHIFT_INTERNAL_IP || "127.0.0.1");
+app.set('db url', process.env.MONGODB_DB_URL || process.env.OPENSHIFT_MONGODB_DB_URL || "mongodb://127.0.0.1/");
 
-  app.use(express.logger('dev'));
-  app.use('/v1', express.bodyParser());
-  app.use('/v1', express.methodOverride());
-	app.use('/v1', express.compress());
-	app.use('/v1', middleware.filter());
-  app.use(app.router);
-  app.use(express.static(path.join(__dirname, 'public')));
-});
+app.use(express.logger('dev'));
+//app.use('/v1', express.bodyParser());
+app.use('/v1', express.json());
+app.use('/v1', express.urlencoded());
+app.use('/v1', express.methodOverride());
+app.use('/v1', express.compress());
+app.use('/v1', middleware.filter());
+app.use(app.router);
+app.use(express.static(path.join(__dirname, 'public')));
 
-app.configure('development', function() {
+if ('development' == app.get('env')) {
   app.use(express.errorHandler());
-});
+}
 
 app.post('/v1/stolpersteine', controllers.stolpersteine.createStolperstein);
 app.get('/v1/stolpersteine', controllers.stolpersteine.retrieveStolpersteine);
