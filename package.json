@@ -22,7 +22,7 @@
 		"restify": "2.8.x",
 		"request": "2.36.x",
 		"xml2js": "0.4.x",
-		"csv": "0.4.x",
+		"csv": "0.3.x",
 		"async": "0.9.x",
 		"iconv-lite": "0.4.x"
 	},
