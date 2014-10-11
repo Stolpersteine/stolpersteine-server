@@ -143,6 +143,11 @@ function patchStolperstein(stolperstein) {
 	// Normalize white space between street and number
 	stolperstein.location.street = stolperstein.location.street.replace(/traße(\d+)/g, "traße $1");
 	stolperstein.location.street = stolperstein.location.street.replace(/traße\s+(\d+)/g, "traße $1");
+	
+	// Invalid character for Renée Gottschalk
+	if (stolperstein.person.lastName === "Gottschalk" && stolperstein.person.firstName.lastIndexOf("Ren", 0) === 0) {
+		stolperstein.person.firstName = "Renée";
+	}
 
 	return stolperstein;
 }
