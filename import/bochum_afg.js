@@ -148,6 +148,15 @@ function patchStolperstein(stolperstein) {
 	if (stolperstein.person.lastName === "Gottschalk" && stolperstein.person.firstName.lastIndexOf("Ren", 0) === 0) {
 		stolperstein.person.firstName = "Renée";
 	}
+	
+	// Invalid URLs
+	if (stolperstein.person.biographyUrl === "http://www.bochum.de/C12571A3001D56CE/vwContentByKey/W28QDE65010BOLDDE/$FILE/135_138_ Familie_Pollack.pdf") {
+		stolperstein.person.biographyUrl = "http://www.bochum.de/C12571A3001D56CE/vwContentByKey/W28QDE65010BOLDDE/$FILE/135_138_%20Familie_Pollack.pdf";
+	}
+
+	if (stolperstein.person.biographyUrl === "http://www.bochum.de/C12571A3001D56CE/vwContentByKey/W28DBB3C290BOLDDE/$FILE/122_123_124_125_Alexander_ Hermann_und_Familie.pdf") {
+		stolperstein.person.biographyUrl = "http://www.bochum.de/C12571A3001D56CE/vwContentByKey/W28DBB3C290BOLDDE/$FILE/122_123_124_125_Alexander_%20Hermann_und_Familie.pdf";
+	}
 
 	return stolperstein;
 }
