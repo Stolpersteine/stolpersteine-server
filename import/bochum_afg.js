@@ -103,22 +103,22 @@ function readCsvData(data, callback) {
 			return;	// ignore after first error
 		}
 
-//		if (index < 2) {
+		// if (index < 2) {
 			row = patchCsv(row);
 			console.log('#' + index + ' ' + JSON.stringify(row));
 
 			var stolperstein = {
 				type : "stolperstein"
 			};
-			stolperstein.person = convertPerson(row[2].trim(), row[8].trim());
-			stolperstein.location = convertLocation(row[3].trim(), row[12].trim(), row[11].trim());
+			stolperstein.person = convertPerson(row[0].trim(), row[6].trim());
+			stolperstein.location = convertLocation(row[1].trim(), row[10].trim(), row[9].trim());
 			
 			stolperstein = patchStolperstein(stolperstein);
 			
 			console.log(JSON.stringify(stolperstein));
 			
 			stolpersteine.push(stolperstein);
-//		 }
+		 // }
 	})
 	.on('end', function(count) {
 		console.log('end');
