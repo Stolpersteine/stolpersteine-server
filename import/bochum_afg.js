@@ -28,7 +28,7 @@ var request = require('request'),
 	util = require('util');
 	
 var sourceOptions = {
-	url: 'http://geoinfo.bochum.de/62/Stolpersteine/Stolpersteine.csv',
+	url: 'http://www.bochum.de/C12571A3001D56CE/currentbaselink/W29VSB94839BOCMDE/$FILE/Stolpersteine.csv',
 	encoding: null,
 	headers: {
 		'User-Agent': 'Stolpersteine/1.0 (http://option-u.com; admin@option-u.com)'
