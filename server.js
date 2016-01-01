@@ -32,9 +32,8 @@ var app = express();
 
 console.log('Node.js env = ' + app.get('env'));
 
-app.set('port', process.env.VCAP_APP_PORT || process.env.OPENSHIFT_INTERNAL_PORT || 3000);
-app.set('host', process.env.VCAP_APP_HOST || process.env.OPENSHIFT_INTERNAL_IP || "127.0.0.1");
-app.set('db url', process.env.MONGODB_DB_URL || process.env.OPENSHIFT_MONGODB_DB_URL || "mongodb://127.0.0.1/");
+app.set('port', process.env.PORT || 3000);
+app.set('db url', process.env.MONGODB_DB_URL || "mongodb://127.0.0.1/");
 
 app.use(express.logger('dev'));
 app.use(express.bodyParser({
@@ -61,6 +60,6 @@ app.delete('/v1/imports/:id', controllers.imports.deleteImport);
 app.post('/v1/imports/:id/execute', controllers.imports.executeImport);
 
 mongoose.connect(app.get('db url') + 'stolpersteine');
-app.listen(app.get('port'), app.get('host'), function() {
-    console.log('%s: Node server started on %s:%d ...', Date(Date.now()), app.get('host'), app.get('port'));
+app.listen(app.get('port'), function() {
+    console.log('%s: Node server started on %d ...', Date(Date.now()), app.get('port'));
 });
