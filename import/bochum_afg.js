@@ -147,6 +147,11 @@ function patchStolperstein(stolperstein) {
 	if (stolperstein.person.lastName === "Gottschalk" && stolperstein.person.firstName.lastIndexOf("Ren", 0) === 0) {
 		stolperstein.person.firstName = "Renée";
 	}
+  
+  // Forward apps to mobile web site
+  if (stolperstein.person.biographyUrl === "http://www.bochum.de/stolpersteine") {
+    stolperstein.person.biographyUrl = "http://m.bochum.de/stolpersteine"
+  }
 	
 	return stolperstein;
 }
