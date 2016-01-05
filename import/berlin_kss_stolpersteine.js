@@ -23,7 +23,7 @@
 var restify = require('restify'),
 	parseXml = require('xml2js').parseString,
 	util = require('util');
-	
+
 var apiClient = restify.createJsonClient({
 	version: '*',
 	userAgent: 'Stolpersteine/1.0 (http://option-u.com; admin@option-u.com)',
@@ -36,7 +36,7 @@ var kssClient = restify.createStringClient({
 	url: 'http://www.stolpersteine-berlin.de/st_interface/xml/geo/linked'
 });
 
-var source = { 
+var source = {
 	url: 'http://www.stolpersteine-berlin.de',
 	name: "Koordinierungsstelle Stolpersteine Berlin",
 	retrievedAt : new Date()
@@ -64,10 +64,17 @@ kssClient.get('', function(error, request, response, data) {
 		console.log('Found ' + result.markers.$.cnt + ' stolpersteine in ' + result.markers.marker.length + ' markers');
 		var stolpersteine = [];
 		var markers = result.markers.marker;
-//		markers = markers.slice(0, 100); // restrict test data
+		// markers = markers.slice(0, 2); // restrict test data
 		for (var markerIndex = 0; markerIndex < markers.length; markerIndex++) {
 			var marker = markers[markerIndex];
-			
+
+			// Skip markers with missing geographic coordinates
+			if (marker.$.lat === "" || marker.$.lng === "") {
+				console.log("Found invalid marker: " + marker.$.adresse);
+				continue;
+			}
+
+			// Convert address
 			var location = {
 				street : marker.$.adresse,
 				zipCode : marker.$.plz,
@@ -86,27 +93,26 @@ kssClient.get('', function(error, request, response, data) {
 				var person = marker.person[i];
 				var stolperstein = convertStolperstein(person, location, source);
 				stolpersteine.push(stolperstein);
-				console.log(JSON.stringify(stolperstein));
+				// console.log(JSON.stringify(stolperstein));
 			}
-			
+
 			// Convert person tags nested in 'weitere'
 			if (marker.weitere) {
-				console.log('Processing "weitere"');
+				// console.log('Processing "weitere"');
 				for (var j = 0; j < marker.weitere.length; j++) {
 					location.street = marker.weitere[j].$.adresse;
-				
+
 					for (var k = 0; k < marker.weitere[j].person.length; k++) {
 						var personWeitere = marker.weitere[j].person[k];
 						var stolpersteinWeitere = convertStolperstein(personWeitere, location, source);
 						stolpersteine.push(stolpersteinWeitere);
-						console.log(JSON.stringify(stolpersteinWeitere));
+						// console.log(JSON.stringify(stolpersteinWeitere));
 					}
 				}
-				console.log('Finished processing "weitere"');
 			}
 		}
 		console.log('Converted ' + stolpersteine.length + ' stolperstein(e)');
-		
+
 		var importData = {
 			source: source,
 			stolpersteine: stolpersteine
@@ -139,7 +145,7 @@ function convertStolperstein(person, location, source) {
 		location : location,
 		source : source
 	};
-	
+
 	return patchStolperstein(stolperstein);
 }
 
