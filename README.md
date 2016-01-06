@@ -1,6 +1,6 @@
 # Stolpersteine Server
 
-[![Build Status](https://travis-ci.org/optionu/stolpersteine-server.png?branch=master)](https://travis-ci.org/optionu/stolpersteine-server) [![Dependency Status](https://www.versioneye.com/user/projects/526633b8632bac385d000003/badge.png)](https://www.versioneye.com/user/projects/526633b8632bac385d000003)
+[![Build Status](https://travis-ci.org/Stolpersteine/stolpersteine-server.svg)](https://travis-ci.org/Stolpersteine/stolpersteine-server)
 
 API server for [Stolperstein](http://en.wikipedia.org/wiki/Stolperstein) data.
 
