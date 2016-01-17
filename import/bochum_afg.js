@@ -26,7 +26,7 @@ var request = require('request'),
 	csv = require('csv'),
 	iconv = require('iconv-lite'),
 	util = require('util');
-	
+
 var sourceOptions = {
 	url: 'http://www.bochum.de/C12571A3001D56CE/currentbaselink/W29VSB94839BOCMDE/$FILE/Stolpersteine.csv',
 	encoding: null,
@@ -44,7 +44,7 @@ var apiOptions = {
 	}
 };
 
-var source = { 
+var source = {
 	url: "http://www.bochum.de",
 	name: "Stadt Bochum",
 	retrievedAt : new Date()
@@ -52,20 +52,20 @@ var source = {
 
 // Request data
 console.log('Loading source data...');
-request.get(sourceOptions, function(error, response, data) {     
+request.get(sourceOptions, function(error, response, data) {
 	data = iconv.decode(data, "iso-8859-1");
 	console.log('Loading source data done.');
  	if (error) {
    	console.log('Error while loading source data ' + error);
 		return;
  	}
-	
+
 	readCsvData(data, function(error, stolpersteine) {
 	 	if (error) {
 	   		console.log('Error while reading CSV data ' + error);
 			return;
 	 	}
-		
+
 //		for (var i = 0; i < stolpersteine.length; i++) {
 //			var stolperstein = stolpersteine[i];
 //			console.log(stolperstein.location.city);
@@ -75,7 +75,7 @@ request.get(sourceOptions, function(error, response, data) {
 		uploadStolpersteine(stolpersteine, function(error, data) {
 			console.log('Resulting import data:');
 			console.log(util.inspect(data, false, null));
-			
+
 			if (error) {
 				console.log('Error during import (' + error + ')');
 			} else {
@@ -98,7 +98,7 @@ function readCsvData(data, callback) {
 		if (index == 0) {
 			return;	// column names
 		}
-		
+
 		if (processingError) {
 			return;	// ignore after first error
 		}
@@ -112,10 +112,10 @@ function readCsvData(data, callback) {
 			};
 			stolperstein.person = convertPerson(row[0].trim(), row[3].trim());
 			stolperstein.location = convertLocation(row[1].trim(), row[7].trim(), row[6].trim());
-			
+
 			stolperstein = patchStolperstein(stolperstein);
 			console.log(JSON.stringify(stolperstein));
-			
+
 			stolpersteine.push(stolperstein);
 		 // }
 	})
@@ -142,17 +142,17 @@ function patchStolperstein(stolperstein) {
 	// Normalize white space between street and number
 	stolperstein.location.street = stolperstein.location.street.replace(/traße(\d+)/g, "traße $1");
 	stolperstein.location.street = stolperstein.location.street.replace(/traße\s+(\d+)/g, "traße $1");
-	
+
 	// Invalid character for Renée Gottschalk
 	if (stolperstein.person.lastName === "Gottschalk" && stolperstein.person.firstName.lastIndexOf("Ren", 0) === 0) {
 		stolperstein.person.firstName = "Renée";
 	}
-  
+
   // Forward apps to mobile web site
   if (stolperstein.person.biographyUrl === "http://www.bochum.de/stolpersteine") {
     stolperstein.person.biographyUrl = "http://m.bochum.de/stolpersteine"
   }
-	
+
 	return stolperstein;
 }
 
@@ -163,11 +163,11 @@ function convertPerson(name, biography) {
 		firstName : names[1],
 		lastName : names[0],
 	};
-	
+
 	if (biography.length > 0) {
 		person.biographyUrl = biography;
 	}
-	
+
 	return person;
 }
 
@@ -191,10 +191,10 @@ function uploadStolpersteine(stolpersteine, callback) {
 		source: source,
 		stolpersteine: stolpersteine
 	};
-	
+
 	console.log('Importing ' + stolpersteine.length + ' stolperstein(e)...');
 	apiOptions.body = JSON.stringify(importData);
-	request.post(apiOptions, function(error, response, data) {     
+	request.post(apiOptions, function(error, response, data) {
 		callback(error, JSON.parse(data));
 	});
 }

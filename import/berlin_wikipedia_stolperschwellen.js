@@ -23,7 +23,7 @@
 var restify = require('restify'),
 	util = require('util'),
 	async = require('async');
-	
+
 var apiClient = restify.createJsonClient({
 	version: '*',
 	userAgent: 'Stolpersteine/1.0 (http://option-u.com; admin@option-u.com)',
@@ -36,7 +36,7 @@ var importData = {
 		url: "http://de.wikipedia.org/wiki/Liste_der_Stolpersteine_in_Berlin",
 		name: "Wikipedia",
 		retrievedAt: new Date()
-	}, 
+	},
 	stolpersteine: [{
 		type: "stolperschwelle",
 		person: {

@@ -45,7 +45,7 @@ var toolserverClient = restify.createStringClient({
 
 for (var i = 0; i < uriSources.length; i++) {
 	var uriSource = uriSources[i];
-	
+
 	console.log('Loading source data for ' + uriSource + '...');
 	wikipediaClient.get('/wiki/Liste_der_Stolpersteine_in_Berlin-Britz', function(error, request, response, data) {
 		console.log('done');
@@ -53,19 +53,19 @@ for (var i = 0; i < uriSources.length; i++) {
     		console.log('Error while loading source data');
 			return;
   		}
-  
+
 	  	jsdom.env({
 	    	html: data,
 	    	scripts: ['http://code.jquery.com/jquery-1.7.min.js']
 	  	}, function (error, window) {
 			var images = [];
-		
-			var source = { 
+
+			var source = {
 				url: uriSource.href,
 				name: "Wikipedia",
 				retrievedAt: new Date(response.headers.date)
 			};
-		
+
 			var $ = window.jQuery;
 			var tableRows = $('table.wikitable.sortable tr');
 			tableRows = tableRows.slice(1, tableRows.length); // first item is table header row
@@ -104,7 +104,7 @@ for (var i = 0; i < uriSources.length; i++) {
 function convertImage($, tableRow, callback) {
 	var image = {};
 	var itemRows = $(tableRow).find('td');
-			
+
 	// Person
 	var nameSpan = $(itemRows[1]).find('span');
 	if (nameSpan.find('span').length) {
@@ -115,12 +115,12 @@ function convertImage($, tableRow, callback) {
 		lastName: names[0].trim(),
 		firstName: names[1].trim()
 	};
-	
+
 	// Image
 	var imageTag = $(itemRows[0]).find('img');
 	image.url = 'http:' + imageTag.attr('src');
 	image.url = image.url.replace('/100px-', '/1024px-'); // width
-	
+
 	var linkTag = $(itemRows[0]).find('a');
 	image.canonicalUrl = linkTag.attr('href');
 	image.canonicalUrl = image.canonicalUrl.replace('/wiki/Datei:', '');
@@ -130,7 +130,7 @@ function convertImage($, tableRow, callback) {
 		street: $(itemRows[2]).text().trim(),
 		city: "Berlin"
 	};
-	
+
 	callback(null, image);
 }
 
@@ -139,13 +139,13 @@ function patchImage(image, callback) {
 		delete image.url;
 		delete image.canonicalUrl;
 	}
-	
+
 	callback(null, image);
 }
 
 function addSourceToImage(source, image, callback) {
 	image.source = source;
-	
+
 	callback(null, image);
 }
 
@@ -160,6 +160,6 @@ function addMetaToImage(image, callback) {
 	});
 }
 
-function logImage(image, callback) {	
+function logImage(image, callback) {
 	callback(null, image);
 }

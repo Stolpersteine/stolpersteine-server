@@ -25,7 +25,7 @@
 var request = require('request'),
 	csv = require('csv'),
 	util = require('util');
-	
+
 var sourceOptions = {
 	url: 'http://www.aktionsbuendnis-brandenburg.de/aktionen-positionen/stolpersteine_export.csv',
 	headers: {
@@ -33,7 +33,7 @@ var sourceOptions = {
 	}
 };
 
-var source = { 
+var source = {
 	url: 'http://www.aktionsbuendnis-brandenburg.de',
 	name: "Aktionsbündnis Brandenburg",
 	retrievedAt : new Date()
@@ -41,7 +41,7 @@ var source = {
 
 // Request data
 console.log('Loading source data...');
-request.get(sourceOptions, function(error, response, data) {     
+request.get(sourceOptions, function(error, response, data) {
 	console.log('Loading source data done');
  	if (error) {
    	console.log('Error while loading source data ' + error);
@@ -53,7 +53,7 @@ request.get(sourceOptions, function(error, response, data) {
 	   	console.log('Error while reading CSV data ' + error);
 			return;
 	 	}
-		
+
 		for (var i = 0; i < stolpersteine.length; i++) {
 			var stolperstein = stolpersteine[i];
 			console.log(stolperstein.location.street + "/" + stolperstein.location.zipCode + "/" + stolperstein.location.city);
@@ -72,7 +72,7 @@ function readCsvData(data, callback) {
 		if (index == 0) {
 			return;	// column names
 		}
-		
+
 		if (processingError) {
 			return;	// ignore after first error
 		}
@@ -80,16 +80,16 @@ function readCsvData(data, callback) {
 		// if (index < 2) {
 			row = patchCsv(row);
 			console.log('#' + index + ' ' + JSON.stringify(row));
-			
+
 			var stolperstein = {
 				type : "stolperstein",
 				source : source
 			};
 			stolperstein.location = convertLocation(row[2].trim(), row[0].trim());
 			stolperstein.person = convertPerson(row[1].trim());
-			
+
 			console.log(JSON.stringify(stolperstein));
-			
+
 			stolpersteine.push(stolperstein);
 		// }
 	})

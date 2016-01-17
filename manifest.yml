@@ -1,14 +1,14 @@
 --- 
-applications: 
-  .: 
+applications:
+  .:
     name: stolpersteine
     infra: eu-aws
     mem: 1G
     instances: 2
     url: ${name}.${target-base}
-    framework: 
+    framework:
       name: node
-      info: 
+      info:
         mem: 64M
         description: Node.js Application
-        exec: 
+        exec:
