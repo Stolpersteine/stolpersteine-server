@@ -37,22 +37,30 @@ exports.createImport = function(req, res) {
 			var newImport = new models.import.Import();
 			newImport.source = source;
 
-			async.forEach(stolpersteineImport, function(stolpersteinImport, callback) {
-				var newStolperstein = new models.stolperstein.Stolperstein(stolpersteinImport);
-				newStolperstein.source = source;
-				newStolperstein.updateHash();
+			var stolpersteineMap = {};
+			for (var stolpersteinIndex = 0; stolpersteinIndex < stolpersteineImport.length; stolpersteinIndex++) {
+				var stolpersteinImport = stolpersteineImport[stolpersteinIndex];
+				var stolperstein = new models.stolperstein.Stolperstein(stolpersteinImport);
+				stolperstein.source = source;
+				stolperstein.updateHash();
 
-				// Check if stolperstein exists
-				models.stolperstein.Stolperstein.findExactMatch(newStolperstein, function(err, stolperstein) {
-					if (stolperstein) {
-						existingStolpersteineIds.push(stolperstein.id);
-					} else {
-						newImport.createActions.stolpersteine.push(newStolperstein);
+				stolpersteineMap[stolperstein.hash] = stolperstein;
+			}
+
+			models.stolperstein.Stolperstein.find({"hash": {$in: Object.keys(stolpersteineMap)}}, function(err, stolpersteine) {
+				async.forEach(stolpersteine, function(stolperstein, callback) {
+					existingStolpersteineIds.push(stolperstein.id);
+					delete stolpersteineMap[stolperstein.hash];
+
+					callback();
+				}, function(err) {
+					var keys = Object.keys(stolpersteineMap);
+					for (var keyIndex = 0; keyIndex < keys.length; keyIndex++) {
+					    var newStolperstein = stolpersteineMap[keys[keyIndex]];
+					    newImport.createActions.stolpersteine.push(newStolperstein);
 					}
-					callback(err);
+					callback(err, newImport, existingStolpersteineIds);
 				});
-			}, function(err) {
-				callback(err, newImport, existingStolpersteineIds);
 			});
 		},
 		// Stolpersteine that don't exist any more
