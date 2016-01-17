@@ -24,6 +24,7 @@ var models = require('../models');
 
 exports.createStolperstein = function(req, res) {
 	var stolperstein = new models.stolperstein.Stolperstein(req.body);
+	stolperstein.updateHash()
 	stolperstein.save(function(err, stolperstein) {
 		if (!err) {
 			res.send(201, stolperstein);
@@ -45,7 +46,7 @@ exports.retrieveStolpersteine = function(req, res) {
 			}
 			res.setHeader('ETag', etag);
 		}
-	
+
 		// Queries
 		var queries = [];
 		if (typeof req.query.q !== 'undefined') {
@@ -87,16 +88,14 @@ exports.retrieveStolpersteine = function(req, res) {
 				"source.name": new RegExp('^' + req.query.source, "i")
 			});
 		}
-		
+
 		var query = {};
 		if (queries.length >= 1) {
 			query = {
 				$and : queries
 			};
 		}
-		
-		console.log(query);
-	
+
 		// Pagination
 		var limit = req.query.limit || 10;
 		var skip = req.query.offset || 0;
@@ -112,7 +111,7 @@ exports.retrieveStolpersteine = function(req, res) {
 		} else {
 			stringify = JSON.stringify;
 		}
-	
+
 		// Manual streaming to improve speed
 		res.charset = 'utf-8';
 		res.type('application/json');
@@ -126,14 +125,14 @@ exports.retrieveStolpersteine = function(req, res) {
 		stream.on('data', function(stolperstein) {
 			stolperstein.id = stolperstein._id;
 			delete stolperstein._id;
-		
+
 			if (!hasWritten) {
 				hasWritten = true;
 				res.write('[');
 			} else {
 				res.write(',');
-			}		
-		
+			}
+
 			res.write(stringify(stolperstein));
 		}).on('err', function(err) {
 			if (!hasWritten) {

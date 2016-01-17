@@ -20,9 +20,11 @@
 
 "use strict";
 
-var mongoose = require('mongoose');
+var mongoose = require('mongoose'),
+	crypto = require('crypto');
 
 var schema = new mongoose.Schema({
+	hash: { type: String, required: true},
 	type: { type: String, enum: ['stolperstein', 'stolperschwelle'], required: true },
 	createdAt: { type: Date },
 	updatedAt: { type: Date },
@@ -68,16 +70,39 @@ schema.set('toJSON', { transform: function (doc, ret, options) {
 	ret.id = doc._id;
  	delete ret._id;
 	delete ret.__v;
+	delete ret.hash;
 }});
 
 schema.methods.toGeoJSON = function() {
-	return { 
-		"type": "Feature", 
+	return {
+		"type": "Feature",
 		"geometry": {
-			"type": "Point", 
+			"type": "Point",
 			"coordinates": [this.location.longitude, this.location.latitude]
 		}
 	};
+};
+
+schema.methods.updateHash = function() {
+	var hash = crypto.createHash('sha1')
+
+	hash.update(this.source.url ? this.source.url.trim() : "")
+	hash.update(this.source.name ? this.source.name.trim() : "")
+	hash.update(this.type ? this.type.trim() : "")
+	hash.update(this.person.firstName ? this.person.firstName.trim() : "")
+	hash.update(this.person.lastName ? this.person.lastName.trim() : "")
+	hash.update(this.person.biographyUrl ? this.person.biographyUrl.trim() : "")
+	hash.update(this.location.street ? this.location.street.trim() : "")
+	hash.update(this.location.zipCode ? this.location.zipCode.trim() : "")
+	hash.update(this.location.city ? this.location.city.trim() : "")
+	hash.update(this.location.sublocality1 ? this.location.sublocality1.trim() : "")
+	hash.update(this.location.sublocality2 ? this.location.sublocality2.trim() : "")
+	hash.update(this.location.state ? this.location.state.trim() : "")
+	hash.update(this.location.coordinates.latitude ? "" + this.location.coordinates.latitude : "")
+	hash.update(this.location.coordinates.longitude ? "" + this.location.coordinates.longitude : "")
+	hash.update(this.description ? this.description.trim() : "")
+
+	this.hash = hash.digest('hex');
 };
 
 schema.statics.findExactMatch = function(source, stolperstein, callback) {
@@ -97,7 +122,7 @@ schema.statics.findExactMatch = function(source, stolperstein, callback) {
 		"location.coordinates.latitude": stolperstein.location.coordinates.latitude === undefined ? undefined : stolperstein.location.coordinates.latitude.trim(),
 		"location.coordinates.longitude": stolperstein.location.coordinates.longitude === undefined ? undefined : stolperstein.location.coordinates.longitude.trim(),
 		"description": stolperstein.description === undefined ? undefined : stolperstein.description.trim()
-		
+
 		// not checked: retrievedAt
 	}, callback);
 };

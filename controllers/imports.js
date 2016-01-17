@@ -26,17 +26,17 @@ var models = require('../models'),
 exports.createImport = function(req, res) {
 	var source = req.body.source;
 	var stolpersteineImport = req.body.stolpersteine;
-	
+
 	async.waterfall([
 		// Find and delete old imports
 		models.import.Import.findAndDelete.bind(undefined, source),
-		
+
 		// Figure out existing stolpersteine
 		function(callback) {
 			var existingStolpersteineIds = [];
 			var newImport = new models.import.Import();
 			newImport.source = source;
-			
+
 			async.forEach(stolpersteineImport, function(stolpersteinImport, callback) {
 				// Check if stolperstein exists
 				models.stolperstein.Stolperstein.findExactMatch(source, stolpersteinImport, function(err, stolperstein) {
@@ -45,6 +45,7 @@ exports.createImport = function(req, res) {
 					} else {
 						var newStolperstein = new models.stolperstein.Stolperstein(stolpersteinImport);
 						newStolperstein.source = source;
+						newStolperstein.updateHash();
 						newImport.createActions.stolpersteine.push(newStolperstein);
 					}
 					callback(err);
