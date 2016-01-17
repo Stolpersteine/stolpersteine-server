@@ -102,28 +102,14 @@ schema.methods.updateHash = function() {
 	hash.update(this.location.coordinates.longitude ? "" + this.location.coordinates.longitude : "")
 	hash.update(this.description ? this.description.trim() : "")
 
+	// not hashed: retrievedAt
+
 	this.hash = hash.digest('hex');
 };
 
 schema.statics.findExactMatch = function(stolperstein, callback) {
 	this.findOne({
-		"source.url": stolperstein.source.url === undefined ? undefined : stolperstein.source.url.trim(),
-		"source.name": stolperstein.source.name === undefined ? undefined : stolperstein.source.name.trim(),
-		"type": stolperstein.type === undefined ? undefined : stolperstein.type.trim(),
-		"person.firstName": stolperstein.person.firstName === undefined ? undefined : stolperstein.person.firstName.trim(),
-		"person.lastName": stolperstein.person.lastName === undefined ? undefined : stolperstein.person.lastName.trim(),
-		"person.biographyUrl": stolperstein.person.biographyUrl === undefined ? undefined : stolperstein.person.biographyUrl.trim(),
-		"location.street": stolperstein.location.street === undefined ? undefined : stolperstein.location.street.trim(),
-		"location.zipCode": stolperstein.location.zipCode === undefined ? undefined : stolperstein.location.zipCode.trim(),
-		"location.city": stolperstein.location.city === undefined ? undefined : stolperstein.location.city.trim(),
-		"location.sublocality1": stolperstein.location.sublocality1 === undefined ? undefined : stolperstein.location.sublocality1.trim(),
-		"location.sublocality2": stolperstein.location.sublocality2 === undefined ? undefined : stolperstein.location.sublocality2.trim(),
-		"location.state": stolperstein.location.state === undefined ? undefined : stolperstein.location.state.trim(),
-		"location.coordinates.latitude": stolperstein.location.coordinates.latitude === undefined ? undefined : stolperstein.location.coordinates.latitude,
-		"location.coordinates.longitude": stolperstein.location.coordinates.longitude === undefined ? undefined : stolperstein.location.coordinates.longitude,
-		"description": stolperstein.description === undefined ? undefined : stolperstein.description.trim()
-
-		// not checked: retrievedAt
+		"hash": stolperstein.hash
 	}, callback);
 };
 
