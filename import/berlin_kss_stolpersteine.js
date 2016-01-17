@@ -70,7 +70,7 @@ kssClient.get('', function(error, request, response, data) {
 
 			// Skip markers with missing geographic coordinates
 			if (marker.$.lat === "" || marker.$.lng === "") {
-				console.log("Found invalid marker: " + marker.$.adresse);
+				console.log("Skipping invalid lat/long: " + marker.$.lat + " " + marker.$.lng);
 				continue;
 			}
 
@@ -91,6 +91,12 @@ kssClient.get('', function(error, request, response, data) {
 			// Convert person tags
 			for (var i = 0; i < marker.person.length; i++) {
 				var person = marker.person[i];
+
+				if (person.$.nachname === "") {
+					console.log("Skipping invalid last name: " + person.$.nachname);
+					continue;
+				}
+
 				var stolperstein = convertStolperstein(person, location, source);
 				stolpersteine.push(stolperstein);
 				// console.log(JSON.stringify(stolperstein));
