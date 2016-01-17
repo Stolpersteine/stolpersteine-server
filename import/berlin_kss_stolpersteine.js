@@ -101,21 +101,6 @@ kssClient.get('', function(error, request, response, data) {
 				stolpersteine.push(stolperstein);
 				// console.log(JSON.stringify(stolperstein));
 			}
-
-			// Convert person tags nested in 'weitere'
-			if (marker.weitere) {
-				// console.log('Processing "weitere"');
-				for (var j = 0; j < marker.weitere.length; j++) {
-					location.street = marker.weitere[j].$.adresse;
-
-					for (var k = 0; k < marker.weitere[j].person.length; k++) {
-						var personWeitere = marker.weitere[j].person[k];
-						var stolpersteinWeitere = convertStolperstein(personWeitere, location, source);
-						stolpersteine.push(stolpersteinWeitere);
-						// console.log(JSON.stringify(stolpersteinWeitere));
-					}
-				}
-			}
 		}
 		console.log('Converted ' + stolpersteine.length + ' stolperstein(e)');
 
