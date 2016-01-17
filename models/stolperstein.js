@@ -24,7 +24,7 @@ var mongoose = require('mongoose'),
 	crypto = require('crypto');
 
 var schema = new mongoose.Schema({
-	hash: { type: String, required: true},
+	hash: { type: String, required: true, index: true },
 	type: { type: String, enum: ['stolperstein', 'stolperschwelle'], required: true },
 	createdAt: { type: Date },
 	updatedAt: { type: Date },
