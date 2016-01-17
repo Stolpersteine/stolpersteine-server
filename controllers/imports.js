@@ -38,14 +38,15 @@ exports.createImport = function(req, res) {
 			newImport.source = source;
 
 			async.forEach(stolpersteineImport, function(stolpersteinImport, callback) {
+				var newStolperstein = new models.stolperstein.Stolperstein(stolpersteinImport);
+				newStolperstein.source = source;
+				newStolperstein.updateHash();
+
 				// Check if stolperstein exists
-				models.stolperstein.Stolperstein.findExactMatch(source, stolpersteinImport, function(err, stolperstein) {
+				models.stolperstein.Stolperstein.findExactMatch(newStolperstein, function(err, stolperstein) {
 					if (stolperstein) {
 						existingStolpersteineIds.push(stolperstein.id);
 					} else {
-						var newStolperstein = new models.stolperstein.Stolperstein(stolpersteinImport);
-						newStolperstein.source = source;
-						newStolperstein.updateHash();
 						newImport.createActions.stolpersteine.push(newStolperstein);
 					}
 					callback(err);
