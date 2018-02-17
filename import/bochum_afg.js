@@ -28,7 +28,7 @@ var request = require('request'),
 	util = require('util');
 
 var sourceOptions = {
-	url: 'http://www.bochum.de/C12571A3001D56CE/currentbaselink/W29VSB94839BOCMDE/$FILE/Stolpersteine.csv',
+	url: 'https://geoinfo.bochum.de/62/opendata/stolpersteine.csv',
 	encoding: null,
 	headers: {
 		'User-Agent': 'Stolpersteine/1.0 (http://option-u.com; admin@option-u.com)'
@@ -148,10 +148,15 @@ function patchStolperstein(stolperstein) {
 		stolperstein.person.firstName = "Renée";
 	}
 
-  // Forward apps to mobile web site
-  if (stolperstein.person.biographyUrl === "http://www.bochum.de/stolpersteine") {
-    stolperstein.person.biographyUrl = "http://m.bochum.de/stolpersteine"
-  }
+  	// Forward apps to mobile web site
+  	if (stolperstein.person.biographyUrl === "http://www.bochum.de/stolpersteine") {
+    	stolperstein.person.biographyUrl = "http://m.bochum.de/stolpersteine"
+	}
+	  
+	// Make sure biography URLs start with http/https
+	if (!stolperstein.person.biographyUrl.startsWith("http")) {
+		stolperstein.person.biographyUrl = "https://" + stolperstein.person.biographyUrl;
+	}
 
 	return stolperstein;
 }
